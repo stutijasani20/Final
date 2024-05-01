@@ -10,6 +10,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "../app/store/store";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { url } from "inspector";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({

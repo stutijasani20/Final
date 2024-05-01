@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('users.urls')),
     path('', include('press.urls')),
     path('', include('careers.urls')),
+     path('', include('flights.urls')),
 
 
     

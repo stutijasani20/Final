@@ -4,6 +4,7 @@ import "../styles/navbar.scss";
 import { logout } from "../store/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import Image from "next/image";
 
 const Header: React.FC = () => {
   const isAuthenticated = useSelector(
@@ -19,7 +20,7 @@ const Header: React.FC = () => {
   return (
     <div className="header">
       <Link href="/" className="logo">
-        Elegance Air
+        <Image src="/logo.png" alt="logo" height={50} width={50} />
       </Link>
       <div className="nav-links">
         <Link href="/book" className="nav-link">

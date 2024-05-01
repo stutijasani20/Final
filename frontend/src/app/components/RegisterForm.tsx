@@ -37,7 +37,8 @@ const RegisterPage = () => {
       <input
         type="password"
         placeholder="Password"
-        value={password}
+        value={password} 
+        style={{}}
         onChange={(e) => setPassword(e.target.value)}
       />
       <br />
