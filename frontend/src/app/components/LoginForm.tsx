@@ -33,7 +33,7 @@ const LoginPage = () => {
 
       // console.log(response.data.token);
       setError(""); // Clear any previous errors
-      router.push("");
+      router.push("/");
 
       // Dispatch the login action with user data
       dispatch(login(response.data.email));

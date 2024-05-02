@@ -1,4 +1,6 @@
 "use client";
+import { Typography } from "@mui/material";
+
 import {
   useState,
   useEffect,
@@ -21,10 +23,13 @@ import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 
+
+
+
 const MapWithRoute = () => {
   const [routeData, setRouteData] = useState(null);
   const [userLocation, setUserLocation] = useState({ lat: 0, lng: 0 });
-  const [hotelLocation, setHotelLocation] = useState({ lat: 0, lng: 0 });
+  const [touristLocation, settouristLocation] = useState({ lat: 0, lng: 0 });
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -49,15 +54,15 @@ const MapWithRoute = () => {
   useEffect(() => {
     const fetchRouteData = async () => {
       try {
-        // Extract hotel location from search params
-        const hotelLat = parseFloat(searchParams.get("hotelLat") || "");
-        const hotelLng = parseFloat(searchParams.get("hotelLng") || "");
+        // Extract tourist location from search params
+        const touristLat = parseFloat(searchParams.get("touristLat") || "");
+        const touristLng = parseFloat(searchParams.get("touristLng") || "");
 
-        setHotelLocation({ lat: hotelLat, lng: hotelLng });
+        settouristLocation({ lat: touristLat, lng: touristLng });
 
         // Fetch route data using TomTom API
         const response = await axios.get(
-          `https://api.tomtom.com/routing/1/calculateRoute/${userLocation.lat},${userLocation.lng}:${hotelLat},${hotelLng}/json?&instructionsType=text&sectionType=lanes&instructionAnnouncementPoints=all&language=en-GB&routeType=eco&traffic=true&vehicleMaxSpeed=120&travelMode=car&key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb`
+          `https://api.tomtom.com/routing/1/calculateRoute/${userLocation.lat},${userLocation.lng}:${touristLat},${touristLng}/json?&instructionsType=text&sectionType=lanes&instructionAnnouncementPoints=all&language=en-GB&routeType=eco&traffic=true&vehicleMaxSpeed=120&travelMode=car&key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb`
         );
 
         if (response.status === 200) {
@@ -69,7 +74,7 @@ const MapWithRoute = () => {
       }
     };
 
-    if (searchParams.has("hotelLat") && searchParams.has("hotelLng")) {
+    if (searchParams.has("touristLat") && searchParams.has("touristLng")) {
       fetchRouteData();
     }
   }, [searchParams, userLocation]);
@@ -138,62 +143,51 @@ const MapWithRoute = () => {
               {formatDate(routeData.routes[0].summary.arrivalTime)}
             </p>
           </div>
-          <h2>Route Instructions</h2>
-          <ol>
-            {routeData.routes[0].guidance.instructions.map(
-              (
-                instruction: {
-                  combinedMessage:
-                    | string
-                    | number
-                    | bigint
-                    | boolean
-                    | ReactElement<any, string | JSXElementConstructor<any>>
-                    | Iterable<ReactNode>
-                    | ReactPortal
-                    | Promise<AwaitedReactNode>
-                    | null
-                    | undefined;
-                },
-                index: Key | null | undefined
-              ) => (
-                <li key={index}>{instruction.combinedMessage}</li>
-              )
-            )}
-          </ol>
-
           <div>
-            <MapContainer
-              center={[userLocation.lat, userLocation.lng]}
-              zoom={15}
-              style={{ height: "700px", width: "100%" }}
-            >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <>
-                <Polyline
-                  positions={routeData.routes[0].legs[0].points.map(
-                    (point: { latitude: any; longitude: any }) => [
-                      point.latitude,
-                      point.longitude,
-                    ]
-                  )}
-                  color="blue"
-                />
-                <Marker
-                  position={[userLocation.lat, userLocation.lng]}
-                  icon={markerIcon}
-                >
-                  <Popup>Starting Point</Popup>
-                </Marker>
-                <Marker
-                  position={[hotelLocation.lat, hotelLocation.lng]}
-                  icon={markerIcon}
-                >
-                  <Popup>Ending Point</Popup>
-                </Marker>
-              </>
-            </MapContainer>
+            <div>
+              <h2>Route Instructions</h2>
+              <ol style={{ listStyleType: "none", padding: 0 }}>
+                {routeData.routes[0].guidance.instructions.map(
+                  (instruction, index) => (
+                    <>
+                      <li key={index}>{instruction.combinedMessage}</li>
+                    </>
+                  )
+                )}
+              </ol>
+            </div>
           </div>
+
+          <MapContainer
+            center={[userLocation.lat, userLocation.lng]}
+            zoom={15}
+            style={{ height: "700px", width: "100%" }}
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <>
+              <Polyline
+                positions={routeData.routes[0].legs[0].points.map(
+                  (point: { latitude: any; longitude: any }) => [
+                    point.latitude,
+                    point.longitude,
+                  ]
+                )}
+                color="blue"
+              />
+              <Marker
+                position={[userLocation.lat, userLocation.lng]}
+                icon={markerIcon}
+              >
+                <Popup>Starting Point</Popup>
+              </Marker>
+              <Marker
+                position={[touristLocation.lat, touristLocation.lng]}
+                icon={markerIcon}
+              >
+                <Popup>Ending Point</Popup>
+              </Marker>
+            </>
+          </MapContainer>
         </div>
       )}
     </>

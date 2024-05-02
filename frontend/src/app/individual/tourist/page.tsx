@@ -3,7 +3,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+import { useRouter } from "next/navigation";
+
 interface tourist {
+  position: {
+    lat: number;
+    lon: number;
+  };
   id: string;
   name: string;
   phone?: string;
@@ -23,6 +29,8 @@ const MyComponent: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>("Mumbai Airport");
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,6 +58,10 @@ const MyComponent: React.FC = () => {
             name: tourist.poi.name,
             categories: tourist.poi.categories,
             address: tourist.address,
+            position: {
+              lat: tourist.position.lat,
+              lon: tourist.position.lon,
+            },
           })
         );
         settourists(touristData);
@@ -70,6 +82,12 @@ const MyComponent: React.FC = () => {
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setPage(1);
+  };
+
+  const handleViewMap = (tourist: tourist) => {
+    // Navigate to MapComponent page with the tourist location
+    const queryString = `?touristLat=${tourist.position.lat}&touristLng=${tourist.position.lon}`;
+    router.push(`/map2${queryString}`);
   };
 
   return (
@@ -114,9 +132,16 @@ const MyComponent: React.FC = () => {
                   {tourist.address.streetName}, {tourist.address.municipality},{" "}
                   {tourist.address.postalCode}, {tourist.address.country}
                 </p>
+                <button
+                  onClick={() => handleViewMap(tourist)}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                >
+                  View Map
+                </button>
               </div>
             ))}
           </div>
+
           <div className="flex justify-center mt-4">
             {Array.from(Array(totalPages).keys()).map((pageNumber) => (
               <button

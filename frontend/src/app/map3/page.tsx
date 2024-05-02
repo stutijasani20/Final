@@ -1,4 +1,5 @@
 "use client";
+"use client";
 import {
   useState,
   useEffect,
@@ -24,7 +25,10 @@ import { useSearchParams } from "next/navigation";
 const MapWithRoute = () => {
   const [routeData, setRouteData] = useState(null);
   const [userLocation, setUserLocation] = useState({ lat: 0, lng: 0 });
-  const [hotelLocation, setHotelLocation] = useState({ lat: 0, lng: 0 });
+  const [restaurantLocation, setrestaurantLocation] = useState({
+    lat: 0,
+    lng: 0,
+  });
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -49,15 +53,19 @@ const MapWithRoute = () => {
   useEffect(() => {
     const fetchRouteData = async () => {
       try {
-        // Extract hotel location from search params
-        const hotelLat = parseFloat(searchParams.get("hotelLat") || "");
-        const hotelLng = parseFloat(searchParams.get("hotelLng") || "");
+        // Extract restaurant location from search params
+        const restaurantLat = parseFloat(
+          searchParams.get("restaurantLat") || ""
+        );
+        const restaurantLng = parseFloat(
+          searchParams.get("restaurantLng") || ""
+        );
 
-        setHotelLocation({ lat: hotelLat, lng: hotelLng });
+        setrestaurantLocation({ lat: restaurantLat, lng: restaurantLng });
 
         // Fetch route data using TomTom API
         const response = await axios.get(
-          `https://api.tomtom.com/routing/1/calculateRoute/${userLocation.lat},${userLocation.lng}:${hotelLat},${hotelLng}/json?&instructionsType=text&sectionType=lanes&instructionAnnouncementPoints=all&language=en-GB&routeType=eco&traffic=true&vehicleMaxSpeed=120&travelMode=car&key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb`
+          `https://api.tomtom.com/routing/1/calculateRoute/${userLocation.lat},${userLocation.lng}:${restaurantLat},${restaurantLng}/json?&instructionsType=text&sectionType=lanes&instructionAnnouncementPoints=all&language=en-GB&routeType=eco&traffic=true&vehicleMaxSpeed=120&travelMode=car&key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb`
         );
 
         if (response.status === 200) {
@@ -69,7 +77,10 @@ const MapWithRoute = () => {
       }
     };
 
-    if (searchParams.has("hotelLat") && searchParams.has("hotelLng")) {
+    if (
+      searchParams.has("restaurantLat") &&
+      searchParams.has("restaurantLng")
+    ) {
       fetchRouteData();
     }
   }, [searchParams, userLocation]);
@@ -162,38 +173,36 @@ const MapWithRoute = () => {
             )}
           </ol>
 
-          <div>
-            <MapContainer
-              center={[userLocation.lat, userLocation.lng]}
-              zoom={15}
-              style={{ height: "700px", width: "100%" }}
-            >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <>
-                <Polyline
-                  positions={routeData.routes[0].legs[0].points.map(
-                    (point: { latitude: any; longitude: any }) => [
-                      point.latitude,
-                      point.longitude,
-                    ]
-                  )}
-                  color="blue"
-                />
-                <Marker
-                  position={[userLocation.lat, userLocation.lng]}
-                  icon={markerIcon}
-                >
-                  <Popup>Starting Point</Popup>
-                </Marker>
-                <Marker
-                  position={[hotelLocation.lat, hotelLocation.lng]}
-                  icon={markerIcon}
-                >
-                  <Popup>Ending Point</Popup>
-                </Marker>
-              </>
-            </MapContainer>
-          </div>
+          <MapContainer
+            center={[userLocation.lat, userLocation.lng]}
+            zoom={15}
+            style={{ height: "700px", width: "100%" }}
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <>
+              <Polyline
+                positions={routeData.routes[0].legs[0].points.map(
+                  (point: { latitude: any; longitude: any }) => [
+                    point.latitude,
+                    point.longitude,
+                  ]
+                )}
+                color="blue"
+              />
+              <Marker
+                position={[userLocation.lat, userLocation.lng]}
+                icon={markerIcon}
+              >
+                <Popup>Starting Point</Popup>
+              </Marker>
+              <Marker
+                position={[restaurantLocation.lat, restaurantLocation.lng]}
+                icon={markerIcon}
+              >
+                <Popup>Ending Point</Popup>
+              </Marker>
+            </>
+          </MapContainer>
         </div>
       )}
     </>

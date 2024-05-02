@@ -3,7 +3,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+import { useRouter } from "next/navigation";
+
 interface restaurant {
+  position: {
+    lat: number;
+    lon: number;
+  };
   id: string;
   name: string;
   phone?: string;
@@ -23,6 +29,8 @@ const MyComponent: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>("Mumbai Airport");
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,6 +58,10 @@ const MyComponent: React.FC = () => {
             name: restaurant.poi.name,
             categories: restaurant.poi.categories,
             address: restaurant.address,
+            position: {
+              lat: restaurant.position.lat,
+              lon: restaurant.position.lon,
+            },
           })
         );
         setrestaurants(restaurantData);
@@ -72,9 +84,15 @@ const MyComponent: React.FC = () => {
     setPage(1);
   };
 
+  const handleViewMap = (restaurant: restaurant) => {
+    // Navigate to MapComponent page with the restaurant location
+    const queryString = `?restaurantLat=${restaurant.position.lat}&restaurantLng=${restaurant.position.lon}`;
+    router.push(`/map3${queryString}`);
+  };
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Restaurant Data</h1>
+      <h1 className="text-3xl font-bold mb-4">restaurant Data</h1>
       <form onSubmit={handleSearch} className="mb-4">
         <input
           type="text"
@@ -115,9 +133,16 @@ const MyComponent: React.FC = () => {
                   {restaurant.address.municipality},{" "}
                   {restaurant.address.postalCode}, {restaurant.address.country}
                 </p>
+                <button
+                  onClick={() => handleViewMap(restaurant)}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                >
+                  View Map
+                </button>
               </div>
             ))}
           </div>
+
           <div className="flex justify-center mt-4">
             {Array.from(Array(totalPages).keys()).map((pageNumber) => (
               <button

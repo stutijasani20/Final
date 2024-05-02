@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import MapWithRoute from "@/app/map/page";
+
 import { useRouter } from "next/navigation";
 
 interface Hotel {
@@ -28,11 +28,8 @@ const MyComponent: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>("Mumbai Airport");
-  
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
- 
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,6 +56,10 @@ const MyComponent: React.FC = () => {
           name: hotel.poi.name,
           categories: hotel.poi.categories,
           address: hotel.address,
+          position: {
+            lat: hotel.position.lat,
+            lon: hotel.position.lon,
+          },
         }));
         setHotels(hotelData);
         setLoading(false);
@@ -70,7 +71,6 @@ const MyComponent: React.FC = () => {
 
     fetchData();
   }, [page, searchQuery]);
-  console.log(hotels);
 
   const goToPage = (pageNumber: number) => {
     setPage(pageNumber);
@@ -80,7 +80,12 @@ const MyComponent: React.FC = () => {
     event.preventDefault();
     setPage(1);
   };
-  console.log(hotels);
+
+  const handleViewMap = (hotel: Hotel) => {
+    // Navigate to MapComponent page with the hotel location
+    const queryString = `?hotelLat=${hotel.position.lat}&hotelLng=${hotel.position.lon}`;
+    router.push(`/map${queryString}`);
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -122,7 +127,12 @@ const MyComponent: React.FC = () => {
                   {hotel.address.streetName}, {hotel.address.municipality},{" "}
                   {hotel.address.postalCode}, {hotel.address.country}
                 </p>
-               
+                <button
+                  onClick={() => handleViewMap(hotel)}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                >
+                  View Map
+                </button>
               </div>
             ))}
           </div>
