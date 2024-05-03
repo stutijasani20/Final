@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'flights',
     'rest_framework_simplejwt',
     'users',
+    
     'press',
     'careers',
 
@@ -184,3 +185,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:8000"
 ]
+
+STRIPE_SECRET_KEY = "sk_test_51P0JlFSDdJ1Ey7xJXV2l7qLiJbsb8H0rmNncAuPw1lQWm40YNH7XNHJR4JcpS0gQfwh81anAQjcBE8gQcK7UBMcI000zWjjvcA"

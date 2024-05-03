@@ -20,6 +20,9 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { Icon } from "leaflet";
+import markerIconPng from "leaflet/dist/images/marker-icon.png";
 
 const MapWithRoute = () => {
   const [routeData, setRouteData] = useState(null);
@@ -75,8 +78,13 @@ const MapWithRoute = () => {
   }, [searchParams, userLocation]);
 
   const markerIcon = L.icon({
-    iconUrl: "/1.jpeg",
-    iconSize: [31, 46],
+    iconUrl: "icons8-valet-48.png",
+    iconSize: [50, 50],
+  });
+
+  const markerIcon2 = L.icon({
+    iconUrl: "icons8-hotel-bed-32.png",
+    iconSize: [50, 50],
   });
 
   const secondsToHoursMinutes = (seconds: number) => {
@@ -187,7 +195,7 @@ const MapWithRoute = () => {
                 </Marker>
                 <Marker
                   position={[hotelLocation.lat, hotelLocation.lng]}
-                  icon={markerIcon}
+                  icon={markerIcon2}
                 >
                   <Popup>Ending Point</Popup>
                 </Marker>

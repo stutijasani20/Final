@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface Flight {
   id: number;
@@ -23,12 +23,15 @@ interface Airport {
 const FlightList: React.FC = () => {
   const [flights, setFlights] = useState<Flight[]>([]);
   const [airports, setAirports] = useState<{ [key: number]: Airport }>({});
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false); // Added loading state
 
   useEffect(() => {
     fetchFlights();
   }, []);
 
   const fetchFlights = async () => {
+    setIsLoading(true); // Set loading state to true
     try {
       const response = await axios.get("http://127.0.0.1:8000/flights/");
       setFlights(response.data);
@@ -41,7 +44,19 @@ const FlightList: React.FC = () => {
       fetchAirportDetails(uniqueAirportIds);
     } catch (error) {
       console.error("Error fetching flights:", error);
+    } finally {
+      setIsLoading(false); // Set loading state to false after fetching data
     }
+  };
+
+  // console.log(flights.map((flight) => flight.price));
+
+  const handleBook = (flight: Flight) => {
+    const selectedFlight = flights.map((flight) => flight.id);
+
+    // Use the selectedFlight object to pre-fill booking form
+    console.log(selectedFlight);
+    router.push(`/booking?flightData=${selectedFlight}`);
   };
 
   const fetchAirportDetails = async (airportIds: number[]) => {
@@ -117,7 +132,10 @@ const FlightList: React.FC = () => {
                   Rs. {flight.price.toFixed(2)}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  <button className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">
+                  <button
+                    onClick={handleBook}
+                    className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+                  >
                     Book
                   </button>
                 </td>
