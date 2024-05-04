@@ -1,5 +1,9 @@
 from django.db import models
+
+# Create your models here.
+from django.db import models
 from users.models import CustomUser  
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 class Department(models.Model):
     name = models.CharField(max_length=100)
@@ -14,7 +18,9 @@ class Job(models.Model):
     requirements = models.TextField()
     location = models.CharField(max_length=100)
     salary = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='jobs/', null=True, blank=True)
+    image = models.ImageField(upload_to='jobs/', storage=MediaCloudinaryStorage, null=True, blank=True)
+    start_date = models.DateField()
+    type = models.CharField(max_length=100)
 
     def __str__(self):
         return self.title

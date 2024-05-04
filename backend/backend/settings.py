@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from datetime import timedelta
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,19 +40,32 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'flights',
+    'flight',
     'rest_framework_simplejwt',
     'users',
-    
+
+    'cloudinary',
     'press',
-    'careers',
+    'jobs',
 
     
     # 'rest_framework.authtoken',
 ]
+
+
+
+# Cloudinary settings
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -68,7 +83,8 @@ AUTHENTICATION_BACKENDS = ['users.backends.EmailBackend',]
 
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -186,4 +202,3 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000"
 ]
 
-STRIPE_SECRET_KEY = "sk_test_51P0JlFSDdJ1Ey7xJXV2l7qLiJbsb8H0rmNncAuPw1lQWm40YNH7XNHJR4JcpS0gQfwh81anAQjcBE8gQcK7UBMcI000zWjjvcA"

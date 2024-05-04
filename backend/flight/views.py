@@ -1,8 +1,11 @@
+from django.shortcuts import render
+
+# Create your views here.
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework.views import APIView
-from .models import *
-from flights.serializers import *
+from flight.models import *
+from flight.serializers import *
 from rest_framework import status, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -24,8 +27,6 @@ class AirportListCreateAPIView(generics.ListCreateAPIView):
 class AirportRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Airport.objects.all()
     serializer_class = AirportSerializer
-
-
 
 
 class PassengerList(APIView):

@@ -1,4 +1,7 @@
 from django.db import models
+
+# Create your models here.
+from django.db import models
 from users.models import *
 from django.core.exceptions import ValidationError
 
@@ -86,6 +89,7 @@ class Booking(models.Model):
 class Payment(models.Model):
     method_name = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    
 
     def __str__(self):
         return f"Payment of {self.amount}"
