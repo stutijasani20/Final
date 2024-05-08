@@ -13,7 +13,7 @@ class Airport(models.Model):
         return f"{self.name} ({self.code})"
 
 def validate_non_zero(value):
-    if value == 0:
+    if value < 2000:
         raise ValidationError("Price cannot be zero.")
 
 class Class(models.Model):
@@ -32,7 +32,12 @@ class Flight(models.Model):
     price = models.IntegerField(validators=[validate_non_zero])
     available_seats = models.IntegerField(default=0)
     classes = models.ForeignKey(Class, on_delete=models.CASCADE)
-    
+
+    def total_price(self):
+        gst = 0.12
+        total_price = self.price + (self.price * gst)
+        return total_price
+
    
 
     def __str__(self):
@@ -86,6 +91,7 @@ class Booking(models.Model):
 class Payment(models.Model):
     method_name = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Payment of {self.amount}"

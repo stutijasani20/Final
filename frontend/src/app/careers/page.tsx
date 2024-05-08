@@ -20,20 +20,21 @@ export default function Page() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-8">Careers</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <h1 className="text-3xl font-bold text-center pt-5 mb-5">Careers</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 mb-5 md:grid-cols-3 gap-6">
         {jobs.map((job) => (
           <div
             key={job.id}
             className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
           >
             <CldImage
-              className="object-cover h-56 w-full"
-              src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${job.image}`} // Assuming your job object has an image property with the Cloudinary public ID
-              alt={job.title}
-              width={500}
-              height={300}
-            />
+  className="object-cover h-56 w-full"
+  cloudName="dvueo2lkr" // Add your Cloudinary cloud name here
+  publicId={job.image} // Assuming your job object has an image property with the Cloudinary public ID
+  alt={job.title}
+  width={500}
+  height={300}
+/>
             <div className="p-4 flex flex-col justify-between flex-grow">
               <div>
                 <h2 className="text-lg font-semibold mb-2">{job.title}</h2>

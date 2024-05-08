@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'flight',
+    'flights',
     'rest_framework_simplejwt',
     'users',
 
@@ -60,12 +60,13 @@ INSTALLED_APPS = [
 
 # Cloudinary settings
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-}
+    'CLOUD_NAME': "dvueo2lkr",
+    'API_KEY': "543398397567745",
+    
+    'API_SECRET': "VDLGFM607SOoSvUmM70YKZ8RSeA"}
 
-
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51P0JlFSDdJ1Ey7xJCp7EDJgZK7Evq093Br4eKGUB66BtazQZfznCSNVHLih97GdVbAHGjzy6KVFdqkJ3DgC4bQeZ00SJ1pNNBf'
+STRIPE_SECRET_KEY = 'sk_test_51P0JlFSDdJ1Ey7xJXV2l7qLiJbsb8H0rmNncAuPw1lQWm40YNH7XNHJR4JcpS0gQfwh81anAQjcBE8gQcK7UBMcI000zWjjvcA'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -120,7 +121,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'demo',
+        'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'stuti@jasani',
         'HOST': 'localhost',

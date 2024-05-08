@@ -36,6 +36,20 @@ class CustomUser(AbstractUser):
 
     objects = CustomUserManager()
 
+    SUPERUSER = 'superuser'
+    AIRPORT_STAFF = 'airport_staff'
+    CUSTOMER = 'customer'
+
+    ROLE_CHOICES = [
+        (SUPERUSER, 'Superuser'),
+        (AIRPORT_STAFF, 'Airport Staff'),
+        (CUSTOMER, 'Customer'),
+    ]
+
+    role = models.CharField(max_length=50, choices=ROLE_CHOICES)
+
+
+
     def __str__(self):
         return self.email
     

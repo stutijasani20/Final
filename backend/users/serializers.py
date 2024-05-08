@@ -19,7 +19,7 @@ class AuthUserSerializer(serializers.ModelSerializer):
 
     class Meta:
          model = CustomUser
-         fields = ["email" , "jwt_token"]
+         fields = ['id',"email" , "jwt_token"]
 
     def get_jwt_token(self, obj):
         refresh = RefreshToken.for_user(obj)
@@ -37,7 +37,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = [ 'email', 'password']
+        fields = ['id', 'email', 'password']
 
     def validate(self, value): 
         user_email = value.get('email')

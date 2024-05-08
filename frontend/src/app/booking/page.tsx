@@ -1,110 +1,136 @@
-// bookingForm.tsx
+
 "use client";
+import React, { useState, useEffect } from 'react';
+import { Elements, useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import { useSearchParams } from 'next/navigation';
+import axios from 'axios';
+import { Stripe } from '@stripe/stripe-js';
+import { useRouter } from 'next/navigation';
 
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+const stripePromise = loadStripe('pk_test_51P0JlFSDdJ1Ey7xJCp7EDJgZK7Evq093Br4eKGUB66BtazQZfznCSNVHLih97GdVbAHGjzy6KVFdqkJ3DgC4bQeZ00SJ1pNNBf');
 
-interface Flight {
-  id: number;
-  flight_number: string;
-  departure_airport: number;
-  arrival_airport: number;
-  departure_time: string;
-  arrival_time: string;
-  price: number;
-}
-
-interface Airport {
-  name: string;
-  id: number;
-  city: string;
-  country: string;
-}
-
-function BookingForm() {
-  const [flightData, setFlightData] = useState<Flight | null>(null);
-  const [airports, setAirports] = useState<{
-    length: number; [key: number]: Airport 
-}>({});
-  const searchParam = useSearchParams();
-  const id = searchParam.get("flightData");
-
+const BookingPage: React.FC = () => {
+  const searchParams = useSearchParams();
+  const flightId = searchParams.get('flight');
+  const bookingId = searchParams.get('booking');
+  const [flightDetails, setFlightDetails] = useState<any>(null);
+  const [userDetails, setUserDetails] = useState<any>(null);
+ 
   useEffect(() => {
-    async function fetchFlightData() {
+    const fetchData = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/flights/${id}`);
-        if (response.ok) {
-          const data = await response.json();
-          setFlightData(data); // Update state with flight data
-        } else {
-          console.error("Error fetching flight data");
-        }
+        const [flightResponse, userResponse] = await Promise.all([
+          axios.get(`http://127.0.0.1:8000/flights/${flightId}`),
+          axios.get(`http://127.0.0.1:8000/users/${bookingId}`)
+        ]);
+        setFlightDetails(flightResponse.data);
+        setUserDetails(userResponse.data);
       } catch (error) {
-        console.error("Error fetching flight data:", error);
+        console.error('Error fetching data:', error);
       }
-    }
-
-    fetchFlightData();
-  }, [id, searchParam]);
-
-  useEffect(() => {
-    async function fetchAirportData() {
-      try {
-        const response = await fetch(`http://127.0.0.1:8000/airports`);
-        if (response.ok) {
-          const data = await response.json();
-          setAirports(data); // Update state with airport data
-        } else {
-          console.error("Error fetching Airport data");
-        }
-      } catch (error) {
-        console.error("Error fetching Airport data:", error);
-      }
-    }
-
-    fetchAirportData();
-  }, []);
+    };
+    fetchData();
+  }, [flightId, bookingId]);
 
   return (
-    <div>
-      {/* Display flight data */}
-      {flightData && (
-        <div>
-          <p>Flight ID: {flightData.id}</p>
-          <p>Flight Number: {flightData.flight_number}</p>
-          {/* Ensure airports are fetched and departure/arrival airports are valid */}
-          {airports.length > 0 &&
-            flightData.departure_airport >= 0 &&
-            flightData.arrival_airport >= 0 && (
-              <>
-                <p>Departure:</p>
-                <p>
-                  - Airport:{" "}
-                  {
-                    airports.find(
-                      (airport) => airport.id === flightData.departure_airport
-                    )?.name
-                  }
-                </p>
-                <p>- Departure Time: {flightData.departure_time}</p>
-                <p>Arrival:</p>
-                <p>
-                  - Airport:{" "}
-                  {
-                    airports.find(
-                      (airport) => airport.id === flightData.arrival_airport
-                    )?.name
-                  }
-                </p>
-                <p>- Arrival Time: {flightData.arrival_time}</p>
-              </>
-            )}
-          <p>Price: {flightData.price}</p>
-          {/* Other flight details as needed */}
-        </div>
+    <Elements stripe={stripePromise}>
+      {flightDetails && userDetails && (
+        <BookingForm flightDetails={flightDetails} userDetails={userDetails} />
       )}
+    </Elements>
+  );
+};
+
+const BookingForm: React.FC<{ flightDetails: any; userDetails: any }> = ({ flightDetails, userDetails }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    
+    if (!stripe || !elements) {
+      return;
+    }
+  
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/create-payment-intent/', {
+        amount: Math.floor(flightDetails.total_price_including_gst) // Amount in cents
+      });
+    
+      const { data } = response;
+      const clientSecret = data.client_secret;
+    
+      if (!clientSecret) {
+        throw new Error("Invalid response from server: clientSecret not found");
+      }
+    
+      const cardElement = elements.getElement(CardElement);
+    
+      if (!cardElement) {
+        throw new Error("Card Element not found");
+      }
+    
+      // Confirm the payment intent with the client secret and card element
+      const { paymentIntent, error: paymentError } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: userDetails.email,
+          },
+        },
+      });
+    
+      if (paymentError) {
+        throw new Error(paymentError.message ?? "Failed to confirm payment intent");
+      }
+    
+      // Payment successful, proceed to booking
+      const bookingResponse = await axios.post('http://127.0.0.1:8000/bookings/', {
+        flight: flightDetails.id,
+        passenger: userDetails.id,
+        is_paid: true, // Assuming payment is made
+      });
+    
+      console.log('Booking successful:', bookingResponse.data);
+      router.push('/booking/success')
+    
+      // Redirect to confirmation page or show success message
+    
+    } catch (error: any) {
+      console.error('Error handling payment:', error);
+      setError(error.message ?? "Failed to handle payment");
+    }
+    
+  };
+
+  return (
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold mb-4 mt-5">Complete Your Booking</h1>
+      <div className="mb-4">
+        <h2 className="text-xl font-bold mb-2">Flight Details:</h2>
+        <p>From: {flightDetails.departure_airport_name}</p>
+        <p>To: {flightDetails.arrival_airport_name}</p>
+        <p>Price (Including GST): ₹{flightDetails.total_price_including_gst.toFixed(2)}</p>
+      </div>
+      <div className="mb-4">
+        <h2 className="text-xl font-bold mb-2">User Details:</h2>
+        <p>Email: {userDetails.email}</p>
+      </div>
+      <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
+        <label className="block mb-4">
+          Enter your card details:
+          <CardElement options={{style: {base: {fontSize: '16px'}}}} className="mt-2 p-2 border rounded-md" />
+        </label>
+        <button type="submit" disabled={!stripe} className="w-full mb-5 py-3 bg-blue-500 text-white font-bold rounded-md shadow-md hover:bg-blue-600 transition-colors duration-300 disabled:opacity-50">
+          Pay Now
+        </button>
+        {error && <div className="text-red-500 mt-2">{error}</div>}
+      </form>
     </div>
   );
-}
+};
 
-export default BookingForm;
+export default BookingPage;

@@ -9,7 +9,7 @@ router.register('', AuthViewSet, basename="authview")
 
 urlpatterns = [
     path('api/auth/', include(router.urls)),
-    path('users/', UserIndividualViewSet.as_view()),
-    #  path('users/<int:pk>/', UserIndividualViewSet.as_view(), name="userdetail"),
+    path('users/', UserListAPIView.as_view(), name='user_list_api'),
+     path('users/<int:pk>', UserDetailAPIView.as_view(), name='user_list_api'),
 
 ]

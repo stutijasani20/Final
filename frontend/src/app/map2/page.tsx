@@ -80,10 +80,13 @@ const MapWithRoute = () => {
   }, [searchParams, userLocation]);
 
   const markerIcon = L.icon({
-    iconUrl: "/1.jpeg",
+    iconUrl: "/user.jpg",
     iconSize: [31, 46],
   });
-
+  const markerIcon2 = L.icon({
+    iconUrl: "/tourist.png",
+    iconSize: [31, 46],
+  });
   const secondsToHoursMinutes = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -182,7 +185,7 @@ const MapWithRoute = () => {
               </Marker>
               <Marker
                 position={[touristLocation.lat, touristLocation.lng]}
-                icon={markerIcon}
+                icon={markerIcon2}
               >
                 <Popup>Ending Point</Popup>
               </Marker>
