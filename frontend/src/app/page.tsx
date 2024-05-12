@@ -2,6 +2,7 @@ import React from "react";
 import Avatar from '@mui/material/Avatar';
 import Rating from '@mui/material/Rating';
 import StarIcon from '@mui/icons-material/Star';
+import withLoading from "./components/withLoading";
 const MiddleSection: React.FC = () => {
    
   return (
@@ -502,5 +503,5 @@ const PackageCard: React.FC<{ name: string; image: string; price: string; durati
   };
   
   
-export default MiddleSection;
+export default (MiddleSection);
 

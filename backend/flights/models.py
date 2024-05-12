@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import models
 from users.models import *
 from django.core.exceptions import ValidationError
@@ -14,7 +15,7 @@ class Airport(models.Model):
 
 def validate_non_zero(value):
     if value < 2000:
-        raise ValidationError("Price cannot be zero.")
+        raise ValidationError("Price cannot be less than 2000.")
 
 class Class(models.Model):
     name = models.CharField(max_length=100)
@@ -23,53 +24,49 @@ class Class(models.Model):
     def __str__(self):
         return self.name
 
+
 class Flight(models.Model):
     flight_number = models.CharField(max_length=20)
-    departure_airport = models.ForeignKey(Airport,  related_name='departures',on_delete=models.CASCADE)
-    arrival_airport = models.ForeignKey(Airport, related_name='arrival',on_delete=models.CASCADE)
+    departure_airport = models.ForeignKey(Airport, related_name='departures', on_delete=models.CASCADE)
+    arrival_airport = models.ForeignKey(Airport, related_name='arrival', on_delete=models.CASCADE)
+    travel_date = models.DateField(default=date.today)
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
     price = models.IntegerField(validators=[validate_non_zero])
     available_seats = models.IntegerField(default=0)
     classes = models.ForeignKey(Class, on_delete=models.CASCADE)
+    
 
     def total_price(self):
         gst = 0.12
-        total_price = self.price + (self.price * gst)
+        total_price = (self.price) + (self.price * gst) 
         return total_price
-
-   
 
     def __str__(self):
         return self.flight_number
     
+
 class Passenger(models.Model):
+    TRAVELLER_CHOICES = [
+        ('adult', 'Adult'),
+        ('child', 'Child'),
+        ('infant', 'Infant'),
+    ]
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=15)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=15)
+    age = models.IntegerField()
+    gender = models.CharField(max_length=10)
+    passenger_type = models.CharField(max_length=10,choices=TRAVELLER_CHOICES, default='adult')
+
+
+
 
     def __str__(self):
         return str(self.name)
-    
 
 
-class Food(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    code = models.CharField(max_length=100)
-   
-
-
-    def __str__(self):
-        return self.name
-
-class InsurancePolicy(models.Model):
-    policy_type = models.CharField(max_length=100)
-    coverage_details = models.TextField()
-    price = models.DecimalField(max_digits=8, decimal_places=2, validators=[validate_non_zero])
-
-    def __str__(self):
-        return self.policy_type
 
 class ConnectionFlight(models.Model):
     from_flight = models.ForeignKey(Flight, related_name='from_flight', on_delete=models.CASCADE)
@@ -78,20 +75,82 @@ class ConnectionFlight(models.Model):
     
     def __str__(self):
         return f"From {self.from_flight} to {self.to_flight}"
+    
+
+
+class Meal(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+    
+
+class Insurance(models.Model):
+    name = models.CharField(max_length=100)
+    coverage_details = models.TextField()
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+    
+
+
 
 class Booking(models.Model):
+    TRIP_TYPE_CHOICES = [
+        ('one_way', 'One Way'),
+        ('round_trip', 'Round Trip'),
+    ]
+
+    TRAVELLER_CHOICES = [
+        ('adult', 'Adult'),
+        ('child', 'Child'),
+        ('infant', 'Infant'),
+    ]
+
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE)
     passenger = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     booking_date = models.DateTimeField(auto_now_add=True)
     is_paid = models.BooleanField(default=False)
+    meals = models.ManyToManyField(Meal, blank=True)
+    insurance = models.ForeignKey(Insurance, on_delete=models.SET_NULL, null=True, blank=True)
+    trip_type = models.CharField(max_length=20, choices=TRIP_TYPE_CHOICES, default='one_way')
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    adults = models.IntegerField(default=1)
+    children = models.IntegerField(default=0)
+    infants = models.IntegerField(default=0)
+
+    def calculate_total_price(self):
+        flight_price = self.flight.price
+        insurance_price = self.insurance.price if self.insurance else 0
+        
+        adult_price = self.adults * flight_price
+        child_price = self.children * flight_price * 0.75
+        infant_price = 0.5 * self.infants * flight_price
+        
+        total_price = adult_price + child_price + infant_price + insurance_price
+        return total_price
+
+    def clean(self):
+        if self.adults < 0 or self.children < 0 or self.infants < 0:
+            raise ValidationError("Number of travelers cannot be negative.")
+    
+    def save(self, *args, **kwargs):
+        self.total_price = self.calculate_total_price()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.passenger} - {self.flight}"
-
+    
 class Payment(models.Model):
     method_name = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
+    payment_date = models.DateTimeField(auto_now_add=True)
+
 
     def __str__(self):
-        return f"Payment of {self.amount}"
+        return f"Payment of {self.amount} by {self.user}"
