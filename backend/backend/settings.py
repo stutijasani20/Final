@@ -15,6 +15,10 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
+from dotenv import dotenv_values
+
+# Load environment variables from .env file
+env_vars = dotenv_values()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -65,8 +69,16 @@ CLOUDINARY_STORAGE = {
     
     'API_SECRET': "VDLGFM607SOoSvUmM70YKZ8RSeA"}
 
-STRIPE_PUBLISHABLE_KEY = 'pk_test_51P0JlFSDdJ1Ey7xJCp7EDJgZK7Evq093Br4eKGUB66BtazQZfznCSNVHLih97GdVbAHGjzy6KVFdqkJ3DgC4bQeZ00SJ1pNNBf'
-STRIPE_SECRET_KEY = 'sk_test_51P0JlFSDdJ1Ey7xJXV2l7qLiJbsb8H0rmNncAuPw1lQWm40YNH7XNHJR4JcpS0gQfwh81anAQjcBE8gQcK7UBMcI000zWjjvcA'
+# STRIPE_PUBLISHABLE_KEY = 'pk_test_51P0JlFSDdJ1Ey7xJCp7EDJgZK7Evq093Br4eKGUB66BtazQZfznCSNVHLih97GdVbAHGjzy6KVFdqkJ3DgC4bQeZ00SJ1pNNBf'
+# STRIPE_SECRET_KEY = 'sk_test_51P0JlFSDdJ1Ey7xJXV2l7qLiJbsb8H0rmNncAuPw1lQWm40YNH7XNHJR4JcpS0gQfwh81anAQjcBE8gQcK7UBMcI000zWjjvcA'
+
+RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
+
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
+
+
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -108,15 +120,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     'default': {

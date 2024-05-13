@@ -83,7 +83,7 @@ const AvailableFlightsPage: React.FC = () => {
               <p className="text-sm mb-2">
                 Available Seats: {flight.available_seats}
               </p>
-              <p className="text-sm mb-2">Travel Date: {new Date(flight.travel_date).toLocaleString()}</p>
+              <p className="text-sm mb-2">Travel Date: {flight.travel_date}</p>
               <p className="text-sm mb-2">Class: {flight.classes_name}</p>
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"

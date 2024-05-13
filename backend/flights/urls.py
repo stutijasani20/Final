@@ -19,6 +19,5 @@ urlpatterns = [
      path('bookings/<int:booking_id>/', BookingCancelView.as_view()),
     path('payments/', PaymentView.as_view()),
     path('payments/<int:pk>/', PaymentDetailView.as_view()),
-    path("create-payment-intent/", CreatePaymentIntentView.as_view()),
-    path("booking/", BookingListByCustomer.as_view()),
+    path("payment/", Initiate_payment.as_view()),
 ]
