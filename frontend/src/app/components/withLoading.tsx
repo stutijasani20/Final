@@ -1,17 +1,39 @@
-/* eslint-disable react/display-name */
 "use client";
-import React, { useState } from "react";
-import LoadingPage from "./Loading";
+import React, { ComponentType, useState, useEffect } from 'react';
+import Image from 'next/image';
 
-export function withLoadingPage(WrappedComponent: React.ComponentType<any>) {
-  return () => {
-    const [isLoading, setIsLoading] = useState(true);
-
-    // Simulate loading completion after some time (Replace this with your actual loading logic)
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return <>{isLoading ? <LoadingPage /> : <WrappedComponent />}</>;
-  };
+// Define the props for the withLoading HOC
+interface WithLoadingProps {
+    isLoading: boolean;
 }
+
+// Define the withLoading HOC
+function withLoading<T extends WithLoadingProps>(WrappedComponent: ComponentType<T>) {
+    return function WithLoading(props: T) {
+        const { isLoading, ...rest } = props;
+        const [showLoader, setShowLoader] = useState(true);
+
+        useEffect(() => {
+            const timer = setTimeout(() => {
+                setShowLoader(false);
+            }, 3000);
+
+            return () => {
+                clearTimeout(timer);
+            };
+        }, []);
+
+        if (isLoading || showLoader) {
+            return (
+                <div className="flex justify-center items-center fixed top-0 left-0 w-full h-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-md z-50">
+                    {/* Replace 'Hourglass.gif' with the path to your .gif file */}
+                    <Image src="/Hourglass.gif" alt="Loader" height={100} width={100} />
+                </div>
+            );
+        }
+
+        return <WrappedComponent {...rest as T} />;
+    };
+}
+
+export default withLoading;

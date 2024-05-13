@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
                 <a href="/about">About Elegance Air</a>
               </li>
               <li>
-                <a href="#">Careers</a>
+                <a href="/careers">Careers</a>
               </li>
               <li>
                 <a href="/corporate_info">Coorporate Information</a>
@@ -29,7 +29,7 @@ const Footer: React.FC = () => {
             <h3>Book and Manage</h3>
             <ul>
               <li>
-                <a href="#">Search Flight</a>
+                <a href="flights/search">Search Flight</a>
               </li>
               <li>
                 <a href="#">Manage Booking</a>
@@ -46,7 +46,7 @@ const Footer: React.FC = () => {
                 <a href="#">Popular Flights</a>
               </li>
               <li>
-                <a href="#">Route Map</a>
+                <a href="/where_we_fly/route_map">Route Map</a>
               </li>
               <li>
                 <a href="#">Non Stop International Flights</a>

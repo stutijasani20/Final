@@ -63,13 +63,14 @@ class AuthViewSet(viewsets.GenericViewSet):
         return super().get_serializer_class()
 
 
-    
-class UserIndividualViewSet(generics.RetrieveAPIView):
-    authentication_classes = [JWTAuthentication] 
-    permission_classes =[IsAuthenticated]
-    queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer
-    
-    def get_object(self):
-        # Use the authenticated user from the request to retrieve individual user data
-        return self.request.user
+class UserListAPIView(APIView):
+    def get(self, request, format=None):
+        users = CustomUser.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserDetailAPIView(APIView):
+            def get(self, request, pk, format=None):
+                user = CustomUser.objects.get(pk=pk)
+                serializer = UserSerializer(user)
+                return Response(serializer.data, status=status.HTTP_200_OK)

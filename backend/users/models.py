@@ -27,14 +27,31 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractUser):
 
+    SUPERUSER = 'superuser'
+    AIRPORT_STAFF = 'airport_staff'
+    CUSTOMER = 'customer'
+    APPLICATION_USER = 'application_user'
 
+    ROLE_CHOICES = [
+        (SUPERUSER, 'Superuser'),
+        (AIRPORT_STAFF, 'Airport Staff'),
+        (CUSTOMER, 'Customer'),
+        (APPLICATION_USER, 'Application User')
+    ]
     email = models.EmailField(_('email address'), unique=True)
+    role = models.CharField(_("role"), max_length=50, choices=ROLE_CHOICES)
 
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
+
+
+
+   
+
+
 
     def __str__(self):
         return self.email

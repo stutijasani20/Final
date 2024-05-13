@@ -12,14 +12,14 @@ from rest_framework.validators import UniqueTogetherValidator
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = [ "id",'email', "password"]
+        fields = [ "id",'email', "password", 'role']
     
 class AuthUserSerializer(serializers.ModelSerializer):
     jwt_token = serializers.SerializerMethodField()
 
     class Meta:
          model = CustomUser
-         fields = ["email" , "jwt_token"]
+         fields = ['id',"email" , "jwt_token",'role']
 
     def get_jwt_token(self, obj):
         refresh = RefreshToken.for_user(obj)
@@ -31,15 +31,26 @@ class EmptySerializer(serializers.Serializer):
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.CharField(max_length=300, required=True)
     password = serializers.CharField(required=True, write_only=True)
+    role = serializers.CharField(required=True)
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    role = serializers.CharField(required=True)
 
     class Meta:
         model = CustomUser
-        fields = [ 'email', 'password']
+        fields = ['id', 'email', 'password','role']
+
+
+    def validate_role(self, value):
+        choices = dict(CustomUser.ROLE_CHOICES)
+        if value not in choices:
+            raise serializers.ValidationError("Invalid role")
+        return value
+
 
     def validate(self, value): 
+      
         user_email = value.get('email')
 
         if CustomUser.objects.filter(email=user_email).exists():

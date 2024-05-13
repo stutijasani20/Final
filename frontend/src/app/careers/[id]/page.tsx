@@ -1,5 +1,4 @@
 "use client";
-import { data } from "@maptiler/sdk";
 import { useEffect, useState } from "react";
 
 export default function Page({ params }: { params: { id: string } }) {
@@ -8,7 +7,6 @@ export default function Page({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Fetch job data based on the id when the component mounts
     const fetchJobData = async () => {
       try {
         const response = await fetch(`http://127.0.0.1:8000/jobs/${params.id}`);
@@ -19,7 +17,6 @@ export default function Page({ params }: { params: { id: string } }) {
       }
     };
 
-    // Fetch department data from another API
     const fetchDepartmentData = async () => {
       try {
         const response = await fetch("http://127.0.0.1:8000/department/");
@@ -30,16 +27,14 @@ export default function Page({ params }: { params: { id: string } }) {
       }
     };
 
-    // Fetch both job and department data
     Promise.all([fetchJobData(), fetchDepartmentData()])
       .then(() => setLoading(false))
       .catch((error) => console.error("Error:", error));
 
-    // Cleanup function if necessary
     return () => {
       // Cleanup code here if needed
     };
-  }, [params.id]); // Re-fetch data if the id changes
+  }, [params.id]);
 
   if (loading) {
     return <div className="text-center">Loading...</div>;
@@ -49,18 +44,30 @@ export default function Page({ params }: { params: { id: string } }) {
     return <div className="text-center">Job not found</div>;
   }
 
+  const departmentName = departmentData.find((department: any) => department.id === jobData.department)?.name;
+
+  const descriptionPoints = jobData.description.split('\n');
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">{jobData.title}</h1>
+      <h1 className="text-3xl font-bold mb-4 mt-5">{jobData.title}</h1>
 
-      <p className="text-gray-700 mb-4">{jobData.description}</p>
+      <div className="mb-4">
+        <h2 className="font-bold">Description:</h2>
+        <ul className="list-disc ml-8">
+          {descriptionPoints.map((point: string, index: number) => (
+            <li key={index}>{point}</li>
+          ))}
+        </ul>
+      </div>
 
-      <p className="text-gray-700 mb-4">{jobData.department}</p>
+      <p className="text-gray-700 mb-4">Department: {departmentName}</p>
 
-      <p className="text-gray-700 mb-4">{jobData.requirements}</p>
+      <p className="text-gray-700 mb-4">Requirements: {jobData.requirements}</p>
 
       <p className="text-gray-700 mb-4">Salary: {jobData.salary}</p>
-      {/* Display other job details as needed */}
+
+      <button className="bg-blue-500 text-white font-bold py-2 mb-5 px-4 rounded mt-4">Apply Now</button>
     </div>
   );
 }
