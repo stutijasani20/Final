@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 interface Airport {
@@ -61,12 +61,11 @@ const FlightSearchPage: React.FC = () => {
     }
   };
 
- 
-
   const handleTravellerChange = (type: any, operation: any) => (event: any) => {
     event.preventDefault();
     setTravellers((prevState) => {
-      let newValue = operation === "increase" ? prevState[type] + 1 : prevState[type] - 1;
+      let newValue =
+        operation === "increase" ? prevState[type] + 1 : prevState[type] - 1;
       newValue = newValue < 0 ? 0 : newValue; // Ensure the value is not negative
 
       // Prevent the number of infants from exceeding the number of adults
@@ -102,7 +101,6 @@ const FlightSearchPage: React.FC = () => {
           flight.arrival_airport === destination &&
           flight.travel_date === departureDate &&
           flight.available_seats >= passenger
-
         );
       });
 
@@ -110,9 +108,10 @@ const FlightSearchPage: React.FC = () => {
       if (filteredFlights.length === 0) {
         setError("No flights available for the selected route.");
       } else {
-        
         router.push(
-          `/flights/availability?flights=${encodeURIComponent(JSON.stringify(filteredFlights))}`
+          `/flights/availability?flights=${encodeURIComponent(
+            JSON.stringify(filteredFlights)
+          )}`
         );
         setError("");
       }
@@ -131,7 +130,6 @@ const FlightSearchPage: React.FC = () => {
   //     console.error("Error booking flight:", error);
   //     // Handle error, show error message, etc.
   //   }
-  
 
   return (
     <>
@@ -220,56 +218,129 @@ const FlightSearchPage: React.FC = () => {
               onChange={(e) => setPassengers(Number(e.target.value))}
             />
           </div> */}
-<div onClick={() => setShowTravellerPopup(true)}>
-  Travellers: Adults: {travellers.adults}, Children: {travellers.children}, Infants: {travellers.infants}
-</div>
+          <div onClick={() => setShowTravellerPopup(true)}>
+            Travellers: Adults: {travellers.adults}, Children:{" "}
+            {travellers.children}, Infants: {travellers.infants}
+          </div>
 
-{showTravellerPopup && (
-  <div 
-    style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      backgroundColor: "#fff",
-      padding: "20px",
-      borderRadius: "8px",
-      boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
-    }}
-  >
-    <div>
-  <span>Adults: </span>
-  <button style={{ margin: "0 5px", transition: "background-color 0.3s" }} onClick={handleTravellerChange("adults", "increase")} onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#ddd"} onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = ""}>
-    +
-  </button>
-  {travellers.adults}
-  <button style={{ margin: "0 5px", transition: "background-color 0.3s" }} onClick={handleTravellerChange("adults", "decrease")} onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#ddd"} onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = ""}>
-    -
-  </button>
-</div>
-    <div>
-      <button style={{ margin: "0 5px", transition: "background-color 0.3s" }} onClick={handleTravellerChange("children", "increase")} onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#ddd"} onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = ""}>
-        +
-      </button>
-      <span>Children: {travellers.children}</span>
-      <button style={{ margin: "0 5px", transition: "background-color 0.3s" }} onClick={handleTravellerChange("children", "decrease")} onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#ddd"} onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = ""}>
-        -
-      </button>
-    </div>
-    <div>
-      <button style={{ margin: "0 5px", transition: "background-color 0.3s" }} onClick={handleTravellerChange("infants", "increase")} onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#ddd"} onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = ""}>
-        +
-      </button>
-      <span>Infants: {travellers.infants}</span>
-      <button style={{ margin: "0 5px", transition: "background-color 0.3s" }} onClick={handleTravellerChange("infants", "decrease")} onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#ddd"} onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = ""}>
-        -
-      </button>
-    </div>
-    <button onClick={() => setShowTravellerPopup(false)}>
-      Close
-    </button>
-  </div>
-)}
+          {showTravellerPopup && (
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                backgroundColor: "#fff",
+                padding: "20px",
+                borderRadius: "8px",
+                boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
+              }}
+            >
+              <div>
+                <span>Adults: </span>
+                <button
+                  style={{
+                    margin: "0 5px",
+                    transition: "background-color 0.3s",
+                  }}
+                  onClick={handleTravellerChange("adults", "increase")}
+                  onMouseOver={(e) =>
+                    ((e.target as HTMLElement).style.backgroundColor = "#ddd")
+                  }
+                  onMouseOut={(e) =>
+                    ((e.target as HTMLElement).style.backgroundColor = "")
+                  }
+                >
+                  +
+                </button>
+                {travellers.adults}
+                <button
+                  style={{
+                    margin: "0 5px",
+                    transition: "background-color 0.3s",
+                  }}
+                  onClick={handleTravellerChange("adults", "decrease")}
+                  onMouseOver={(e) =>
+                    ((e.target as HTMLElement).style.backgroundColor = "#ddd")
+                  }
+                  onMouseOut={(e) =>
+                    ((e.target as HTMLElement).style.backgroundColor = "")
+                  }
+                >
+                  -
+                </button>
+              </div>
+              <div>
+                <button
+                  style={{
+                    margin: "0 5px",
+                    transition: "background-color 0.3s",
+                  }}
+                  onClick={handleTravellerChange("children", "increase")}
+                  onMouseOver={(e) =>
+                    ((e.target as HTMLElement).style.backgroundColor = "#ddd")
+                  }
+                  onMouseOut={(e) =>
+                    ((e.target as HTMLElement).style.backgroundColor = "")
+                  }
+                >
+                  +
+                </button>
+                <span>Children: {travellers.children}</span>
+                <button
+                  style={{
+                    margin: "0 5px",
+                    transition: "background-color 0.3s",
+                  }}
+                  onClick={handleTravellerChange("children", "decrease")}
+                  onMouseOver={(e) =>
+                    ((e.target as HTMLElement).style.backgroundColor = "#ddd")
+                  }
+                  onMouseOut={(e) =>
+                    ((e.target as HTMLElement).style.backgroundColor = "")
+                  }
+                >
+                  -
+                </button>
+              </div>
+              <div>
+                <button
+                  style={{
+                    margin: "0 5px",
+                    transition: "background-color 0.3s",
+                  }}
+                  onClick={handleTravellerChange("infants", "increase")}
+                  onMouseOver={(e) =>
+                    ((e.target as HTMLElement).style.backgroundColor = "#ddd")
+                  }
+                  onMouseOut={(e) =>
+                    ((e.target as HTMLElement).style.backgroundColor = "")
+                  }
+                >
+                  +
+                </button>
+                <span>Infants: {travellers.infants}</span>
+                <button
+                  style={{
+                    margin: "0 5px",
+                    transition: "background-color 0.3s",
+                  }}
+                  onClick={handleTravellerChange("infants", "decrease")}
+                  onMouseOver={(e) =>
+                    ((e.target as HTMLElement).style.backgroundColor = "#ddd")
+                  }
+                  onMouseOut={(e) =>
+                    ((e.target as HTMLElement).style.backgroundColor = "")
+                  }
+                >
+                  -
+                </button>
+              </div>
+              <button onClick={() => setShowTravellerPopup(false)}>
+                Close
+              </button>
+            </div>
+          )}
 
           <div className="mb-4">
             <label
@@ -334,10 +405,6 @@ const FlightSearchPage: React.FC = () => {
         </form>
 
         {error && <div className="text-red-500 mb-4">{error}</div>}
-
-       
-
-       
       </div>
     </>
   );
