@@ -34,22 +34,9 @@ class InsurancePolicySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class BookingSerializer(serializers.ModelSerializer):
-    passengers_count = serializers.SerializerMethodField()
-    insurance_policy_opted = serializers.SerializerMethodField()
-
     class Meta:
         model = Booking
-        fields = ['flight', 'passenger', 'booking_date', 'is_paid', 'passengers_count', 'insurance_policy_opted']
-
-    def get_passengers_count(self, obj):
-        return Passenger.objects.filter(user=obj.passenger).count()
-
-    def get_insurance_policy_opted(self, obj):
-        try:
-            insurance_policy = Insurance.objects.get(user=obj.passenger)
-            return True
-        except Insurance.DoesNotExist:
-            return False
+        fields = '__all__'
 
 
 class FoodSerializer(serializers.ModelSerializer):

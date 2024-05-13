@@ -3,7 +3,9 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Razorpay from 'razorpay';
 
+import useRazorpay  from "react-razorpay";
 interface Flight {
   id: number;
   flight_number: string;
@@ -105,12 +107,15 @@ const PopupForm: React.FC<{
 
 const BookingPage: React.FC = () => {
   const router = useRouter();
+  const [Razorpay] = useRazorpay();
   const pathname = usePathname();
   const [flight, setFlight] = useState<Flight | null>(null);
   const [mealOptions, setMealOptions] = useState<Meal[]>([]);
   const [insurancePolicies, setInsurancePolicies] = useState<InsurancePolicy[]>([]);
   const [selectedMeal, setSelectedMeal] = useState<number | null>(null);
   const [selectedInsurance, setSelectedInsurance] = useState<number | null>(null);
+  const [showPayment, setShowPayment] = useState<boolean>(false);
+  const [paymentId, setPaymentId] = useState<string | null>(null);
   const [passengerDetails, setPassengerDetails] = useState<{
     first_name: string;
     last_name: string;
@@ -180,7 +185,123 @@ const BookingPage: React.FC = () => {
     }
   };
   
+ 
+
+  const handleConfirmBooking = async () => {
+    try {
+      // Construct payload for booking
+      const bookingPayload = {
+        flight: flight?.id,
+        meal_id: selectedMeal,
+        insurance_id: selectedInsurance,
+        passenger: localStorage.getItem("userId") ? parseInt(localStorage.getItem("userId") as string) : 0,
+
+      };
   
+      // Send POST request to booking API
+      const bookingResponse = await axios.post("http://127.0.0.1:8000/bookings/", bookingPayload);
+  console.log("Booking confirmed successfully:", bookingResponse.data);
+      if (bookingResponse.status === 201) {
+        console.log("Booking confirmed successfully:", bookingResponse.data);
+  
+        // Make request to backend to initiate payment
+        const paymentInitiationResponse = await axios.post("http://127.0.0.1:8000/payment/", {
+          bookingId: bookingResponse.data.id, // Assuming the booking endpoint returns an id
+        
+        });
+  
+        if (paymentInitiationResponse.status === 200) {
+          console.log("Payment initiation successful:", paymentInitiationResponse.data);
+          if (paymentInitiationResponse.status === 200) {
+            console.log("Payment initiation successful:", paymentInitiationResponse.data);
+    
+            // Load Razorpay SDK script dynamically
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            document.body.appendChild(script);
+            
+            script.async = true;
+            script.onload = () => {
+              // Use data from payment initiation response to initialize Razorpay payment
+              const { id, amount } = paymentInitiationResponse.data;
+              console.log("Payment ID:",id);
+              console.log("Amount:", amount);
+
+
+    
+  
+          // Use data from payment initiation response to initialize Razorpay payment
+        
+       
+          // Initialize Razorpay payment
+          const options = {
+            key: 'rzp_test_wWsetA6HFaDo8e', // Replace with your actual Razorpay key
+            amount: amount, 
+            currency: 'INR',
+            name: 'Elegance Air',
+            description: 'Booking Payment',
+            order_id: id,
+          
+            handler: async function(response: any) {
+              console.log('Payment successful!', response);
+              // Send payment data to backend
+              try {
+                const paymentData = {
+                  bookingId: bookingResponse.data.id,
+                  paymentId: response.razorpay_payment_id,
+                  amount: response.razorpay_amount,
+                  currency: response.razorpay_currency,
+                  status: response.razorpay_status,
+                };
+                const paymentResponse = await axios.post("http://127.0.0.1:8000/payment/", paymentData);
+               
+                console.log("Payment data sent to backend:", paymentResponse.data);
+  
+                // Update is_paid field in booking API
+                const updateBookingResponse = await axios.put(`http://127.0.0.1:8000/bookings/${bookingResponse.data.id}/`, {
+                  flight: flight?.id,
+                  meal_id: selectedMeal,
+                  insurance_id: selectedInsurance,
+                  passenger: localStorage.getItem("userId") ? parseInt(localStorage.getItem("userId") as string) : 0,
+                  is_paid: true,
+                });
+                console.log("Booking payment status updated:", updateBookingResponse.data);
+  
+                // Redirect to success page or perform other actions
+                router.push("/booking/payment");
+              } catch (error) {
+                console.error("Error sending payment data to backend:", error);
+                // Optionally, display an error message to the user
+              }
+            },
+            prefill: {
+              name:  passengerDetails.first_name + " " + passengerDetails.last_name,
+              email: localStorage.getItem("email") as string,
+              contact:  "1234567890",
+            },
+          };
+         const razorpay = new Razorpay(options);
+         
+          razorpay.open();
+        }
+      
+      
+          // Optionally, display an error message to the user
+        }
+      } else {
+        console.error("Error confirming booking:", bookingResponse.statusText);
+        // Optionally, display an error message to the user
+      }
+    } 
+    
+ 
+  
+    } catch (error) { 
+      console.error("Error confirming booking:", error);
+      // Optionally, display an error message to the user
+    } 
+  };
+
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -430,10 +551,17 @@ const BookingPage: React.FC = () => {
       </div>
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() => router.push("/booking/payment")}
+            onClick={handleConfirmBooking}
           >
             Confirm Booking
           </button> 
+
+          {showPayment && (
+        <div>
+          <p>Amount: </p>
+          <p>Payment ID: {paymentId}</p>
+        </div>
+      )}
         </div>
       ) : (
         <div className="text-gray-500 mb-4">Loading...</div>

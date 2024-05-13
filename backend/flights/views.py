@@ -8,10 +8,9 @@ from rest_framework import generics
 import stripe
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
-
+import razorpay
 from django.conf import settings
-  # Import your models
+  
 
 class FlightView(APIView):
     def get(self, request):
@@ -105,7 +104,7 @@ class PassengerView(APIView):
                     serializer.save()
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+           
 class PassengerDetailView(APIView):
             def get_object(self, pk):
                 try:
@@ -251,31 +250,55 @@ class BookingView(APIView):
         bookings = Booking.objects.all()
         serializer = BookingSerializer(bookings, many=True)
         return Response(serializer.data)
-
+    
     def post(self, request):
         serializer = BookingSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            flight_id = serializer.data['flight']
-            passenger_id = serializer.data['passenger']
-            is_paid = serializer.data['is_paid']
-            num_passengers = serializer.data['num_passengers']
-            insurance_opted = serializer.data['insurance_opted']
-            food_choosed = serializer.data['food_choosed']
-            
             try:
-                flight = Flight.objects.get(pk=flight_id)
-                flight.available_seats -= num_passengers
-                flight.save()                    
-            except Flight.DoesNotExist:
-                return Response({'error': 'Flight does not exist'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            # Perform additional operations for insurance and food
-            # ...
-            
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                serializer.save()
+
+                # Retrieve data from serializer
+                flight_id = serializer.data['flight']
+                passenger_id = serializer.data['passenger']
+                is_paid = serializer.data['is_paid']
+
+                
+
+                # Handle payment and update flight availability
+                try:
+                    flight = Flight.objects.get(pk=flight_id)
+                    flight.available_seats -= 1
+                    flight.save()
+                except Flight.DoesNotExist:
+                    payment = Payment.objects.create(method_name='Razorpay', amount=0, user_id=passenger_id, booking_id=serializer.data['id'])
+                    payment.save()
+                
+                # Additional operations for insurance and food can be added here
+
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class Initiate_payment(APIView):
+    
+    def post(self, request):
+        booking_id = request.data.get('bookingId')
+        
+        try:
+            booking = Booking.objects.get(pk=booking_id)
+        except Booking.DoesNotExist:
+            return JsonResponse({'error': 'Booking does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        amount = booking.calculate_total_price()
+        
+        try:
+            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+            payment = client.order.create({'amount': int(amount)*100, 'currency': 'INR', 'payment_capture': '1'})
+            return JsonResponse(payment)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class BookingDetailView(APIView):
             def get_object(self, pk):
                 try:
@@ -356,41 +379,41 @@ class PaymentDetailView(APIView):
 
 
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+# stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.conf import settings
-import stripe
+# from rest_framework.views import APIView
+# from rest_framework.response import Response
+# from django.conf import settings
+# import stripe
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+# stripe.api_key = settings.STRIPE_SECRET_KEY
 
-class CreatePaymentIntentView(APIView):
-    def post(self, request):
-        amount = request.data.get('amount')
+# class CreatePaymentIntentView(APIView):
+#     def post(self, request):
+#         amount = request.data.get('amount')
         
-        if amount is None:
-            return Response({'error': 'Amount is missing in the request'}, status=400)
+#         if amount is None:
+#             return Response({'error': 'Amount is missing in the request'}, status=400)
         
-        try:
-            currency = 'inr'  # Adjust currency as needed
+#         try:
+#             currency = 'inr'  # Adjust currency as needed
             
-            intent = stripe.PaymentIntent.create(
-                amount=int(float(amount) * 100),
-                currency=currency
-            )
+#             intent = stripe.PaymentIntent.create(
+#                 amount=int(float(amount) * 100),
+#                 currency=currency
+#             )
             
-            return Response({'client_secret': intent.client_secret, 'amount': amount})
+#             return Response({'client_secret': intent.client_secret, 'amount': amount})
         
-        except Exception as e:
-            return Response({'error': str(e)}, status=500)
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=500)
 
-class BookingListByCustomer(generics.ListAPIView):
-    serializer_class = BookingSerializer
+# class BookingListByCustomer(generics.ListAPIView):
+#     serializer_class = BookingSerializer
 
-    def get_queryset(self):
-        customer_id = self.request.query_params.get('customer', None)
-        if customer_id is not None:
-            return Booking.objects.filter(passenger_id=customer_id)
-        return Booking.objects.none()
+#     def get_queryset(self):
+#         customer_id = self.request.query_params.get('customer', None)
+#         if customer_id is not None:
+#             return Booking.objects.filter(passenger_id=customer_id)
+#         return Booking.objects.none()

@@ -2,6 +2,7 @@ from datetime import date
 from django.db import models
 from users.models import *
 from django.core.exceptions import ValidationError
+from decimal import Decimal
 
 class Airport(models.Model):
     code = models.CharField(max_length=3, unique=True)
@@ -36,12 +37,11 @@ class Flight(models.Model):
     available_seats = models.IntegerField(default=0)
     classes = models.ForeignKey(Class, on_delete=models.CASCADE)
     
-
     def total_price(self):
-        gst = 0.12
-        total_price = (self.price) + (self.price * gst) 
-        return total_price
+        return self.price * Decimal('0.12') + self.price
+    
 
+   
     def __str__(self):
         return self.flight_number
     
@@ -52,7 +52,7 @@ class Passenger(models.Model):
         ('child', 'Child'),
         ('infant', 'Infant'),
     ]
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=15)
@@ -116,23 +116,27 @@ class Booking(models.Model):
     meals = models.ManyToManyField(Meal, blank=True)
     insurance = models.ForeignKey(Insurance, on_delete=models.SET_NULL, null=True, blank=True)
     trip_type = models.CharField(max_length=20, choices=TRIP_TYPE_CHOICES, default='one_way')
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+   
 
     adults = models.IntegerField(default=1)
     children = models.IntegerField(default=0)
     infants = models.IntegerField(default=0)
 
     def calculate_total_price(self):
-        flight_price = self.flight.price
-        insurance_price = self.insurance.price if self.insurance else 0
+            flight_price = Decimal(self.flight.price)
+            total = flight_price * Decimal('0.12') 
+            price = flight_price + total
         
-        adult_price = self.adults * flight_price
-        child_price = self.children * flight_price * 0.75
-        infant_price = 0.5 * self.infants * flight_price
-        
-        total_price = adult_price + child_price + infant_price + insurance_price
-        return total_price
 
+            insurance_price = Decimal(self.insurance.price) if self.insurance else Decimal(0)
+            
+            adult_price = Decimal(self.adults) * price
+            child_price = Decimal(self.children) * price * Decimal('0.75')
+
+            infant_price = Decimal(self.infants) * price * Decimal('0.5')
+    
+            total_price = adult_price + child_price + infant_price + insurance_price
+            return total_price
     def clean(self):
         if self.adults < 0 or self.children < 0 or self.infants < 0:
             raise ValidationError("Number of travelers cannot be negative.")
