@@ -30,24 +30,34 @@ const MapWithRoute = () => {
   const [hotelLocation, setHotelLocation] = useState({ lat: 0, lng: 0 });
   const searchParams = useSearchParams();
 
+  const airport = searchParams.get("airport") || "Mumbai Airport"
+
   useEffect(() => {
-    // Step 1: Retrieve user's location
+    
     const fetchUserLocation = async () => {
       try {
-        // Use Geolocation API to get user's current position
-        navigator.geolocation.getCurrentPosition((position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        });
+        // Fetch airport data from the API endpoint
+        const response = await axios.get(`http://127.0.0.1:8000/airports/?name=${airport}`);
+        console.log(response.data[0].lat);
+        console.log(response.data[0].lng);
+        
+        
+        // Extract latitude and longitude from the response data
+        const latitude = response.data[0].lat;
+        const longitude = response.data[0].lng;
+        // Set the user location state with the fetched latitude and longitude
+        setUserLocation({ lat: latitude, lng: longitude });
       } catch (error) {
         console.error("Error fetching user location:", error);
       }
     };
-
+  
+    // Call the fetchUserLocation function
     fetchUserLocation();
-  }, []);
+  }, [airport]);
+
+
+  
 
   useEffect(() => {
     const fetchRouteData = async () => {
@@ -55,6 +65,9 @@ const MapWithRoute = () => {
         // Extract hotel location from search params
         const hotelLat = parseFloat(searchParams.get("hotelLat") || "");
         const hotelLng = parseFloat(searchParams.get("hotelLng") || "");
+
+        console.log("Hotel location:", hotelLat, hotelLng);
+
 
         setHotelLocation({ lat: hotelLat, lng: hotelLng });
 
@@ -66,9 +79,12 @@ const MapWithRoute = () => {
         if (response.status === 200) {
           const data = response.data;
           setRouteData(data);
+          
         }
       } catch (error) {
+
         console.error("Error fetching route data:", error);
+        console.log("Error fetching route data:", error);
       }
     };
 

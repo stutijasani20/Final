@@ -2,6 +2,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import {useSearchParams} from "next/navigation";
 
 import { useRouter } from "next/navigation";
 
@@ -28,15 +29,24 @@ const MyComponent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [searchQuery, setSearchQuery] = useState<string>("Mumbai Airport");
+  const searchParams = useSearchParams();
+  
 
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  
   const router = useRouter();
+  const flightsParam = searchParams.get("flight");
+
+  useEffect(() => {
+    setSearchQuery(flightsParam || ""); 
+  }, [flightsParam]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const { data: response } = await axios.get(
-          `https://api.tomtom.com/search/2/geocode/${searchQuery}.json?key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb`
+          `https://api.tomtom.com/search/2/geocode/${flightsParam}.json?key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb`
         );
 
         const location = response.results[0];
@@ -73,7 +83,7 @@ const MyComponent: React.FC = () => {
     };
 
     fetchData();
-  }, [page, searchQuery]);
+  }, [page, flightsParam]);
 
   const goToPage = (pageNumber: number) => {
     setPage(pageNumber);
@@ -86,7 +96,7 @@ const MyComponent: React.FC = () => {
 
   const handleViewMap = (tourist: tourist) => {
     // Navigate to MapComponent page with the tourist location
-    const queryString = `?touristLat=${tourist.position.lat}&touristLng=${tourist.position.lon}`;
+    const queryString = `?touristLat=${tourist.position.lat}&touristLng=${tourist.position.lon}&name=${flightsParam}`;
     router.push(`/map2${queryString}`);
   };
 

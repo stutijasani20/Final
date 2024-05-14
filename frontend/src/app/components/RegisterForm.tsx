@@ -4,12 +4,17 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { login } from "../store/authSlice"; // Import login action creator
 import Link from "next/link"
+import { useRouter } from "next/navigation";  
+
+
 const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState(""); // State for role
   const [error, setError] = useState("");
+
   const dispatch = useDispatch(); // Initialize useDispatch hook
+  const router = useRouter(); // Initialize useRouter hook
 
   const handleRegister = async () => {
     try {
@@ -19,12 +24,21 @@ const RegisterPage = () => {
       );
       // If registration is successful, dispatch the login action
       dispatch(login(response.data));
+    
+
       // console.log(response.data);
     } catch (error: any) {
       console.error("Registration failed:", error.message);
       setError("Registration failed. Please try again.");
       
     }
+
+    const loggedIn = localStorage.getItem("token");
+    if (loggedIn){
+      router.push("/");
+    }
+   
+    
   };
 
   return (

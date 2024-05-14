@@ -268,7 +268,15 @@ const BookingPage: React.FC = () => {
                 console.log("Booking payment status updated:", updateBookingResponse.data);
   
                 // Redirect to success page or perform other actions
-                router.push("/booking/payment");
+                const queryParams = new URLSearchParams();
+
+                queryParams.append("bookingId", bookingResponse.data.id.toString());
+                queryParams.append("passengerId", passengerDetails.user.toString());
+                
+                
+
+                
+                router.push(`/booking/success?${queryParams.toString()}`);
               } catch (error) {
                 console.error("Error sending payment data to backend:", error);
                 // Optionally, display an error message to the user
@@ -555,13 +563,6 @@ const BookingPage: React.FC = () => {
           >
             Confirm Booking
           </button> 
-
-          {showPayment && (
-        <div>
-          <p>Amount: </p>
-          <p>Payment ID: {paymentId}</p>
-        </div>
-      )}
         </div>
       ) : (
         <div className="text-gray-500 mb-4">Loading...</div>

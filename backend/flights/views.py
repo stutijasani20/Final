@@ -56,10 +56,13 @@ class FlightDetailView(APIView):
 
 class AirportView(APIView):
             def get(self, request):
-                airports = Airport.objects.all()
+                name = request.query_params.get('name')
+                if name:
+                    airports = Airport.objects.filter(name=name)
+                else:
+                    airports = Airport.objects.all()
                 serializer = AirportSerializer(airports, many=True)
                 return Response(serializer.data)
-
             def post(self, request):
                 serializer = AirportSerializer(data=request.data)
                 if serializer.is_valid():
@@ -93,10 +96,14 @@ class AirportDetailView(APIView):
                 return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PassengerView(APIView):
-            def get(self, request):
+        def get(self, request):
+            user_id = request.query_params.get('user')
+            if user_id:
+                passengers = Passenger.objects.filter(user_id=user_id)
+            else:
                 passengers = Passenger.objects.all()
-                serializer = PassengerSerializer(passengers, many=True)
-                return Response(serializer.data)
+            serializer = PassengerSerializer(passengers, many=True)
+            return Response(serializer.data)
 
             def post(self, request):
                 serializer = PassengerSerializer(data=request.data)
@@ -295,7 +302,7 @@ class Initiate_payment(APIView):
         
         try:
             client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-            payment = client.order.create({'amount': int(amount)*100, 'currency': 'INR', 'payment_capture': '1'})
+            payment = client.order.create({'amount': int(amount), 'currency': 'INR', 'payment_capture': '1'})
             return JsonResponse(payment)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -374,46 +381,3 @@ class PaymentDetailView(APIView):
                 return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
-
-
-
-
-# stripe.api_key = settings.STRIPE_SECRET_KEY
-
-
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
-# from django.conf import settings
-# import stripe
-
-# stripe.api_key = settings.STRIPE_SECRET_KEY
-
-# class CreatePaymentIntentView(APIView):
-#     def post(self, request):
-#         amount = request.data.get('amount')
-        
-#         if amount is None:
-#             return Response({'error': 'Amount is missing in the request'}, status=400)
-        
-#         try:
-#             currency = 'inr'  # Adjust currency as needed
-            
-#             intent = stripe.PaymentIntent.create(
-#                 amount=int(float(amount) * 100),
-#                 currency=currency
-#             )
-            
-#             return Response({'client_secret': intent.client_secret, 'amount': amount})
-        
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=500)
-
-# class BookingListByCustomer(generics.ListAPIView):
-#     serializer_class = BookingSerializer
-
-#     def get_queryset(self):
-#         customer_id = self.request.query_params.get('customer', None)
-#         if customer_id is not None:
-#             return Booking.objects.filter(passenger_id=customer_id)
-#         return Booking.objects.none()

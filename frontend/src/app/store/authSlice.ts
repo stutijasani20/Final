@@ -23,7 +23,7 @@ const authSlice = createSlice({
     login(state, action: PayloadAction<User>) {
       state.isAuthenticated = true;
       state.user = action.payload;
-      console.log("++++++",action.payload);
+    
       localStorage.setItem("user", JSON.stringify(action.payload));
       localStorage.setItem("userRole", action?.payload?.role ?? "" );
       localStorage.setItem("userId", action?.payload?.id ?? "");

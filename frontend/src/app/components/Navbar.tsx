@@ -5,9 +5,11 @@ import "../styles/navbar.scss";
 import { logout } from "../store/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 // Hydration error was caused by the use of the Link component from next/link. and removed with use effect
 const Header: React.FC = () => {
+  const router = useRouter();
   const isAuthenticatedRedux = useSelector(
     (state: RootState) => state.isAuthenticated
   );
@@ -19,7 +21,9 @@ const Header: React.FC = () => {
   }, [isAuthenticatedRedux]);
 
   const handleLogout = () => {
+  
     dispatch(logout());
+    router.push("/");
   };
 
   return (

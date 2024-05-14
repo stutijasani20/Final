@@ -23,19 +23,27 @@ interface Hotel {
 }
 
 const MyComponent: React.FC = () => {
+  const params = new URLSearchParams(location.search);
+  const flightsParam = params.get("airport");
+  console.log(flightsParam);
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [searchQuery, setSearchQuery] = useState<string>("Mumbai Airport");
-
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  
   const router = useRouter();
+
+  useEffect(() => {
+    setSearchQuery(flightsParam || ""); 
+  }, [flightsParam]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const { data: response } = await axios.get(
-          `https://api.tomtom.com/search/2/geocode/${searchQuery}.json?key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb`
+          `https://api.tomtom.com/search/2/geocode/${flightsParam}.json?key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb`
         );
 
         const location = response.results[0];
@@ -70,7 +78,7 @@ const MyComponent: React.FC = () => {
     };
 
     fetchData();
-  }, [page, searchQuery]);
+  }, [page, flightsParam]);
 
   const goToPage = (pageNumber: number) => {
     setPage(pageNumber);
@@ -83,7 +91,7 @@ const MyComponent: React.FC = () => {
 
   const handleViewMap = (hotel: Hotel) => {
     // Navigate to MapComponent page with the hotel location
-    const queryString = `?hotelLat=${hotel.position.lat}&hotelLng=${hotel.position.lon}`;
+    const queryString = `?hotelLat=${hotel.position.lat}&hotelLng=${hotel.position.lon}&airport=${flightsParam}`;
     router.push(`/map${queryString}`);
   };
 
