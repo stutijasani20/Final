@@ -63,7 +63,7 @@ const FlightSearchPage: React.FC = () => {
 
   const handleTravellerChange = (type: any, operation: any) => (event: any) => {
     event.preventDefault();
-    setTravellers((prevState) => {
+    setTravellers((prevState:any) => {
       let newValue =
         operation === "increase" ? prevState[type] + 1 : prevState[type] - 1;
       newValue = newValue < 0 ? 0 : newValue; // Ensure the value is not negative

@@ -21,7 +21,6 @@ const Header: React.FC = () => {
   }, [isAuthenticatedRedux]);
 
   const handleLogout = () => {
-  
     dispatch(logout());
     router.push("/");
   };
@@ -36,7 +35,7 @@ const Header: React.FC = () => {
           Book & Manage
         </Link>
         <div className="nav-link">Prepare to Travel</div>
-        <Link href="/destinations" className="nav-link">
+        <Link href="/reviews" className="nav-link">
           Passenger Reviews
         </Link>
         <Link href="/where_we_fly/route_map" className="nav-link">

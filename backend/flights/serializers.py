@@ -56,3 +56,9 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = "__all__"
+
+
+class PassengerReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reviews
+        fields = "__all__"

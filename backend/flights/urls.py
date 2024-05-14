@@ -20,4 +20,7 @@ urlpatterns = [
     path('payments/', PaymentView.as_view()),
     path('payments/<int:pk>/', PaymentDetailView.as_view()),
     path("payment/", Initiate_payment.as_view()),
+     path('reviews/', PassengerReviewListCreate.as_view(), name='passenger_review_list_create'),
+    path('reviews/<int:pk>/',PassengerReviewRetrieveUpdateDestroy.as_view(), name='passenger_review_detail'),
+    
 ]

@@ -105,7 +105,7 @@ class PassengerView(APIView):
             serializer = PassengerSerializer(passengers, many=True)
             return Response(serializer.data)
 
-            def post(self, request):
+        def post(self, request):
                 serializer = PassengerSerializer(data=request.data)
                 if serializer.is_valid():
                     serializer.save()
@@ -381,3 +381,12 @@ class PaymentDetailView(APIView):
                 return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class PassengerReviewListCreate(generics.ListCreateAPIView):
+    queryset = Reviews.objects.all()
+    serializer_class = PassengerReviewSerializer
+
+    
+
+class PassengerReviewRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Reviews.objects.all()
+    serializer_class = PassengerReviewSerializer
