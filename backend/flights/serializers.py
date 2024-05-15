@@ -10,6 +10,7 @@ class FlightSerializer(serializers.ModelSerializer):
     departure_airport_name = serializers.CharField(source='departure_airport.name',read_only=True)
     departure_code = serializers.CharField(source='departure_airport.code',read_only=True)
     arrival_code = serializers.CharField(source='arrival_airport.code',read_only=True)
+    
 
     class Meta:
         model = Flight

@@ -76,6 +76,11 @@ RAZORPAY_KEY_ID = "rzp_test_wWsetA6HFaDo8e"
 
 RAZORPAY_KEY_SECRET = "XoeHdqwNbx6rk2bBed2YBddm"
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5
+}
+
 
 
 

@@ -94,17 +94,24 @@ const AboutPage: React.FC = () => {
       <h2 className="text-2xl font-semibold mt-4 mb-4">Our Achievements</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         <AchievementCard icon="/air.webp" title="2000+ Daily Flights" />
-        <AchievementCard icon="/india.png" title="80+ Domestic Destinations" />
+        <AchievementCard icon="/india.png" title="80+ Domestic Flights" />
         <AchievementCard
           icon="/world.png"
-          title="30+ International Destinations"
+          title="30+ International Flights"
         />
         <AchievementCard
           icon="/passenger.png"
           title="500 million+ Happy Passengers"
         />
         <AchievementCard icon="/fleet.png" title="300+ Fleet" />
+        <AchievementCard icon="/earth.webp" title="Multiple Destinations" />
+        <AchievementCard icon="/cancel.jpg" title="Low cancellation Rates" />
+        <AchievementCard icon="/cargo.png" title="82K cargos tonned" />
       </div>
+
+      <p className="text-lg text-gray-700 mb-8 mt-8">
+       One of the largest training academies with 2k+ students trained every year. We are committed to providing a safe and secure environment for our passengers and employees, ensuring that every journey is a pleasant and memorable experience. Our dedication to excellence and innovation has earned us numerous awards and accolades, solidifying our position as a leader in the aviation industry. We look forward to welcoming you on board Elegance Air Airlines for your next adventure!
+      </p>
 
       <p className="text-lg text-gray-700 mb-8 mt-8">
         We also prioritize sustainability and environmental responsibility,

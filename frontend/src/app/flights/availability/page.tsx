@@ -1,7 +1,9 @@
 "use client";
+"use client";
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 interface Flight {
   id: number;
@@ -25,6 +27,11 @@ const AvailableFlightsPage: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const [filteredFlights, setFilteredFlights] = useState<Flight[]>([]);
+  const [departure_airport, setDeparture_airport] = useState<string>("");
+  const [arrival_airport, setArrival_airport] = useState<string>("");
+  const [travel_date, setTravel_date] = useState<string>("");
+  const [classes, setClasses] = useState<string>("");
+
   const [error, setError] = useState<string>("");
 
   const updateFilteredFlights = () => {
@@ -43,6 +50,46 @@ const AvailableFlightsPage: React.FC = () => {
     }
   };
 
+  
+
+    const handleSearchModification = async () => {
+      try {
+        const response =  await axios.get<Flight[]>(
+          "http://127.0.0.1:8000/flights",
+          {
+            params: {
+              departure_airport_name: departure_airport,
+              arrival_airport_name: arrival_airport,
+              travel_date: travel_date,
+              classes: classes,
+            },
+          }
+        );
+       
+       const filteredFlights = response.data.filter((flight) => {
+          return (
+            flight.departure_airport_name === departure_airport &&
+            flight.arrival_airport_name === arrival_airport &&
+            flight.travel_date === travel_date &&
+            flight.classes_name === classes
+          );
+        });
+        console.log(filteredFlights);
+        setFilteredFlights(filteredFlights);
+        router.push(`/flights/availability?flights=${JSON.stringify(filteredFlights)}`);
+
+        setError("");
+      } catch (error) {
+        setError("Error fetching flight data.");
+      }
+    };
+    
+
+
+   
+  
+
+
   useEffect(() => {
     updateFilteredFlights();
   }, [pathname]);
@@ -53,6 +100,68 @@ const AvailableFlightsPage: React.FC = () => {
 
   return (
     <div className="container mx-auto py-8">
+      <div>
+       
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mt-5">
+            <label className="block text-sm font-medium text-gray-700">
+              Departure Airport
+            </label>
+            <input
+              type="text"
+              value={departure_airport}
+              onChange={(e) => setDeparture_airport(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Arrival Airport
+            </label>
+            <input
+              type="text"
+              value={arrival_airport}
+              onChange={(e) => setArrival_airport(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Travel Date
+            </label>
+            <input
+              type="date"
+              value={travel_date}
+              onChange={(e) => setTravel_date(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Class
+            </label>
+            <select
+              value={classes}
+              onChange={(e) => setClasses(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+            >
+              <option value="">Select Class</option>
+              <option value="Economy Class">Economy Class</option>
+              <option value="Business Class">Business Class</option>
+              <option value="First Class">First Class</option>
+            </select>
+          </div>
+          <div className="col-span-2">
+            <button
+              onClick={handleSearchModification}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Search
+            </button>
+          </div>
+          
+      </div>
+      </div>
       <h1 className="text-3xl font-bold mb-4 mt-5">Available Flights</h1>
       {error ? (
         <div className="text-red-500 mb-4">{error}</div>

@@ -5,28 +5,56 @@ from rest_framework import status
 from .serializers import *
 from .models import *
 from rest_framework import generics
-import stripe
+
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+
 import razorpay
 from django.conf import settings
+from rest_framework.pagination import PageNumberPagination
   
 
 class FlightView(APIView):
     def get(self, request):
+        # Initialize pagination class
+        
+        # Get query parameters
+        departure_airport_name = request.GET.get('departure_airport_name')
+        arrival_airport_name = request.GET.get('arrival_airport_name')
+        price = request.GET.get('price')
+        travel_date = request.GET.get('travel_date')
+        class_name = request.GET.get('class_name')
+        
+        # Get queryset
         flights = Flight.objects.all()
-        for flight in flights:
-            # Calculate total price including GST
-            flight.total_price_including_gst = flight.total_price() 
+        
+        # Apply filtering
+        if departure_airport_name:
+            flights = flights.filter(departure_airport__name__icontains=departure_airport_name)
+        if arrival_airport_name:
+            flights = flights.filter(arrival_airport__name__icontains=arrival_airport_name)
+        if price:
+            price = int(price)
+            flights = flights.filter(price__lte=price)
+        if travel_date:
+            flights = flights.filter(travel_date=travel_date)
+        if class_name:
+            flights = flights.filter(classes_name=class_name)
+        
+        # Paginate the queryset
+       
+        
+        # Serialize paginated queryset
         serializer = FlightSerializer(flights, many=True)
+        
+        # Return paginated response
         return Response(serializer.data)
-
+    
     def post(self, request):
-        serializer = FlightSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer = FlightSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
 class FlightDetailView(APIView):
@@ -97,13 +125,26 @@ class AirportDetailView(APIView):
 
 class PassengerView(APIView):
         def get(self, request):
+        # Get user ID from query parameters
             user_id = request.query_params.get('user')
+            
+            # Get queryset based on user ID
             if user_id:
                 passengers = Passenger.objects.filter(user_id=user_id)
             else:
                 passengers = Passenger.objects.all()
-            serializer = PassengerSerializer(passengers, many=True)
-            return Response(serializer.data)
+            
+            # Initialize pagination class
+            pagination_class = PageNumberPagination()
+            
+            # Paginate the queryset
+            paginated_passengers = pagination_class.paginate_queryset(passengers, request)
+            
+            # Serialize paginated queryset
+            serializer = PassengerSerializer(paginated_passengers, many=True)
+            
+            # Return paginated response
+            return pagination_class.get_paginated_response(serializer.data)
 
         def post(self, request):
                 serializer = PassengerSerializer(data=request.data)
