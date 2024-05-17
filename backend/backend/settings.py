@@ -54,7 +54,7 @@ INSTALLED_APPS = [
 
     'cloudinary',
     'press',
-    'social_django',
+    
     'jobs',
 
     'rest_framework.authtoken',
@@ -91,12 +91,13 @@ REST_FRAMEWORK = {
 }
 
 
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  
-EMAIL_PORT = 587  
-EMAIL_USE_TLS = True  
-EMAIL_HOST_USER = 'stutijasani25@gmail.com'  
-EMAIL_HOST_PASSWORD = 'nhco fzyd expt hydd ' 
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "rajat.vashi50@gmail.com"
+EMAIL_HOST_PASSWORD = "ller nzhn aayr mzqi"
 
 
 
@@ -111,11 +112,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware',
+    
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser' 
-AUTHENTICATION_BACKENDS = ['users.backends.EmailBackend', 'social_core.backends.google.GoogleOAuth2',
+AUTHENTICATION_BACKENDS = ['users.backends.EmailBackend'
 ]
 
 
@@ -137,7 +138,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'social_django.context_processors.backends', 
+            
             ],
         },
     },
@@ -145,9 +146,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY='1015407048535-mqthk8bi4u1qgfv6qagluj1vmdteck7k.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
-SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'http://localhost:8000/complete/google-oauth2/'
 
 
 

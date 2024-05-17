@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import Cookies from 'js-cookie';
 
 interface User {
   id: string | null;
@@ -24,16 +23,11 @@ const authSlice = createSlice({
     login(state, action: PayloadAction<User>) {
       state.isAuthenticated = true;
       state.user = action.payload;
-    
+
       localStorage.setItem("user", JSON.stringify(action.payload));
-      localStorage.setItem("userRole", action?.payload?.role ?? "" );
+      localStorage.setItem("userRole", action?.payload?.role ?? "");
       localStorage.setItem("userId", action?.payload?.id ?? "");
       localStorage.setItem("isAuthenticated", "true");
-
-      Cookies.set('user', JSON.stringify(action.payload), { expires: 7000 });
-      Cookies.set('userRole', action?.payload?.role ?? '', { expires: 7000 });
-      Cookies.set('userId', action?.payload?.id ?? '', { expires: 7000 });
-      Cookies.set('isAuthenticated', 'true', { expires: 7000 });
     },
     register(state, action: PayloadAction<User>) {
       state.isAuthenticated = true;
@@ -42,11 +36,6 @@ const authSlice = createSlice({
       localStorage.setItem("userId", action.payload.id || "");
       localStorage.setItem("userRole", action.payload.role || "");
       localStorage.setItem("isAuthenticated", "true");
-
-      Cookies.set('user', JSON.stringify(action.payload), { expires: 7000 });
-      Cookies.set('userRole', action?.payload?.role ?? '', { expires: 7000 });
-      Cookies.set('userId', action?.payload?.id ?? '', { expires: 7000 });
-      Cookies.set('isAuthenticated', 'true', { expires: 7000 });
     },
     logout(state) {
       state.isAuthenticated = false;
@@ -55,11 +44,6 @@ const authSlice = createSlice({
       localStorage.removeItem("userId");
       localStorage.removeItem("userRole");
       localStorage.removeItem("isAuthenticated");
-
-      Cookies.remove('user');
-      Cookies.remove('userRole');
-      Cookies.remove('userId');
-      Cookies.remove('isAuthenticated');
     },
   },
 });
