@@ -97,7 +97,7 @@ const ReviewList: React.FC = () => {
               </div>
             </div>
             <div className="mt-2 flex items-center">
-              <span className="text-red-600">
+              <span className="text-red-500">
                 {Array.from({ length: 5 }, (_, index) => (
                   <span key={index}>
                     {index < review.rating ? <Favorite /> : ""}{" "}
