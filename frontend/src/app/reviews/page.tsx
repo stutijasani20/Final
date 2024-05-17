@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { AddCircle, Favorite } from "@mui/icons-material";
-import { Avatar } from "@mui/material"; I
+import { Avatar } from "@mui/material"; // Import Avatar from Material-UI
 
 
 interface Review {
@@ -18,34 +18,58 @@ interface Review {
 const ReviewList: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [filteredReviews, setFilteredReviews] = useState<Review[]>([]);
-  const inappropriateWords = [
-    "bad",
-    "inappropriate",
-    "offensive",
-    "disappointing",
-  ]; // Define inappropriate words
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const itemsPerPage = 5;
+   // Define inappropriate words
 
   useEffect(() => {
+    
     const fetchReviews = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/reviews/");
-        setReviews(response.data);
+        const response = await axios.get(`http://127.0.0.1:8000/reviews/?page=${currentPage}`);
+        setReviews(response.data.results);
+        setTotalPages(Math.ceil(response.data.count / itemsPerPage))
+        
       } catch (error) {
         console.error("Error fetching reviews:", error);
       }
     };
     fetchReviews();
-  }, []);
+  }, [currentPage]);
 
   useEffect(() => {
+    const inappropriateWords = [
+      "bad",
+      "inappropriate",
+      "offensive",
+      "disappointing",
+    ];
     // Filter out reviews containing inappropriate words
-    const filtered = reviews.filter((review) => {
-      return !inappropriateWords.some((word) =>
-        review.review_text.toLowerCase().includes(word)
-      );
-    });
-    setFilteredReviews(filtered);
-  }, []);
+
+   
+
+      const filtered = reviews.filter((review: any) => {
+        return !inappropriateWords.some((word) =>
+          review.review_text.toLowerCase().includes(word)
+        );
+      });
+      setFilteredReviews(filtered);
+    }, [reviews, currentPage, totalPages]);
+
+    const handlePreviousPage = () => {
+      if (currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
+    };
+    
+      const handleNextPage = () => {
+        if (currentPage < totalPages) {
+          setCurrentPage(currentPage + 1);
+        }
+      }; 
+
+  
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -90,6 +114,25 @@ const ReviewList: React.FC = () => {
           </li>
         ))}
       </ul>
+      <div className="flex justify-between mt-4">
+        <button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg"
+        >
+          Previous
+        </button>
+        <span>Page {currentPage} of {totalPages}</span>
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+          className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg"
+        >
+          Next
+        </button>
+      </div>
+
+
       {filteredReviews.length === 0 && (
         <p className="text-gray-600 mt-4">No reviews available.</p>
       )}
