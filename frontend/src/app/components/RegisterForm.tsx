@@ -17,10 +17,15 @@ const RegisterPage = () => {
   const router = useRouter(); // Initialize useRouter hook
 
   const handleRegister = async () => {
+    const token = localStorage.getItem("token")
+    
     try {
       const response = await axios.post<any>(
         "http://127.0.0.1:8000/api/auth/register/",
-        { email, password, role } // Include role in the request payload
+        { email, password, role } 
+    
+
+         // Include role in the request payload
       );
       // If registration is successful, dispatch the login action
       dispatch(login(response.data));

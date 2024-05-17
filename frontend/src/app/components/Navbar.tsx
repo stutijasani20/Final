@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Dropdown from "./Dropdown";
 // Hydration error was caused by the use of the Link component from next/link. and removed with use effect
 const Header: React.FC = () => {
   const router = useRouter();
@@ -44,8 +45,10 @@ const Header: React.FC = () => {
       </div>
       <div className="nav-links">
         {isAuthenticated ? (
-          <div className="nav-link" onClick={handleLogout}>
-            Logout
+          <div className="nav-link">
+            <Dropdown />
+          
+           
           </div>
         ) : (
           <div>

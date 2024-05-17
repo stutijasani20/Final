@@ -82,6 +82,10 @@ REST_FRAMEWORK = {
         # Add any other authentication classes if needed
     ],
 
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5
 }
@@ -113,6 +117,7 @@ MIDDLEWARE = [
 AUTH_USER_MODEL = 'users.CustomUser' 
 AUTHENTICATION_BACKENDS = ['users.backends.EmailBackend', 'social_core.backends.google.GoogleOAuth2',
 ]
+
 
 
 MEDIA_URL = '/media/'
@@ -226,8 +231,10 @@ SITE_NAME = "Test Django Next.js"
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
+
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://127.0.0.1:8000"
+    "http://localhost:8000",
 ]
 

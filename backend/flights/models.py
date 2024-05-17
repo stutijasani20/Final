@@ -59,6 +59,7 @@ class Passenger(models.Model):
     age = models.IntegerField()
     gender = models.CharField(max_length=10)
     passenger_type = models.CharField(max_length=10,choices=TRAVELLER_CHOICES, default='adult')
+    
 
 
 
@@ -95,8 +96,6 @@ class Insurance(models.Model):
         return self.name
     
 
-
-
 class Booking(models.Model):
     TRIP_TYPE_CHOICES = [
         ('one_way', 'One Way'),
@@ -111,6 +110,7 @@ class Booking(models.Model):
 
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE)
     passenger = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    passengers = models.ManyToManyField(Passenger, blank=True)
     booking_date = models.DateTimeField(auto_now_add=True)
     is_paid = models.BooleanField(default=False)
     meals = models.ManyToManyField(Meal, blank=True)
@@ -118,35 +118,38 @@ class Booking(models.Model):
     trip_type = models.CharField(max_length=20, choices=TRIP_TYPE_CHOICES, default='one_way')
    
 
-    adults = models.IntegerField(default=1)
-    children = models.IntegerField(default=0)
-    infants = models.IntegerField(default=0)
-
     def calculate_total_price(self):
-            flight_price = Decimal(self.flight.price)
-            total = flight_price * Decimal('0.12') 
-            price = flight_price + total
+        flight_price = Decimal(self.flight.price)
+        tax_rate = Decimal('0.12')
+        total_flight_price = flight_price * (1 + tax_rate)
+
+        insurance_price = Decimal(self.insurance.price) if self.insurance else Decimal(0)
+
+        # Calculate passenger counts
+        adult_count = self.passengers.filter(passenger_type='adult').count()
+        child_count = self.passengers.filter(passenger_type='child').count()
+        infant_count = self.passengers.filter(passenger_type='infant').count()
+
+        total_price = (
+            (total_flight_price * Decimal(adult_count))
+
+            + (total_flight_price * Decimal(child_count) * Decimal('0.5'))
+
+            + (total_flight_price * Decimal(infant_count) * Decimal('0.1'))
+
+        )
+
+        total_price += insurance_price
+        
+        return total_price
         
 
-            insurance_price = Decimal(self.insurance.price) if self.insurance else Decimal(0)
-            
-            adult_price = Decimal(self.adults) * price
-            child_price = Decimal(self.children) * price * Decimal('0.75')
 
-            infant_price = Decimal(self.infants) * price * Decimal('0.5')
-    
-            total_price = adult_price + child_price + infant_price + insurance_price
-            return total_price
-    def clean(self):
-        if self.adults < 0 or self.children < 0 or self.infants < 0:
-            raise ValidationError("Number of travelers cannot be negative.")
-    
-    def save(self, *args, **kwargs):
-        self.total_price = self.calculate_total_price()
-        super().save(*args, **kwargs)
 
+    
     def __str__(self):
-        return f"{self.passenger} - {self.flight}"
+        return f"Booking for {self.passenger} on {self.flight}"
+    
     
 class Payment(models.Model):
     method_name = models.CharField(max_length=100)

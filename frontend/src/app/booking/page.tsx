@@ -106,7 +106,10 @@ const PopupForm: React.FC<{
   );
 };
 
+
+
 const BookingPage: React.FC = () => {
+  const [passengerData, setPassengerData] = useState<any>([])
   const router = useRouter();
   const [Razorpay] = useRazorpay();
   const pathname = usePathname();
@@ -114,12 +117,16 @@ const BookingPage: React.FC = () => {
   const [mealOptions, setMealOptions] = useState<Meal[]>([]);
   const [insurancePolicies, setInsurancePolicies] = useState<InsurancePolicy[]>([]);
   const [selectedMeal, setSelectedMeal] = useState<number | null>(null);
+ 
   const [selectedInsurance, setSelectedInsurance] = useState<number | null>(null);
   const [showPayment, setShowPayment] = useState<boolean>(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
 
+
+
   
   const [passengerDetails, setPassengerDetails] = useState<{
+   
     first_name: string;
     last_name: string;
     age: number;
@@ -128,6 +135,7 @@ const BookingPage: React.FC = () => {
     passenger_type: string;
     user: number;
   }>({
+   
     first_name: "",
     last_name: "",
     age: 18,
@@ -141,6 +149,7 @@ const BookingPage: React.FC = () => {
   const [error, setError] = useState<string>("");
 
   const [passengerList, setPassengerList] = useState<{
+    
     first_name: string;
     last_name: string;
     age: number;
@@ -158,12 +167,11 @@ const BookingPage: React.FC = () => {
     setShowPopup(false);
   };
 
- 
+
+
   const handleAddPassenger = async () => {
-    
     try {
-      // Add the current passenger details to the list
-      setPassengerDetails({ 
+      setPassengerDetails({
         first_name: "", 
         last_name: "", 
         age: 18, 
@@ -172,26 +180,42 @@ const BookingPage: React.FC = () => {
         passenger_type: "adult", 
         user: parseInt(localStorage.getItem("userId") as string),
       });
-      console.log("Passenger Details:", passengerDetails);
-      const response = await axios.post("http://127.0.0.1:8000/passengers/", passengerDetails);
+  
+      const response = await axios.post("http://127.0.0.1:8000/passengers/", passengerDetails, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("token") || "",
+        },
+      });
+  
       if (response.status === 201) {
-        setPassengerList([...passengerList, passengerDetails]);
-        console.log("Passenger added successfully");
+        const passengerId = response.data.id;
+        setPassengerList([...passengerList, passengerId]);
+        setPassengerData([...passengerData, response.data]); // Set passengerData to response.data
+    
+        console.log("Passenger added successfully:", response.data);
+        console.log("+++++++", passengerData);
       } else {
         console.error("Error adding passenger:", response.statusText);
       }
-    
     } catch (error: any) {
       console.error("Error saving passenger details:", error);
-      console.log("Error saving passenger details:", error.response.data)
+      console.log("Error saving passenger details:", error.response.data);
       // Optionally, handle error scenarios here
     }
   };
   
-  
- 
 
+ 
+  
+  
+  
+  
+  
   const handleConfirmBooking = async () => {
+
+    
+    
     try {
       // Construct payload for booking
       const bookingPayload = {
@@ -199,10 +223,12 @@ const BookingPage: React.FC = () => {
         meal_id: selectedMeal,
         insurance_id: selectedInsurance,
         passenger: localStorage.getItem("userId") ? parseInt(localStorage.getItem("userId") as string) : 0,
+        passengers: passengerList,
 
       };
   
       // Send POST request to booking API
+
       
       
       const bookingResponse = await axios.post("http://127.0.0.1:8000/bookings/", bookingPayload, {
@@ -241,16 +267,8 @@ const BookingPage: React.FC = () => {
               const { id, amount } = paymentInitiationResponse.data;
               console.log("Payment ID:",id);
               console.log("Amount:", amount);
-
-
-    
-  
-          // Use data from payment initiation response to initialize Razorpay payment
-        
-       
-          // Initialize Razorpay payment
           const options = {
-            key: 'rzp_test_wWsetA6HFaDo8e', // Replace with your actual Razorpay key
+            key: 'rzp_test_wWsetA6HFaDo8e', 
             amount: amount, 
             currency: 'INR',
             name: 'Elegance Air',
@@ -271,6 +289,8 @@ const BookingPage: React.FC = () => {
                 const paymentResponse = await axios.post("http://127.0.0.1:8000/payment/", paymentData);
                
                 console.log("Payment data sent to backend:", paymentResponse.data);
+
+              
   
                 // Update is_paid field in booking API
                 const updateBookingResponse = await axios.put(`http://127.0.0.1:8000/bookings/${bookingResponse.data.id}/`, {
@@ -279,6 +299,10 @@ const BookingPage: React.FC = () => {
                   insurance_id: selectedInsurance,
                   passenger: localStorage.getItem("userId") ? parseInt(localStorage.getItem("userId") as string) : 0,
                   is_paid: true,
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + localStorage.getItem("token") || "",
+                  },
                 });
                 console.log("Booking payment status updated:", updateBookingResponse.data);
   
@@ -358,7 +382,12 @@ const BookingPage: React.FC = () => {
 
   const fetchMealOptions = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/foods/");
+      const response = await axios.get("http://127.0.0.1:8000/foods/" , {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("token") || "",
+        },
+        
+      });
       if (response.status === 200) {
         const mealOptionsData = response.data;
         setMealOptions(mealOptionsData);
@@ -372,7 +401,12 @@ const BookingPage: React.FC = () => {
 
   const fetchInsurancePolicies = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/insurance-policies/");
+      const response = await axios.get("http://127.0.0.1:8000/insurance-policies/" ,{
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("token") || "",
+        },
+      
+      });
       if (response.status === 200) {
         const insurancePoliciesData = response.data;
         setInsurancePolicies(insurancePoliciesData);
@@ -383,6 +417,8 @@ const BookingPage: React.FC = () => {
       console.error("Error fetching insurance policies:", error);
     }
   };
+
+
 
   return (
     <div className="container mx-auto py-8">
@@ -557,6 +593,7 @@ const BookingPage: React.FC = () => {
               <button
                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                 onClick={handleAddPassenger}
+
               >
                 Add Passenger
               </button>
@@ -568,12 +605,14 @@ const BookingPage: React.FC = () => {
       {/* Display the list of passengers */}
       <div className="mt-4">
         <h2 className="text-lg font-semibold mb-2">Passenger List</h2>
-        {passengerList.map((passenger, index) => (
+        {passengerData.map((passenger: any, index: number) => (
           <div key={index} className="mb-2">
             <p>{`${passenger.first_name} ${passenger.last_name}, Age: ${passenger.age}, Gender: ${passenger.gender}, Passenger Type: ${passenger.passenger_type}`}</p>
           </div>
         ))}
       </div>
+
+       
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={handleConfirmBooking}

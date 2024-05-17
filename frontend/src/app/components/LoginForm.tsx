@@ -128,6 +128,7 @@ const LoginPage = () => {
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const token = localStorage.getItem("token");
     e.preventDefault();
     try {
       const response = await axios.post(
@@ -140,7 +141,11 @@ const LoginPage = () => {
       dispatch(login(response.data));
 
       const user = localStorage.getItem("userId");
-      const userData = await axios.get(`http://127.0.0.1:8000/users/${user}/`);
+      const userData = await axios.get(`http://127.0.0.1:8000/users/${user}/` , {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
       localStorage.setItem("userRole", userData.data.role);
 
       setLoggedIn(true); // Set loggedIn state to true after successful login

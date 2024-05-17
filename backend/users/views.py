@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.shortcuts import redirect
 
 
+
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.decorators import action
 from django.contrib.auth import logout
@@ -23,8 +24,8 @@ from rest_framework.views import APIView
 
 
 class AuthViewSet(viewsets.GenericViewSet):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [AllowAny]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [AllowAny]
     queryset = CustomUser.objects.all() 
     serializer_class = EmptySerializer
     serializer_classes = {
@@ -39,6 +40,7 @@ class AuthViewSet(viewsets.GenericViewSet):
         user = get_and_authenticate_user(**serializer.validated_data)
         serializer_class = AuthUserSerializer 
         data = serializer_class(user).data
+
         return Response(data=data, status=status.HTTP_200_OK)
         
     
@@ -46,11 +48,19 @@ class AuthViewSet(viewsets.GenericViewSet):
     @action(methods=['POST',], detail=False)
     def register(self, request):
         serializer = self.get_serializer(data=request.data)
+        
         serializer.is_valid(raise_exception=True)
         user = create_user_account(**serializer.validated_data)
         data = AuthUserSerializer(user).data
+        print("++++", request.user)
+        
+        subject = 'Welcome to ELegance Air'
 
-
+        message = f'Hi {request.user}, thank you for registering in our website. We are glad to have you with us. Enjoy your journey with us.'
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [request.user, ]
+        send_mail( subject, message, email_from, recipient_list )
+                
         return Response(data=data, status=status.HTTP_201_CREATED)
 
     @action(methods=['POST', ], detail=False)
@@ -76,14 +86,22 @@ class AuthViewSet(viewsets.GenericViewSet):
 
 
 class UserListAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
+        print(request.user)
         users = CustomUser.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserDetailAPIView(APIView):
-            def get(self, request, pk, format=None):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+
+    def get(self, request, pk, format=None):
                 user = CustomUser.objects.get(pk=pk)
+               
                 serializer = UserSerializer(user)
                 return Response(serializer.data, status=status.HTTP_200_OK)
 

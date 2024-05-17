@@ -34,14 +34,16 @@ export default function MyBookingsPage() {
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/bookings/?userId=${userId}&page=${currentPage}` ,{
+                const response = await axios.get(`http://127.0.0.1:8000/bookings/?passenger=${userId}&page=${currentPage}` ,{
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
                 
             });
-                console.log(response.data)
+                
                 setBookings(response.data.results);
+            
+
                 setTotalPages(Math.ceil(response.data.count / itemsPerPage)); 
             } catch (error) {
                 console.error("Error fetching bookings:", error);
@@ -51,6 +53,7 @@ export default function MyBookingsPage() {
             }   
         };
 
+        
         const fetchFlights = async () => {
             try {
                 const response = await axios.get(`http://127.0.0.1:8000/flights/`);
@@ -137,7 +140,7 @@ export default function MyBookingsPage() {
                                     <td className="px-6 py-4 whitespace-nowrap">{index+1}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{new Date(booking.booking_date).toLocaleString()}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{booking.trip_type}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{booking.adults + booking.children + booking.infants}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{booking.passengers.length}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className={`inline-block px-2 py-1 rounded-lg ${booking.is_paid ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
                                             {booking.is_paid ? "Success" : "Pending"}
