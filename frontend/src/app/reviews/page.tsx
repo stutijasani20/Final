@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { AddCircle, Favorite } from "@mui/icons-material";
-import { Avatar } from "@mui/material"; // Import Avatar from Material-UI
-import { deepOrange, deepPurple } from "@mui/material/colors";
+import { Avatar } from "@mui/material"; I
+
 
 interface Review {
   id: number;
@@ -45,7 +45,7 @@ const ReviewList: React.FC = () => {
       );
     });
     setFilteredReviews(filtered);
-  }, [reviews]);
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -73,7 +73,7 @@ const ReviewList: React.FC = () => {
               </div>
             </div>
             <div className="mt-2 flex items-center">
-              <span className="text-red-600">
+              <span className="text-red-500">
                 {Array.from({ length: 5 }, (_, index) => (
                   <span key={index}>
                     {index < review.rating ? <Favorite /> : ""}{" "}
