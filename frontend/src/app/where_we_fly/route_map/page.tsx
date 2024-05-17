@@ -1,4 +1,5 @@
 "use client";
+"use client";
 import React, { useEffect, useRef, useState } from "react";
 import * as maptilersdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
@@ -6,11 +7,12 @@ import "@maptiler/sdk/dist/maptiler-sdk.css";
 export default function Map(): JSX.Element {
   const mapContainer = useRef<HTMLDivElement>(null);
   const [markers, setMarkers] = useState<any[]>([]);
+  const zoom = 3;
 
   useEffect(() => {
     if (!mapContainer.current) return;
 
-    const zoom = 5;
+   
     const center_map = { lng: 78.9629, lat: 20.5937 }; // Mumbai Airport coordinates
 
     maptilersdk.config.apiKey = "oXA9UAqOuM8L6RQbCgHd";
@@ -18,7 +20,7 @@ export default function Map(): JSX.Element {
     const map = new maptilersdk.Map({
       container: mapContainer.current,
       style: maptilersdk.MapStyle.STREETS,
-      center: [center_map.lat, center_map.lng],
+      center: [78.9629, 20.5937],
       zoom: zoom,
     });
 

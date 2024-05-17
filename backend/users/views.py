@@ -2,6 +2,10 @@ from .models import *
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status, generics, viewsets
+from social_django.utils import psa
+from django.urls import reverse
+from django.shortcuts import redirect
+
 
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.decorators import action
@@ -16,7 +20,10 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.views import APIView
 
 
+
+
 class AuthViewSet(viewsets.GenericViewSet):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [AllowAny]
     queryset = CustomUser.objects.all() 
     serializer_class = EmptySerializer
@@ -52,6 +59,11 @@ class AuthViewSet(viewsets.GenericViewSet):
         data = {'success': 'Sucessfully logged out'}
         return Response(data=data, status=status.HTTP_200_OK)
     
+    @action(methods=['POST'], detail=False)
+    @psa('social:complete')
+    def google_auth(self, request):
+        return redirect(reverse('social:begin', args=['google-oauth2']))
+    
 
 
     def get_serializer_class(self):
@@ -74,3 +86,4 @@ class UserDetailAPIView(APIView):
                 user = CustomUser.objects.get(pk=pk)
                 serializer = UserSerializer(user)
                 return Response(serializer.data, status=status.HTTP_200_OK)
+

@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
@@ -26,19 +27,28 @@ export default function MyBookingsPage() {
     const [error, setError] = useState("");
     const [flightData, setFlightData] = useState([]);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-    
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const itemsPerPage = 5;
 
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/bookings?userId=${userId}`);
-                setBookings(response.data);
+                const response = await axios.get(`http://127.0.0.1:8000/bookings/?userId=${userId}&page=${currentPage}` ,{
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                
+            });
+                console.log(response.data)
+                setBookings(response.data.results);
+                setTotalPages(Math.ceil(response.data.count / itemsPerPage)); 
             } catch (error) {
                 console.error("Error fetching bookings:", error);
                 setError("Failed to fetch bookings");
             } finally {
                 setLoading(false);
-            }
+            }   
         };
 
         const fetchFlights = async () => {
@@ -51,6 +61,7 @@ export default function MyBookingsPage() {
             }
         }
 
+    
         if (userId) {
             fetchBookings();
             fetchFlights();
@@ -58,7 +69,7 @@ export default function MyBookingsPage() {
             // Redirect to login if user ID is not available
             router.push("/login");
         }
-    }, [userId]);
+    }, [userId, currentPage, router]);
 
     const handleCancelBooking = async (bookingId: any) => {
         try {
@@ -73,6 +84,7 @@ export default function MyBookingsPage() {
         }
     };
 
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -84,6 +96,20 @@ export default function MyBookingsPage() {
     const first_flight = bookings[0]
     const id = first_flight?.flight
     const flight = flightData.find(flight => flight.id === id)?.arrival_airport_name
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+          setCurrentPage(currentPage - 1);
+        }
+      };
+      
+        const handleNextPage = () => {
+          if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+          }
+        }; 
+    
+
     
 
     return (
@@ -106,9 +132,9 @@ export default function MyBookingsPage() {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {bookings.map(booking => (
+                            {bookings.map((booking: any, index) => (
                                 <tr key={booking.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 whitespace-nowrap">{booking.id}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{index+1}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{new Date(booking.booking_date).toLocaleString()}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{booking.trip_type}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{booking.adults + booking.children + booking.infants}</td>
@@ -127,8 +153,29 @@ export default function MyBookingsPage() {
                             ))}
                         </tbody>
                     </table>
+                    
                 )}
             </div>
+           
+
+            <div className="flex justify-between mt-4">
+        <button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg"
+        >
+          Previous
+        </button>
+        <span>Page {currentPage} of {totalPages}</span>
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+          className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg"
+        >
+          Next
+        </button>
+      </div>
+
 
             <div className="mt-4 flex items-center justify-center space-x-4">
             <Link href={`/individual/hotel?airport=${flightData.find(flight => flight.id === id)?.arrival_airport_name}`}  className="text-blue-600 hover:underline transition duration-300 ease-in-out">

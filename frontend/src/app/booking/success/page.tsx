@@ -31,7 +31,7 @@ const Success: React.FC = () => {
   const userId = localStorage.getItem('userId');
 
   const [booking, setBooking] = useState<Booking | null>(null);
-  const [passengers, setPassengers] = useState<Passenger[] | null>(null);
+  const [passengers, setPassengers] = useState<Passenger[] >([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
 
@@ -71,6 +71,7 @@ const Success: React.FC = () => {
     }
   }, [userId]);
 
+  console.log(passengers)
   return (
     <div className="container mx-auto py-8">
       {loading && <p>Loading...</p>}
@@ -105,7 +106,9 @@ const Success: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {passengers.map((passenger) => (
+                  {passengers.results.map((passenger) =>{
+                    
+                    return  (
                     <tr key={passenger.id}>
                       <td className="px-6 py-4 whitespace-nowrap">{passenger.id}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{passenger.first_name}</td>
@@ -114,7 +117,7 @@ const Success: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap">{passenger.phone_number}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{passenger.gender}</td>
                     </tr>
-                  ))}
+                  )})}
                 </tbody>
               </table>
             </div>

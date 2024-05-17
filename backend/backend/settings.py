@@ -54,10 +54,10 @@ INSTALLED_APPS = [
 
     'cloudinary',
     'press',
+    'social_django',
     'jobs',
 
-    
-    # 'rest_framework.authtoken',
+    'rest_framework.authtoken',
 ]
 
 
@@ -77,9 +77,22 @@ RAZORPAY_KEY_ID = "rzp_test_wWsetA6HFaDo8e"
 RAZORPAY_KEY_SECRET = "XoeHdqwNbx6rk2bBed2YBddm"
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # Add any other authentication classes if needed
+    ],
+
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5
 }
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  
+EMAIL_PORT = 587  
+EMAIL_USE_TLS = True  
+EMAIL_HOST_USER = 'stutijasani25@gmail.com'  
+EMAIL_HOST_PASSWORD = 'nhco fzyd expt hydd ' 
 
 
 
@@ -94,10 +107,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser' 
-AUTHENTICATION_BACKENDS = ['users.backends.EmailBackend',]
+AUTHENTICATION_BACKENDS = ['users.backends.EmailBackend', 'social_core.backends.google.GoogleOAuth2',
+]
 
 
 MEDIA_URL = '/media/'
@@ -117,6 +132,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends', 
             ],
         },
     },
@@ -124,6 +140,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY='1015407048535-mqthk8bi4u1qgfv6qagluj1vmdteck7k.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'http://localhost:8000/complete/google-oauth2/'
 
 
 

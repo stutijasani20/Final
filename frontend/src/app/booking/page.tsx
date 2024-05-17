@@ -6,6 +6,7 @@ import axios from "axios";
 import Razorpay from 'razorpay';
 
 import useRazorpay  from "react-razorpay";
+
 interface Flight {
   id: number;
   flight_number: string;
@@ -116,6 +117,8 @@ const BookingPage: React.FC = () => {
   const [selectedInsurance, setSelectedInsurance] = useState<number | null>(null);
   const [showPayment, setShowPayment] = useState<boolean>(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
+
+  
   const [passengerDetails, setPassengerDetails] = useState<{
     first_name: string;
     last_name: string;
@@ -185,6 +188,7 @@ const BookingPage: React.FC = () => {
     }
   };
   
+  
  
 
   const handleConfirmBooking = async () => {
@@ -199,8 +203,19 @@ const BookingPage: React.FC = () => {
       };
   
       // Send POST request to booking API
-      const bookingResponse = await axios.post("http://127.0.0.1:8000/bookings/", bookingPayload);
+      
+      
+      const bookingResponse = await axios.post("http://127.0.0.1:8000/bookings/", bookingPayload, {
+      
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("token") || "",
+          
+        },
+      }
+      );
   console.log("Booking confirmed successfully:", bookingResponse.data);
+  
       if (bookingResponse.status === 201) {
         console.log("Booking confirmed successfully:", bookingResponse.data);
   
@@ -312,8 +327,10 @@ const BookingPage: React.FC = () => {
 
 
   useEffect(() => {
+ 
     const params = new URLSearchParams(location.search);
     const flightId = params.get("flightId");
+
     if (flightId) {
       fetchFlightDetails(flightId);
       fetchMealOptions();

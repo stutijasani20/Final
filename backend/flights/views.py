@@ -5,29 +5,31 @@ from rest_framework import status
 from .serializers import *
 from .models import *
 from rest_framework import generics
-
 from django.http import JsonResponse
-
 import razorpay
 from django.conf import settings
 from rest_framework.pagination import PageNumberPagination
-  
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework import authentication, permissions
+from rest_framework.permissions import IsAuthenticated
 
 class FlightView(APIView):
     def get(self, request):
-        # Initialize pagination class
         
-        # Get query parameters
+        
+
         departure_airport_name = request.GET.get('departure_airport_name')
         arrival_airport_name = request.GET.get('arrival_airport_name')
         price = request.GET.get('price')
         travel_date = request.GET.get('travel_date')
         class_name = request.GET.get('class_name')
         
-        # Get queryset
         flights = Flight.objects.all()
         
-        # Apply filtering
+        
         if departure_airport_name:
             flights = flights.filter(departure_airport__name__icontains=departure_airport_name)
         if arrival_airport_name:
@@ -40,12 +42,14 @@ class FlightView(APIView):
         if class_name:
             flights = flights.filter(classes_name=class_name)
         
-        # Paginate the queryset
+     
+        
        
-        
-        # Serialize paginated queryset
         serializer = FlightSerializer(flights, many=True)
-        
+
+    
+
+    
         # Return paginated response
         return Response(serializer.data)
     
@@ -84,6 +88,8 @@ class FlightDetailView(APIView):
 
 class AirportView(APIView):
             def get(self, request):
+
+               
                 name = request.query_params.get('name')
                 if name:
                     airports = Airport.objects.filter(name=name)
@@ -294,11 +300,23 @@ class ConnectionFlightDetailView(APIView):
                 return Response(status=status.HTTP_204_NO_CONTENT)
 
 class BookingView(APIView):
+    authentication_classes = [JWTAuthentication]  # Use JWTAuthentication for authentication
+    permission_classes = [IsAuthenticated]
     def get(self, request):
-        bookings = Booking.objects.all()
-        serializer = BookingSerializer(bookings, many=True)
-        return Response(serializer.data)
-    
+           
+
+            
+              
+            
+            
+            paginator = PageNumberPagination()
+            paginator.page_size = 5  # Set the number of items per page
+            bookings = Booking.objects.all().order_by('-booking_date')
+            result_page = paginator.paginate_queryset(bookings, request)
+            serializer = BookingSerializer(result_page, many=True)
+            return Response(paginator.get_paginated_response(serializer.data).data)
+            
+        
     def post(self, request):
         serializer = BookingSerializer(data=request.data)
         if serializer.is_valid():
@@ -310,16 +328,28 @@ class BookingView(APIView):
                 passenger_id = serializer.data['passenger']
                 is_paid = serializer.data['is_paid']
 
-                
-
-                # Handle payment and update flight availability
                 try:
                     flight = Flight.objects.get(pk=flight_id)
+    
                     flight.available_seats -= 1
                     flight.save()
                 except Flight.DoesNotExist:
                     payment = Payment.objects.create(method_name='Razorpay', amount=0, user_id=passenger_id, booking_id=serializer.data['id'])
                     payment.save()
+
+                try:
+                    user_email = request.user 
+                    subject = 'Booking Confirmation'
+                    email_from = settings.EMAIL_HOST_USER
+                    html_content = render_to_string('confirmation.html')
+                    text_content = strip_tags(html_content)  
+                    message = 'Thank you for booking with us. Your booking ID is ' + str(serializer.data['id'])
+                    email = EmailMultiAlternatives(subject, text_content, message , email_from, [user_email])
+                    email.attach_alternative(html_content, "text/html")
+                    email.send()
+                except Exception as e:
+                    # Handle email sending failure gracefully
+                    print("Failed to send confirmation email:", str(e))
                 
                 # Additional operations for insurance and food can be added here
 
@@ -425,6 +455,7 @@ class PaymentDetailView(APIView):
 class PassengerReviewListCreate(generics.ListCreateAPIView):
     queryset = Reviews.objects.all()
     serializer_class = PassengerReviewSerializer
+
 
     
 
