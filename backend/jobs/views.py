@@ -10,7 +10,7 @@ class JobDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
 
-class ApplicantViewSet(generics.ListAPIView):
+class ApplicantViewSet(generics.ListCreateAPIView):
     queryset = Applicant.objects.all()
     serializer_class = ApplicantSerializer
 

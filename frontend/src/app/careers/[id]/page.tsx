@@ -1,5 +1,9 @@
 "use client";
+import * as React from "react";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+
+import Apply from "./apply";
 
 export default function Page({ params }: { params: { id: string } }) {
   const [jobData, setJobData] = useState<any>(null);
@@ -21,7 +25,8 @@ export default function Page({ params }: { params: { id: string } }) {
       try {
         const response = await fetch("http://127.0.0.1:8000/department/");
         const data = await response.json();
-        setDepartmentData(data);
+
+        setDepartmentData(data.results);
       } catch (error) {
         console.error("Error fetching department data:", error);
       }
@@ -44,30 +49,51 @@ export default function Page({ params }: { params: { id: string } }) {
     return <div className="text-center">Job not found</div>;
   }
 
-  const departmentName = departmentData.find((department: any) => department.id === jobData.department)?.name;
+  const departmentName = departmentData.find(
+    (department: any) => department.id === jobData.department
+  )?.name;
 
-  const descriptionPoints = jobData.description.split('\n');
+  const descriptionPoints = jobData.description.split(".");
+  const requirementPoints = jobData.requirements.split(",");
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4 mt-5">{jobData.title}</h1>
+    <div className="container mx-auto px-4 py-8 flex">
+      <div className="w-3/4">
+        <h1 className="text-3xl font-bold mb-4 mt-5">{jobData.title}</h1>
 
-      <div className="mb-4">
-        <h2 className="font-bold">Description:</h2>
+        <div className="mb-4">
+          <h2 className="font-bold">Description:</h2>
+          <ul className="list-disc ml-8">
+            {descriptionPoints.map((point: string, index: number) => (
+              <li key={index}>{point}</li>
+            ))}
+          </ul>
+        </div>
+
+        <p className="fobt-bold mb-4">Department: {departmentName}</p>
+        <p className="font-bold mb-4">Requirements:</p>
+
         <ul className="list-disc ml-8">
-          {descriptionPoints.map((point: string, index: number) => (
+          {requirementPoints.map((point: string, index: number) => (
             <li key={index}>{point}</li>
           ))}
         </ul>
+
+        <p className="font-bold mb-4">Salary: </p>
+        <p className="mt-2 mb-4">{jobData.salary}</p>
+
+        <Apply jobId={params.id} />
       </div>
 
-      <p className="text-gray-700 mb-4">Department: {departmentName}</p>
-
-      <p className="text-gray-700 mb-4">Requirements: {jobData.requirements}</p>
-
-      <p className="text-gray-700 mb-4">Salary: {jobData.salary}</p>
-
-      <button className="bg-blue-500 text-white font-bold py-2 mb-5 px-4 rounded mt-4">Apply Now</button>
+      <div className="w-1/4 flex justify-end">
+        <Image
+          src={jobData.image}
+          alt="Image"
+          width={800}
+          height={100}
+          className="mt-5 mb-5"
+        />
+      </div>
     </div>
   );
 }
