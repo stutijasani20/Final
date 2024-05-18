@@ -12,14 +12,14 @@ from rest_framework.validators import UniqueTogetherValidator
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = [ "id",'email', "password", 'role']
+        fields = [ "id",'email', "password", 'is_staff', 'role']
     
 class AuthUserSerializer(serializers.ModelSerializer):
     jwt_token = serializers.SerializerMethodField()
 
     class Meta:
          model = CustomUser
-         fields = ['id',"email" , "jwt_token"]
+         fields = ['id',"email" , "jwt_token", 'is_staff']
 
     def get_jwt_token(self, obj):
         refresh = RefreshToken.for_user(obj)
@@ -67,3 +67,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         user = CustomUser.objects.create_user(password=password, **validated_data)
         return user
     
+class UpdateStaffStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['is_staff']

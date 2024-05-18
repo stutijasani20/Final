@@ -16,95 +16,8 @@ from django.core.exceptions import ImproperlyConfigured
 from .utils import *
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.conf import settings
-from django.core.mail import send_mail, BadHeaderError
-from rest_framework import filters
-from rest_framework.parsers import FormParser, MultiPartParser
+from django.core.mail import send_mail
 from rest_framework.views import APIView
-
-
-
-
-# class AuthViewSet(viewsets.GenericViewSet):
-#     permission_classes = [AllowAny]
-#     queryset = CustomUser.objects.all() 
-#     serializer_class = EmptySerializer
-#     serializer_classes = {
-#         'login': UserLoginSerializer,
-#         'register': UserRegisterSerializer,
-#     }
-
-#     @action(methods=['POST'], detail=False)
-#     def login(self, request):
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         user = get_and_authenticate_user(**serializer.validated_data)
-#         serializer_class = AuthUserSerializer 
-#         data = serializer_class(user).data
-#         print(data)
-
-#         return Response(data=data, status=status.HTTP_200_OK)
-        
-    
-    
-#     @action(methods=['POST',], detail=False)
-#     def register(self, request):
-#         serializer = self.get_serializer(data=request.data)
-        
-#         serializer.is_valid(raise_exception=True)
-#         user = create_user_account(**serializer.validated_data)
-#         data = AuthUserSerializer(user).data
-#         print(user)
-        
-#         subject = 'Welcome to ELegance Air'
-
-#         message = f'Hi {user}, thank you for registering in our website. We are glad to have you with us. Enjoy your journey with us.'
-#         email_from = settings.EMAIL_HOST_USER
-#         recipient_list = [user, ]
-#         send_mail(subject, message, email_from, recipient_list)
-        
-        
-                
-#         return Response(data=data, status=status.HTTP_201_CREATED)
-
-#     @action(methods=['POST', ], detail=False)
-#     def logout(self, request):
-#         logout(request)
-#         data = {'success': 'Sucessfully logged out'}
-#         return Response(data=data, status=status.HTTP_200_OK)
-    
-
-    
-
-
-#     def get_serializer_class(self):
-#         if not isinstance(self.serializer_classes, dict):
-#             raise ImproperlyConfigured("serializer_classes should be a dict mapping.")
-
-#         if self.action in self.serializer_classes.keys():
-#             return self.serializer_classes[self.action]
-#         return super().get_serializer_class()
-
-
-# class UserListAPIView(APIView):
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [IsAuthenticated]
-#     def get(self, request, format=None):
-#         print(request.user)
-#         users = CustomUser.objects.all()
-#         serializer = UserSerializer(users, many=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-
-# class UserDetailAPIView(APIView):
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [IsAuthenticated]
-    
-
-#     def get(self, request, pk, format=None):
-#                 user = CustomUser.objects.get(pk=pk)
-               
-#                 serializer = UserSerializer(user)
-#                 return Response(serializer.data, status=status.HTTP_200_OK)
-
 from django.conf import settings
 from django.core.mail import send_mail
 from rest_framework import status, viewsets
@@ -116,6 +29,7 @@ from .models import CustomUser
 from .serializers import EmptySerializer, UserLoginSerializer, UserRegisterSerializer, AuthUserSerializer, UserSerializer
 from django.contrib.auth import logout
 from users.utils import Utils
+from rest_framework.pagination import PageNumberPagination
 
 class AuthViewSet(viewsets.GenericViewSet):
     permission_classes = [AllowAny]
@@ -144,26 +58,7 @@ class AuthViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         user = create_user_account(**serializer.validated_data)
         data = AuthUserSerializer(user).data
-        print(user)
         Utils.send_mail()
-
-        # subject = 'Welcome to Elegance Air'
-
-        # message = f'Hi {user.email}, thank you for registering on our website. We are glad to have you with us. Enjoy your journey with us.'
-        # email_from = settings.EMAIL_HOST_USER
-        # email = [user.email]
-        # # send_mail(subject, message, email_from, recipient_list)
-        # token = PasswordResetTokenGenerator().make_token(user)
-        # link = 'http://localhost:3000/reset/'+'/'+token
-        # body = 'Click Following Link to Reset Your Password '+link
-
-        # send_mail(
-        #     'Password Reset',
-        #     f'link click and reset your password: ${body}',
-        #     email_from,
-        #     [email],
-        #     fail_silently=False,
-        # )
 
         return Response(data=data, status=status.HTTP_201_CREATED)
 
@@ -172,6 +67,8 @@ class AuthViewSet(viewsets.GenericViewSet):
         logout(request)
         data = {'success': 'Successfully logged out'}
         return Response(data=data, status=status.HTTP_200_OK)
+    
+   
 
     def get_serializer_class(self):
         if not isinstance(self.serializer_classes, dict):
@@ -185,12 +82,18 @@ class AuthViewSet(viewsets.GenericViewSet):
 class UserListAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination  # Add pagination class
 
     def get(self, request, format=None):
-        print(request.user)
         users = CustomUser.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # Paginate the queryset
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(users, request)
+
+        # Serialize and return paginated data
+        serializer = UserSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
 
 class UserDetailAPIView(APIView):
@@ -202,3 +105,15 @@ class UserDetailAPIView(APIView):
 
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def put(self, request, pk, format=None):
+        try:
+            user = CustomUser.objects.get(pk=pk)
+        except CustomUser.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserSerializer(user, data=request.data, partial=True)  # Use UserSerializer for update
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

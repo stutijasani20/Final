@@ -331,7 +331,7 @@ class BookingView(APIView):
         
        
         paginator = PageNumberPagination()
-        paginator.page_size = 5  
+        paginator.page_size = 10
         result_page = paginator.paginate_queryset(bookings, request)
         serializer = BookingSerializer(result_page, many=True)
         

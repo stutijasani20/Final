@@ -11,13 +11,21 @@ import { persistor, store } from "../app/store/store";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { url } from "inspector";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 const inter = Inter({ subsets: ["latin"] });
+
+
+
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const admin = pathname.includes("airport_staff");
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -25,10 +33,10 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Provider store={store}>
-          <Navbar />
+        {!admin && <Navbar />} 
           <PersistGate loading={null} persistor={persistor}>
             {children}
-            <Footer />
+        {!admin && <Footer />}
           </PersistGate>
         </Provider>
       </body>
