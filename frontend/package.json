@@ -9,8 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.3.7",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/react-fontawesome": "^0.2.1",
     "@headlessui/react": "^1.7.19",
     "@maptiler/sdk": "^2.0.3",
     "@mui/icons-material": "^5.15.16",
@@ -23,6 +26,9 @@
     "@stripe/react-stripe-js": "^2.7.1",
     "@stripe/stripe-js": "^3.4.0",
     "@types/dotenv": "^8.2.0",
+    "@types/react-google-recaptcha": "^2.1.9",
+    "@types/react-toastify": "^4.1.0",
+    "antd": "^5.17.2",
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
     "framer-motion": "^11.1.9",
@@ -35,6 +41,8 @@
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
+    "react-google-recaptcha": "^3.1.0",
+    "react-icons": "^5.2.1",
     "react-leaflet": "^4.2.1",
     "react-modal": "^3.16.1",
     "react-razorpay": "^2.0.1",
@@ -42,6 +50,7 @@
     "react-router-dom": "^6.23.0",
     "react-spinners": "^0.13.8",
     "react-swipeable": "^7.0.1",
+    "react-toastify": "^10.0.5",
     "redux-persist": "^6.0.0",
     "sass": "^1.75.0"
   },

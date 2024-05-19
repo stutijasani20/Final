@@ -27,19 +27,10 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractUser):
 
-    SUPERUSER = 'superuser'
-    AIRPORT_STAFF = 'airport_staff'
-    CUSTOMER = 'customer'
-    APPLICATION_USER = 'application_user'
-
-    ROLE_CHOICES = [
-        (SUPERUSER, 'Superuser'),
-        (AIRPORT_STAFF, 'Airport Staff'),
-        (CUSTOMER, 'Customer'),
-        (APPLICATION_USER, 'Application User')
-    ]
+    
+    
     email = models.EmailField(_('email address'), unique=True)
-    role = models.CharField(_("role"), max_length=50, choices=ROLE_CHOICES)
+    
 
 
     USERNAME_FIELD = 'email'
@@ -49,17 +40,6 @@ class CustomUser(AbstractUser):
 
 
 
-   
-
-
-
     def __str__(self):
         return self.email
     
-    def save(self, *args, **kwargs):
-        if not self.username:
-            
-            self.username = self.email.split('@')[0]
-        while CustomUser.objects.filter(username=self.username).exists():
-            self.username += '_'
-        super().save(*args, **kwargs)

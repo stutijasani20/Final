@@ -1,0 +1,47 @@
+input[type="checkbox"]:checked + label span {
+
+    position: relative;
+  }
+  
+  input[type="checkbox"]:checked + label span:before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0;
+    width: 2px;
+    height: 5px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  
+  /* Hide the click symbol */
+  input[type="checkbox"]:not(:checked) + label span:before {
+    display: none;
+  }
+  
+  
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(to bottom, #f0f0f0, #f8f598da 60%, #f8f598da 100%);
+    width: 100vw;
+    height: 100vh;
+  }
+    .flex-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    
+  .content {
+    padding: 20px; /* Add padding to the content area */
+    border-radius: 10px;
+  }
+  
+  
+  @media screen and (max-width: 768px) {
+    .content {
+      max-width: 90%; /* Adjusted max width for smaller screens */
+    }
+  }

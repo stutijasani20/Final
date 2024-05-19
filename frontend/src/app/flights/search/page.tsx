@@ -1,8 +1,14 @@
 "use client";
-"use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, MouseEvent, MouseEventHandler } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import "../../styles/flightsearch.scss"
+import { Card, DatePicker, Form, InputNumber, Select, Spin, Tooltip } from 'antd';
+import { InfoCircleOutlined, SearchOutlined } from '@ant-design/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faMinus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import Modal from 'react-modal';
+import Image from 'next/image';
 interface Airport {
   id: number;
   name: string;
@@ -62,14 +68,14 @@ const FlightSearchPage: React.FC = () => {
     }
   };
 
-  const handleTravellerChange = (type: any, operation: any) => (event: any) => {
+  const handleTravellerChange = (type: any, operation: any) => (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setTravellers((prevState:any) => {
       let newValue =
         operation === "increase" ? prevState[type] + 1 : prevState[type] - 1;
       newValue = newValue < 0 ? 0 : newValue; // Ensure the value is not negative
 
-      // Prevent the number of infants from exceeding the number of adults
+    
       if (
         type === "infants" &&
         operation === "increase" &&
@@ -121,227 +127,221 @@ const FlightSearchPage: React.FC = () => {
       console.error("Error fetching flights:", error);
     }
   };
-  // const handleBooking = async (flightId: number) => {
-  //   const user = localStorage.getItem("userId");
-  //   // console.log(user)    // Check if user is authenticated
-  //   try {
-  //     const queryString = `?flight=${flightId}&booking=${user}`;
-  //     router.push(`/booking/${queryString}`);
-  //   } catch (error) {
-  //     console.error("Error booking flight:", error);
-  //     // Handle error, show error message, etc.
-  //   }
+ 
 
   return (
     <>
-      <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-4 mt-5">Flight Search</h1>
-        <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div className="flex items-center justify-center">
+        <div className="w-full md:w-4/5 lg:w-3/5"> 
+        <h1 className="text-3xl font-bold mb-4 mt-5 text-center">Flight Search</h1>
+        <form className="rounded px-8  pb-8 mb-4">
           <div className="container mx-auto py-8 flex flex-col items-center">
             <span className="block text-gray-700 text-sm font-bold mb-2"></span>
             <div>
-              <input
-                type="radio"
-                id="oneWay"
-                name="tripType"
-                value="oneWay"
-                checked={tripType === "oneWay"}
-                onChange={(e) => setTripType(e.target.value)}
-              />
-              <label htmlFor="oneWay" className="mr-4">
-                One Way
-              </label>
-              <input
-                type="radio"
-                id="roundTrip"
-                name="tripType"
-                value="roundTrip"
-                checked={tripType === "roundTrip"}
-                onChange={(e) => setTripType(e.target.value)}
-              />
-              <label htmlFor="roundTrip">Round Trip</label>
-            </div>
-          </div>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="origin"
-            >
-              Origin Airport
-            </label>
-            <select
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="origin"
-              value={origin}
-              onChange={(e) => setOrigin(Number(e.target.value))}
-            >
-              <option value={0}>Select Origin Airport</option>
-              {airports.map((airport) => (
-                <option key={airport.id} value={airport.id}>
-                  {airport.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="destination"
-            >
-              Destination Airport
-            </label>
-            <select
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="destination"
-              value={destination}
-              onChange={(e) => setDestination(Number(e.target.value))}
-            >
-              <option value={0}>Select Destination Airport</option>
-              {airports.map((airport) => (
-                <option key={airport.id} value={airport.id}>
-                  {airport.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          {/* <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="passengers"
-            >
-              Number of Passengers
-            </label>
-            <input
-              type="number"
-              id="passengers"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              value={passenger}
-              onChange={(e) => setPassengers(Number(e.target.value))}
-            />
-          </div> */}
-          <div onClick={() => setShowTravellerPopup(true)}>
-            Travellers: Adults: {travellers.adults}, Children:{" "}
-            {travellers.children}, Infants: {travellers.infants}
-          </div>
+            <button
+                  className={`mr-4 p-2 ${tripType === "oneWay" ? "bg-blue-500 text-white" : "bg-white-500 text-black"} transition-all duration-200 hover:bg-blue-500 hover:text-black hover:scale-110`}
+                  onClick={(e) => { e.preventDefault(); setTripType("oneWay"); }}
+                >
+                  One Way
+                </button>
+             
+                <button
+                  className={`mr-4 p-2 ${tripType === "roundTrip" ? "bg-blue-500 text-white" : "bg-white-500 text-black"} transition-all duration-200 hover:bg-blue-500 hover:text-black hover:scale-110`}
+                  onClick={(e) => { e.preventDefault(); setTripType("roundTrip"); }}
+                >
+                  Round Trip
+                </button>
 
-          {showTravellerPopup && (
-            <div
+            </div>
+          </div> <br /> <br />
+
+          <div className="flex justify-between mb-4">
+              <div className="w-1/2 mr-2">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="origin"
+                >
+                  Origin Airport
+                </label>
+                <select
+                  className="dropdown-input shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="origin"
+                  value={origin}
+                  onChange={(e) => {
+                    setOrigin(Number(e.target.value));
+                    // Clear error when input changes
+                  }}
+                >
+                  <option value="">Select Origin Airport</option>
+                  {airports.map((airport) => (
+                    <option key={airport.id} value={airport.id}>
+                      {airport.name}
+                    </option>
+                  ))}
+                </select>
+               
+              </div>
+
+              <div className="swap-container flex flex-col justify-center mx-2">
+                <button type="button" >
+                  <Image src="/swap.png" width={50} height={50} alt="Swap values" />
+                </button>
+              </div>
+
+              <div className="w-1/2 ml-2">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="destination"
+                >
+                  Destination Airport
+                </label>
+                <select
+                  className="dropdown-input shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="destination"
+                  value={destination}
+                  onChange={(e) => setDestination(Number(e.target.value))}
+                >
+                  <option value="">Select Destination Airport</option>
+                  {airports.map((airport) => (
+                    <option key={airport.id} value={airport.id}>
+                      {airport.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          
+          
+          <div
+              className="mb-4"
+              onClick={() => setShowTravellerPopup(true)}
               style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                backgroundColor: "#fff",
-                padding: "20px",
-                borderRadius: "8px",
-                boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
+                fontWeight: 'bold',
+                fontSize: '17px',
               }}
             >
-              <div>
-                <span>Adults: </span>
-                <button
-                  style={{
-                    margin: "0 5px",
-                    transition: "background-color 0.3s",
-                  }}
-                  onClick={handleTravellerChange("adults", "increase")}
-                  onMouseOver={(e) =>
-                    ((e.target as HTMLElement).style.backgroundColor = "#ddd")
-                  }
-                  onMouseOut={(e) =>
-                    ((e.target as HTMLElement).style.backgroundColor = "")
-                  }
-                >
-                  +
-                </button>
-                {travellers.adults}
-                <button
-                  style={{
-                    margin: "0 5px",
-                    transition: "background-color 0.3s",
-                  }}
-                  onClick={handleTravellerChange("adults", "decrease")}
-                  onMouseOver={(e) =>
-                    ((e.target as HTMLElement).style.backgroundColor = "#ddd")
-                  }
-                  onMouseOut={(e) =>
-                    ((e.target as HTMLElement).style.backgroundColor = "")
-                  }
-                >
-                  -
-                </button>
+              Travellers:<br />
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ paddingRight: '10px' }}>
+                  Adults:
+                  <input type="text" value={travellers.adults} readOnly className="readonly-input" />
+                </div>
+                <div style={{ paddingRight: '0px' }}>
+                  Children:
+                  <input type="text" value={travellers.children} readOnly className="readonly-input" />
+                </div>
+                <div>
+                  Infants:
+                  <input type="text" value={travellers.infants} readOnly className="readonly-input" />
+                </div>
               </div>
-              <div>
-                <button
-                  style={{
-                    margin: "0 5px",
-                    transition: "background-color 0.3s",
-                  }}
-                  onClick={handleTravellerChange("children", "increase")}
-                  onMouseOver={(e) =>
-                    ((e.target as HTMLElement).style.backgroundColor = "#ddd")
-                  }
-                  onMouseOut={(e) =>
-                    ((e.target as HTMLElement).style.backgroundColor = "")
-                  }
-                >
-                  +
-                </button>
-                <span>Children: {travellers.children}</span>
-                <button
-                  style={{
-                    margin: "0 5px",
-                    transition: "background-color 0.3s",
-                  }}
-                  onClick={handleTravellerChange("children", "decrease")}
-                  onMouseOver={(e) =>
-                    ((e.target as HTMLElement).style.backgroundColor = "#ddd")
-                  }
-                  onMouseOut={(e) =>
-                    ((e.target as HTMLElement).style.backgroundColor = "")
-                  }
-                >
-                  -
-                </button>
-              </div>
-              <div>
-                <button
-                  style={{
-                    margin: "0 5px",
-                    transition: "background-color 0.3s",
-                  }}
-                  onClick={handleTravellerChange("infants", "increase")}
-                  onMouseOver={(e) =>
-                    ((e.target as HTMLElement).style.backgroundColor = "#ddd")
-                  }
-                  onMouseOut={(e) =>
-                    ((e.target as HTMLElement).style.backgroundColor = "")
-                  }
-                >
-                  +
-                </button>
-                <span>Infants: {travellers.infants}</span>
-                <button
-                  style={{
-                    margin: "0 5px",
-                    transition: "background-color 0.3s",
-                  }}
-                  onClick={handleTravellerChange("infants", "decrease")}
-                  onMouseOver={(e) =>
-                    ((e.target as HTMLElement).style.backgroundColor = "#ddd")
-                  }
-                  onMouseOut={(e) =>
-                    ((e.target as HTMLElement).style.backgroundColor = "")
-                  }
-                >
-                  -
-                </button>
-              </div>
-              <button onClick={() => setShowTravellerPopup(false)}>
-                Close
-              </button>
             </div>
-          )}
+
+            {showTravellerPopup && (
+              <Modal
+                isOpen={showTravellerPopup}
+                onRequestClose={() => setShowTravellerPopup(false)}
+                className="modal-content"
+                overlayClassName="modal-overlay"
+              >
+                <div>
+                  <button className="close-button" onClick={() => setShowTravellerPopup(false)}>
+                    <FontAwesomeIcon icon={faTimes} color="red" />
+                  </button>
+
+                  <h2 className="modal-title">Please Select The Seats:</h2>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px', flexWrap: 'wrap' }}>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px' }}>
+                      <span style={{ fontWeight: 'bold' }}>Adults:</span>
+                      <div>
+                        <button style={{ margin: "0 10px", transition: "background-color 0.3s" }} onClick={handleTravellerChange("adults", "increase")} onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#ddd"} onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = ""}>
+                          <FontAwesomeIcon icon={faPlus} />
+                        </button>
+                        <span style={{ fontWeight: 'bold', margin: '0 10px' }}>{travellers.adults}</span>
+                        <button
+                          style={{ margin: "0 10px", transition: "background-color 0.3s", cursor: travellers.adults === 1 ? 'not-allowed' : 'pointer' }}
+                          onClick={travellers.adults === 1 ? null : handleTravellerChange("adults", "decrease")}
+                          onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#ddd"}
+                          onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = ""}
+                          disabled={travellers.adults === 1}
+                        >
+                          <FontAwesomeIcon icon={faMinus} />
+                        </button>
+                      </div>
+
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px' }}>
+                      <span style={{ fontWeight: 'bold' }}>Children:</span>
+                      <div>
+                        <button
+                          style={{
+                            margin: "0 10px",
+                            transition: "background-color 0.3s",
+                            cursor: travellers.children === 0 ? 'not-allowed' : 'pointer'
+                          }}
+                          onClick={handleTravellerChange("children", "increase")}
+                          onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#ddd"}
+                          onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = ""}
+                        >
+                          <FontAwesomeIcon icon={faPlus} />
+                        </button>
+                        <span style={{ fontWeight: 'bold', margin: '0 10px' }}>{travellers.children}</span>
+                        <button
+                          style={{
+                            margin: "0 10px",
+                            transition: "background-color 0.3s",
+                            cursor: travellers.children === 0 ? 'not-allowed' : 'pointer'
+                          }}
+                          onClick={travellers.children === 0 ? null : handleTravellerChange("children", "decrease")}
+                          onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#ddd"}
+                          onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = ""}
+                          disabled={travellers.children === 0}
+                        >
+                          <FontAwesomeIcon icon={faMinus} />
+                        </button>
+                      </div>
+                    </div>
+
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px' }}>
+                      <span style={{ fontWeight: 'bold' }}>Infants:</span>
+                      <div>
+                        <button
+                          style={{
+                            margin: "0 10px",
+                            transition: "background-color 0.3s",
+                            cursor: travellers.infants === 0 ? 'not-allowed' : 'pointer'
+                          }}
+                          onClick={handleTravellerChange("infants", "increase")}
+                          onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#ddd"}
+                          onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = ""}
+                        >
+                          <FontAwesomeIcon icon={faPlus} />
+                        </button>
+                        <span style={{ fontWeight: 'bold', margin: '0 10px' }}>{travellers.infants}</span>
+                        <button
+                          style={{
+                            margin: "0 10px",
+                            transition: "background-color 0.3s",
+                            cursor: travellers.infants === 0 ? 'not-allowed' : 'pointer'
+                          }}
+                          onClick={travellers.infants === 0 ? null : handleTravellerChange("infants", "decrease")}
+                          onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#ddd"}
+                          onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = ""}
+                          disabled={travellers.infants === 0}
+                        >
+                          <FontAwesomeIcon icon={faMinus} />
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </Modal>
+            )}
 
           <div className="mb-4">
             <label
@@ -351,12 +351,16 @@ const FlightSearchPage: React.FC = () => {
               Departure Date
             </label>
             <input
-              type="date"
-              id="departureDate"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              value={departureDate}
-              onChange={(e) => setDepartureDate(e.target.value)}
-            />
+                  className="date-input shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="departureDate"
+                  type="date"
+                  value={departureDate}
+                  onChange={(e) => {
+                    setDepartureDate(e.target.value);
+                   
+                  }}
+                  min={new Date().toISOString().split("T")[0]} // Prevent past dates // Prevent past dates
+                />
           </div>
 
           {tripType === "roundTrip" && (
@@ -397,7 +401,7 @@ const FlightSearchPage: React.FC = () => {
             </select>
           </div>
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-blue-500 hover:bg-blue-700 hover:text-black  text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
             onClick={handleSearch}
           >
@@ -406,6 +410,7 @@ const FlightSearchPage: React.FC = () => {
         </form>
 
         {error && <div className="text-red-500 mb-4">{error}</div>}
+      </div>
       </div>
     </>
   );

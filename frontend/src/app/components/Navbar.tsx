@@ -1,64 +1,105 @@
-"use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import "../styles/navbar.scss";
 import { logout } from "../store/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Dropdown from "./Dropdown";
-// Hydration error was caused by the use of the Link component from next/link. and removed with use effect
+import { FaUserCircle } from "react-icons/fa";
+
 const Header: React.FC = () => {
-  const router = useRouter();
-  const isAuthenticatedRedux = useSelector(
+  const [isOpen, setIsOpen] = useState(false);
+  const [isNestedOpen, setIsNestedOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const isAuthenticated = useSelector(
     (state: RootState) => state.isAuthenticated
   );
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    setIsAuthenticated(isAuthenticatedRedux);
-  }, [isAuthenticatedRedux]);
 
   const handleLogout = () => {
     dispatch(logout());
-    router.push("/");
   };
 
   return (
-    <div className="header">
-      <Link href="/" className="logo">
-        <Image src="/logo.png" alt="logo" height={50} width={50} />
-      </Link>
-      <div className="nav-links">
-        <Link href="/flights/search" className="nav-link">
-          Book & Manage
-        </Link>
-        <div className="nav-link">Prepare to Travel</div>
-        <Link href="/reviews" className="nav-link">
-          Passenger Reviews
-        </Link>
-        <Link href="/where_we_fly/route_map" className="nav-link">
-          Where We Fly
+    <nav className="header text-lg font-bold text-blue-600">
+      <div className="logo-container">
+        <Link href="/">
+          <div className="logo">
+            <Image src="/logo1.png" alt="logo" height={150} width={150} />
+          </div>
         </Link>
       </div>
-      <div className="nav-links">
-        {isAuthenticated ? (
-          <div className="nav-link">
-            <Dropdown />
-          
-           
-          </div>
-        ) : (
-          <div>
-            <Link href="/auth/register" className="nav-link">
-              Register/Login
+      <ul className="nav-links">
+        <li>
+          <Link href="#">
+            <div className="dropdown" onClick={() => setIsOpen(!isOpen)}>
+              <div className="nav-link">Book & Manage</div>
+              {isOpen && (
+                <div className="dropdown-content">
+                  <Link href="/flights/search">
+                    <div className="dropdown-item hover:bg-gray-200 p-2">Book Flight</div>
+                  </Link>
+                  <Link href="/link2">
+                    <div className="dropdown-item hover:bg-gray-200 p-2">Web CheckIn</div>
+                  </Link>
+                  <div className="dropdown-item text-gray-700 hover:bg-gray-200 p-2" onMouseEnter={() => setIsNestedOpen(true)} onMouseLeave={() => setIsNestedOpen(false)}>
+                    Cancel/Reschedule Flight
+                    {isNestedOpen && (
+                      <div className="dropdown-content">
+                        <Link href="/link4">
+                          <div className="dropdown-item text-gray-700 hover:bg-gray-200 p-2">Cancel Flight</div>
+                        </Link>
+                        <Link href="/link5">
+                          <div className="dropdown-item text-gray-700 hover:bg-gray-200 p-2">Reschedule Flight</div>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </Link>
+        </li>
+        <li>
+          <div className="nav-link">Prepare to Travel</div>
+        </li>
+        <li>
+          <Link href="/reviews">
+            <div className="nav-link">Passenger Reviews</div>
+          </Link>
+        </li>
+        <li>
+          <Link href="/">
+            <div className="nav-link">Where We Fly</div>
+          </Link>
+        </li>
+        <li>
+          {isAuthenticated ? (
+            <div className="nav-link" onClick={handleLogout}>
+              Logout
+            </div>
+          ) : (
+            <Link href="/auth/login">
+              <div className="nav-link">Login</div>
+            </Link>
+          )}
+        </li>
+      </ul>
+      <div className="profile-container" onMouseEnter={() => setIsProfileOpen(true)} onMouseLeave={() => setIsProfileOpen(false)}>
+        <FaUserCircle size={50} />
+        {isProfileOpen && (
+          <div className="profile-dropdown">
+            <Link href="/auth/login">
+              <div className="dropdown-item hover:bg-gray-200 p-2">Login</div>
+            </Link>
+            <Link href="/auth/register">
+              <div className="dropdown-item hover:bg-gray-200 p-2">Register</div>
             </Link>
           </div>
         )}
       </div>
-    </div>
+    </nav>
   );
 };
 

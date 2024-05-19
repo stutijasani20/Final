@@ -28,7 +28,7 @@ from rest_framework.views import APIView
 from .models import CustomUser
 from .serializers import EmptySerializer, UserLoginSerializer, UserRegisterSerializer, AuthUserSerializer, UserSerializer
 from django.contrib.auth import logout
-from users.utils import Utils
+
 from rest_framework.pagination import PageNumberPagination
 
 class AuthViewSet(viewsets.GenericViewSet):
@@ -58,7 +58,7 @@ class AuthViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         user = create_user_account(**serializer.validated_data)
         data = AuthUserSerializer(user).data
-        Utils.send_mail()
+        
 
         return Response(data=data, status=status.HTTP_201_CREATED)
 

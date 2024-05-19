@@ -1,70 +1,168 @@
-.backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("/2.jpeg");
-  background-size: cover;
-  background-position: center;
-  z-index: 1000;
-}
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.about-section {
-  background-size: cover;
-  background-position: center;
-}
-
-// p {
-//   font-size: 18px;
-//   font-family: "georgia";
-//   font-weight: bold;
-//   margin-left: 35px;
+// .backdrop {
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   background-image: url("/2.jpeg");
+//   background-size: cover;
+//   background-position: center;
+//   z-index: 1000;
 // }
-// h1 {
-//   margin-left: 35px;
+// .container {
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
 // }
 
-$table-width: 130%;
-$cell-padding: 8px 12px;
+// .about-section {
+//   background-size: cover;
+//   background-position: center;
+// }
 
-.table-container {
-  width: $table-width;
+// // p {
+// //   font-size: 18px;
+// //   font-family: "georgia";
+// //   font-weight: bold;
+// //   margin-left: 35px;
+// // }
+// // h1 {
+// //   margin-left: 35px;
+// // }
+
+// $table-width: 130%;
+// $cell-padding: 8px 12px;
+
+// .table-container {
+//   width: $table-width;
+//   margin: 0 auto;
+
+//   table {
+//     border-collapse: collapse;
+//     width: 100%;
+//     margin-left: 35%;
+//     margin-top: 40%;
+
+//     th,
+//     td {
+//       padding: $cell-padding;
+//       text-align: center;
+//       color: black;
+//     }
+
+//     th {
+//       background-color: #f2f2f2;
+//       font-weight: bold;
+//     }
+
+//     tbody {
+//       border-bottom: 1px solid #ccc;
+//       color: black;
+//       background-color: #f2f2f2;
+//     }
+//   }
+// }
+
+// .left-div,
+// .right-div {
+//   flex: 1;
+//   padding: 20px;
+// }
+
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(to bottom,rgb(199, 201, 216),  rgba(63, 81, 181, 1)  20%, rgba(26, 35, 126, 1) 90%, );
+  min-height: 100vh;
+  margin: 0;
+}
+
+.main-container {
+  background-color: transparent;
+  padding: 20px;
+  /* Add some padding for better spacing */
   margin: 0 auto;
+  /* Center align the container */
+  max-width: 100%;
 
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    margin-left: 35%;
-    margin-top: 40%;
+}
 
-    th,
-    td {
-      padding: $cell-padding;
+/* Adjustments for small screens */
+@media (max-width: 768px) {
+  .grid-cols-1 {
+      grid-template-columns: 1fr;
+      /* Display one column on small screens */
+  }
+
+  /* Adjust the font size and padding for better mobile experience */
+  .text-3xl {
+      font-size: 2rem;
+  }
+
+  .px-4 {
+      padding-left: 1rem;
+      padding-right: 1rem;
+  }
+
+  .lg:text-left {
       text-align: center;
-      color: black;
-    }
-
-    th {
-      background-color: #f2f2f2;
-      font-weight: bold;
-    }
-
-    tbody {
-      border-bottom: 1px solid #ccc;
-      color: black;
-      background-color: #f2f2f2;
-    }
+      /* Center align text on small screens */
   }
 }
 
-.left-div,
-.right-div {
-  flex: 1;
+/* Styles for the footer */
+.footer {
+  background-color: transparent;
   padding: 20px;
+  text-align: center;
+}
+
+/* Social media icons */
+.footer a {
+  margin-right: 10px;
+}
+
+/* Additional styles for the footer contact information */
+.contact-info {
+  text-align: center;
+}
+
+.contact-info span {
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Adjust styles for testimonial cards */
+.testimonial-card {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+
+button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+}
+
+
+
+/* Additional adjustments for testimonial cards on small screens */
+@media (max-width: 768px) {
+  .text-3xl {
+      font-size: 2rem;
+  }
+
+  .px-4 {
+      padding-left: 1rem;
+      padding-right: 1rem;
+  }
+
+  .lg:text-left {
+      text-align: center;
+  }
 }
