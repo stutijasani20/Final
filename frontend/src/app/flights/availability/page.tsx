@@ -1,11 +1,20 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { Grid, Paper, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
-import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
-import FlightLandIcon from '@mui/icons-material/FlightLand';
+import {
+  Grid,
+  Paper,
+  Typography,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import FlightLandIcon from "@mui/icons-material/FlightLand";
 
 interface Flight {
   id: number;
@@ -24,7 +33,6 @@ interface Flight {
   departure_code: string;
   arrival_code: string;
 }
-
 
 const AvailableFlightsPage: React.FC = () => {
   const router = useRouter();
@@ -106,12 +114,21 @@ const AvailableFlightsPage: React.FC = () => {
   };
 
   const formatDate = (dateString: any) => {
-    const options = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    const options = {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    };
+    return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
   const formatTime = (timeString: any) => {
-    return new Date(timeString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    return new Date(timeString).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
   };
 
   const calculateDuration = (departureTime: string, arrivalTime: string) => {
@@ -123,55 +140,52 @@ const AvailableFlightsPage: React.FC = () => {
     return `${diffHrs}h ${diffMins}m`;
   };
 
-  
-
   return (
-  
-<div className="container mx-auto py-8 mt-4">
-  <div className="rounded-lg shadow-md p-6">
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="md:col-span-1">
+    <div className="container mx-auto py-8 mt-4">
+      <div className="rounded-lg shadow-md p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="md:col-span-1">
             <label className="block text-sm font-medium text-gray-700">
               Departure Airport
             </label>
             <input
-          type="text"
-          value={departure_airport}
-          onChange={(e) => setDeparture_airport(e.target.value)}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-        />
+              type="text"
+              value={departure_airport}
+              onChange={(e) => setDeparture_airport(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+            />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Arrival Airport
             </label>
             <input
-          type="text"
-          value={arrival_airport}
-          onChange={(e) => setArrival_airport(e.target.value)}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-        />
+              type="text"
+              value={arrival_airport}
+              onChange={(e) => setArrival_airport(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+            />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Travel Date
             </label>
             <input
-          type="date"
-          value={travel_date}
-          onChange={(e) => setTravel_date(e.target.value)}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-        />
+              type="date"
+              value={travel_date}
+              onChange={(e) => setTravel_date(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+            />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Class
             </label>
             <select
-          value={classes}
-          onChange={(e) => setClasses(e.target.value)}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-        >
+              value={classes}
+              onChange={(e) => setClasses(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+            >
               <option value="">Select Class</option>
               <option value="Economy Class">Economy Class</option>
               <option value="Business Class">Business Class</option>
@@ -179,10 +193,10 @@ const AvailableFlightsPage: React.FC = () => {
             </select>
           </div>
           <div className="col-span-2">
-          <button
-          onClick={handleSearchModification}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
+            <button
+              onClick={handleSearchModification}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
               Modify Search
             </button>
           </div>
@@ -196,9 +210,16 @@ const AvailableFlightsPage: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 mb-5 gap-4">
           {filteredFlights.map((flight) => (
-            <div key={flight.id} className="border border-gray-200 p-4 rounded-lg shadow-md font-serif">
+            <div
+              key={flight.id}
+              className="border border-gray-200 p-4 rounded-lg shadow-md font-serif"
+            >
               <div>
-                <Typography variant="h6" className="font-bold mb-2 font-serif" style={{ fontWeight: "bold" }}>
+                <Typography
+                  variant="h6"
+                  className="font-bold mb-2 font-serif"
+                  style={{ fontWeight: "bold" }}
+                >
                   {flight.flight_number}
                 </Typography>
                 <hr />
@@ -217,11 +238,14 @@ const AvailableFlightsPage: React.FC = () => {
                   </Typography>
                 </div>
                 <div className="w-1/2 flex items-center justify-center space-x-2">
-                  <FlightTakeoffIcon sx={{ color: "red" }} /> ----------- {" "}
+                  <FlightTakeoffIcon sx={{ color: "red" }} /> -----------{" "}
                   <Typography variant="body1" className="mb-2 text-center">
-                    {calculateDuration(flight.departure_time, flight.arrival_time)}
-                  </Typography> --------- {" "}
-                  <FlightLandIcon sx={{ color: "red" }} />
+                    {calculateDuration(
+                      flight.departure_time,
+                      flight.arrival_time
+                    )}
+                  </Typography>{" "}
+                  --------- <FlightLandIcon sx={{ color: "red" }} />
                 </div>
                 <div className="w-1/3 pl-2">
                   <Typography variant="body1" className="mb-2">
@@ -264,31 +288,48 @@ const AvailableFlightsPage: React.FC = () => {
                 <strong>Flight Number:</strong> {selectedFlight.flight_number}
               </Typography>
               <Typography variant="body1" className="mb-2">
-                <strong>Departure Airport:</strong> {selectedFlight.departure_airport_name} ({selectedFlight.departure_code})
+                <strong>Departure Airport:</strong>{" "}
+                {selectedFlight.departure_airport_name} (
+                {selectedFlight.departure_code})
               </Typography>
               <Typography variant="body1" className="mb-2">
-                <strong>Departure Date:</strong> {formatDate(selectedFlight.departure_time)}
+                <strong>Departure Date:</strong>{" "}
+                {formatDate(selectedFlight.departure_time)}
               </Typography>
               <Typography variant="body1" className="mb-2">
-                <strong>Departure Time:</strong> {formatTime(selectedFlight.departure_time)}
+                <strong>Departure Time:</strong>{" "}
+                {formatTime(selectedFlight.departure_time)}
               </Typography>
               <Typography variant="body1" className="mb-2">
-                <strong>Arrival Airport:</strong> {selectedFlight.arrival_airport_name} ({selectedFlight.arrival_code})
+                <strong>Arrival Airport:</strong>{" "}
+                {selectedFlight.arrival_airport_name} (
+                {selectedFlight.arrival_code})
               </Typography>
               <Typography variant="body1" className="mb-2">
-                <strong>Arrival Date:</strong> {formatDate(selectedFlight.arrival_time)}
+                <strong>Arrival Date:</strong>{" "}
+                {formatDate(selectedFlight.arrival_time)}
               </Typography>
               <Typography variant="body1" className="mb-2">
-                <strong>Arrival Time:</strong> {formatTime(selectedFlight.arrival_time)}
+                <strong>Arrival Time:</strong>{" "}
+                {formatTime(selectedFlight.arrival_time)}
               </Typography>
               <Typography variant="body1" className="mb-2">
-                <strong>Total Duration:</strong> {calculateDuration(selectedFlight.departure_time, selectedFlight.arrival_time)}
+                <strong>Total Duration:</strong>{" "}
+                {calculateDuration(
+                  selectedFlight.departure_time,
+                  selectedFlight.arrival_time
+                )}
               </Typography>
               <Typography variant="body1" className="mb-2">
-                <strong>Price:</strong> {selectedFlight.price.toLocaleString("en-IN", { style: "currency", currency: "INR" })}
+                <strong>Price:</strong>{" "}
+                {selectedFlight.price.toLocaleString("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                })}
               </Typography>
               <Typography variant="body1" className="mb-2">
-                <strong>Available Seats:</strong> {selectedFlight.available_seats}
+                <strong>Available Seats:</strong>{" "}
+                {selectedFlight.available_seats}
               </Typography>
             </>
           )}
@@ -300,9 +341,7 @@ const AvailableFlightsPage: React.FC = () => {
         </DialogActions>
       </Dialog>
     </div>
-   
   );
 };
 
 export default AvailableFlightsPage;
-

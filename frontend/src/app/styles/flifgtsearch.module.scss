@@ -1,0 +1,122 @@
+.body {
+  font-family: "Montserrat", sans-serif;
+  /* Apply gradient background */
+  background: linear-gradient(
+    to bottom,
+    rgba(240, 240, 240, 1),
+    rgb(135, 206, 235) 70%
+  );
+  min-height: 100vh;
+  min-width: 100vw;
+  margin: 0;
+
+  /* Remove default margin to ensure styles cover the entire viewport */
+  @media (min-width: 768px) {
+    .ReactModal__Content {
+      width: 20%;
+      height: 30%;
+    }
+  }
+}
+
+.readonlyInput {
+  background-color: rgb(151, 212, 240);
+}
+
+.swapContainer {
+  padding-top: 25px;
+}
+
+.button {
+  &:hover {
+    background-color: #faf9f6 !important;
+  }
+}
+
+.modalSection {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  .modalLabel {
+    font-weight: bold;
+    margin-left: -55px;
+  }
+
+  .modalControls {
+    display: flex;
+    flex-wrap: wrap;
+
+    .modalButton {
+      margin: 0 10px;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: #ddd;
+      }
+    }
+
+    .modalValue {
+      font-weight: bold;
+      margin: 0 10px;
+    }
+  }
+}
+
+.modalOverlay {
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.5
+  ); // Semi-transparent background for the modal overlay
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed; /* Ensure it covers the entire viewport */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.modalContent {
+  background-color: #87ceeb;
+  border-radius: 10px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  width: 90%; // Adjust the width as needed
+  max-width: 400px; // Limit the maximum width for smaller screens
+  position: relative; /* Position relative to the parent */
+  overflow: auto;
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.modalTitle {
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center; /* Add this line to center the text */
+}
+
+.modalControls > div {
+  /* Ensure each control fits within the modal */
+  width: calc(33.33% - 20px); /* Adjust as needed */
+  margin-right: 20px;
+  margin-bottom: 10px;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .modalControls > div {
+    width: calc(50% - 20px); /* Adjust as needed */
+  }
+}

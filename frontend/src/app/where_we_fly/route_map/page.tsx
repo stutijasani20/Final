@@ -7,12 +7,11 @@ import "@maptiler/sdk/dist/maptiler-sdk.css";
 export default function Map(): JSX.Element {
   const mapContainer = useRef<HTMLDivElement>(null);
   const [markers, setMarkers] = useState<any[]>([]);
-  const zoom = 3;
+  const zoom = 4.9;
 
   useEffect(() => {
     if (!mapContainer.current) return;
 
-   
     const center_map = { lng: 78.9629, lat: 20.5937 }; // Mumbai Airport coordinates
 
     maptilersdk.config.apiKey = "oXA9UAqOuM8L6RQbCgHd";

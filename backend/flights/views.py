@@ -41,10 +41,11 @@ class FlightView(APIView):
         if travel_date:
             flights = flights.filter(travel_date=travel_date)
         if class_name:
-            flights = flights.filter(classes_name=class_name)
+
+            flights = flights.filter(classes__name=class_name)
        
         serializer = FlightSerializer(flights, many=True)
-        
+      
         return Response(serializer.data)
     
 

@@ -1,39 +1,43 @@
 "use client";
 
 import React from "react";
-import Avatar from '@mui/material/Avatar';
-import Rating from '@mui/material/Rating';
-import StarIcon from '@mui/icons-material/Star';
+import Avatar from "@mui/material/Avatar";
+import Rating from "@mui/material/Rating";
+import StarIcon from "@mui/icons-material/Star";
 
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaHome, FaEnvelope, FaPhone, FaPlane } from 'react-icons/fa'; // import social media icons
-import { motion } from 'framer-motion';
+import {
+  FaFacebook,
+  FaTwitter,
+  FaInstagram,
+  FaLinkedin,
+  FaHome,
+  FaEnvelope,
+  FaPhone,
+  FaPlane,
+} from "react-icons/fa"; // import social media icons
+import { motion } from "framer-motion";
 
-import "./styles/main.scss"
-
+// import "./styles/main.scss"
 
 const MiddleSection: React.FC = () => {
-
   return (
-
     <>
-    
-    <motion.div
+      <motion.div
         className="main-container pt-16"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
       >
         {/* Add other content here */}
-      
-
 
         <div className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl italic font-semibold text-white text-center mb-8">
               Explore Our Services
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8" > {/* Adjusted grid layout for smaller screens */}
-            
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+              {" "}
+              {/* Adjusted grid layout for smaller screens */}
               <ServiceCard
                 title="Flight Booking"
                 description="Book your flights hassle-free with our easy-to-use booking system."
@@ -54,13 +58,11 @@ const MiddleSection: React.FC = () => {
                 description="Enjoy a range of complimentary amenities onboard, ensuring a comfortable and enjoyable journey."
                 icon="🎁"
               />
-
               <ServiceCard
                 title="Exclusive Deals and Discounts"
                 description="Unlock exclusive deals and discounts when you book with us, saving you money on your travels."
                 icon="💰"
               />
-
               <ServiceCard
                 title="Flexible Booking Options"
                 description="Choose from a variety of flexible booking options, including refundable fares and date changes."
@@ -81,7 +83,6 @@ const MiddleSection: React.FC = () => {
                 discount="Up to 30% off"
                 expiry="Expires on May 31, 2024"
                 description="Book now and save on your spring travels."
-
               />
               <OfferCard
                 title="Family Package"
@@ -129,8 +130,6 @@ const MiddleSection: React.FC = () => {
                 description="Experience the magic of winter with our special winter wonderland offers."
               />
 
-
-
               <OfferCard
                 title="Holiday Bonanza"
                 image="/holiday.jpg"
@@ -138,7 +137,6 @@ const MiddleSection: React.FC = () => {
                 expiry="Valid for bookings from November to January"
                 description="Celebrate the holidays with our exclusive holiday bonanza discounts."
               />
-
             </div>
           </div>
         </div>
@@ -221,14 +219,22 @@ const MiddleSection: React.FC = () => {
                 image="/europe.jpg"
                 price="1999"
                 duration="10 Days / 9 Nights"
-                includes={["Multiple Destinations", "Guided Tours", "Transportation"]}
+                includes={[
+                  "Multiple Destinations",
+                  "Guided Tours",
+                  "Transportation",
+                ]}
               />
               <PackageCard
                 name="City Explorer"
                 image="/cityexplorer.jpeg"
                 price="15,999"
                 duration="4 Days / 3 Nights"
-                includes={["Flight tickets", "City center hotel accommodation", "Sightseeing tours"]}
+                includes={[
+                  "Flight tickets",
+                  "City center hotel accommodation",
+                  "Sightseeing tours",
+                ]}
               />
 
               <PackageCard
@@ -236,7 +242,11 @@ const MiddleSection: React.FC = () => {
                 image="/beach.jpg"
                 price="28,499"
                 duration="6 Days / 5 Nights"
-                includes={["Flight tickets", "Beach resort accommodation", "Water sports activities"]}
+                includes={[
+                  "Flight tickets",
+                  "Beach resort accommodation",
+                  "Water sports activities",
+                ]}
               />
 
               <PackageCard
@@ -244,7 +254,11 @@ const MiddleSection: React.FC = () => {
                 image="/1020.jpg"
                 price="23,999"
                 duration="7 Days / 6 Nights"
-                includes={["Flight tickets", "Historic hotel accommodation", "Guided historical tours"]}
+                includes={[
+                  "Flight tickets",
+                  "Historic hotel accommodation",
+                  "Guided historical tours",
+                ]}
               />
 
               <PackageCard
@@ -252,7 +266,11 @@ const MiddleSection: React.FC = () => {
                 image="/groups.jpg"
                 price="35,999"
                 duration="9 Days / 8 Nights"
-                includes={["Flight tickets", "Ski lodge accommodation", "Skiing and snowboarding"]}
+                includes={[
+                  "Flight tickets",
+                  "Ski lodge accommodation",
+                  "Skiing and snowboarding",
+                ]}
               />
 
               <PackageCard
@@ -260,9 +278,12 @@ const MiddleSection: React.FC = () => {
                 image="/back.jpg"
                 price="42,999"
                 duration="12 Days / 11 Nights"
-                includes={["Flight tickets", "Cultural immersion experiences", "Local cuisine sampling"]}
+                includes={[
+                  "Flight tickets",
+                  "Cultural immersion experiences",
+                  "Local cuisine sampling",
+                ]}
               />
-
             </div>
           </div>
         </div>
@@ -369,11 +390,9 @@ const MiddleSection: React.FC = () => {
               <TestimonialCard
                 name="Isabella Wilson"
                 location="Sydney, Australia"
-
                 quote="Friendly staff and great amenities. Made my long-haul flight enjoyable."
                 rating={4}
               />
-
 
               <TestimonialCard
                 name="Jane Smith"
@@ -390,16 +409,14 @@ const MiddleSection: React.FC = () => {
             </div>
           </div>
         </div>
-      
       </motion.div>
-
-
-
 
       <footer className=" footer bg-zinc-50 text-center text-surface/75 dark:bg-neutral-700 dark:text-white/75 lg:text-left m-0 p-0">
         <div className="flex flex-col lg:flex-row items-center justify-center border-b-2 border-neutral-200 p-6 dark:border-white/10 lg:justify-between">
           <div className="mb-4 lg:mb-0 lg:me-12">
-            <span className="hidden lg:block">Get connected with us on social networks:</span>
+            <span className="hidden lg:block">
+              Get connected with us on social networks:
+            </span>
           </div>
           <div className="flex justify-center lg:justify-start">
             {/* Social media icons (replace "#" with actual links) */}
@@ -428,13 +445,17 @@ const MiddleSection: React.FC = () => {
               Air Elegance
             </h6>
             <p>
-              We are a leading airline company providing top-notch services to our customers worldwide. Our headquarters are located at Luxaria Business Hub, Surat.
+              We are a leading airline company providing top-notch services to
+              our customers worldwide. Our headquarters are located at Luxaria
+              Business Hub, Surat.
             </p>
           </div>
-        </div>  
+        </div>
         {/* Contact Information */}
         <div className="flex flex-col lg:items-end lg:pr-10 space-y-4 justify-center">
-          <h2 className="font-bold text-center mb-4 lg:mb-3">Contact Information</h2>
+          <h2 className="font-bold text-center mb-4 lg:mb-3">
+            Contact Information
+          </h2>
           <div className="flex flex-col items-start">
             <div className="flex items-center mb-4">
               <FaHome className="me-2" size={26} />
@@ -446,29 +467,33 @@ const MiddleSection: React.FC = () => {
             </div>
             <div className="flex items-center">
               <FaPhone className="me-2" size={26} />
-              <span>+91 9408199677</span><br />
+              <span>+91 9408199677</span>
+              <br />
             </div>
           </div>
         </div>
 
-
-
-
-
         {/* Copyright section */}
-        < div className="bg-black/5 p-6  text-center" >
+        <div className="bg-black/5 p-6  text-center">
           <span>© 2024 Copyright:</span>
-          <a className="font-semibold hover:text-blue-500" href="https://airelegance.com/">Air Elegance</a>
-        </div >
-      </footer >
-
-
-
-
+          <a
+            className="font-semibold hover:text-blue-500"
+            href="https://airelegance.com/"
+          >
+            Air Elegance
+          </a>
+        </div>
+      </footer>
     </>
   );
 };
-const OfferCard: React.FC<{ title: string; image: string; discount: string; expiry: string; description: string }> = ({ title, image, discount, expiry, description }) => {
+const OfferCard: React.FC<{
+  title: string;
+  image: string;
+  discount: string;
+  expiry: string;
+  description: string;
+}> = ({ title, image, discount, expiry, description }) => {
   return (
     <div className="bg-white shadow-lg rounded-md overflow-hidden transition duration-300 ease-in-out transform hover:scale-105">
       <img src={image} alt={title} className="w-full h-64 object-cover" />
@@ -484,13 +509,16 @@ const OfferCard: React.FC<{ title: string; image: string; discount: string; expi
   );
 };
 
-
-const ServiceCard: React.FC<{ title: string; description: string; icon: string }> = ({ title, description, icon }) => {
+const ServiceCard: React.FC<{
+  title: string;
+  description: string;
+  icon: string;
+}> = ({ title, description, icon }) => {
   return (
     <motion.div
       className="bg-white shadow-lg p-6 rounded-md"
-      whileHover={{ scale: 1.05, boxShadow: '0 10px 20px rgba(0,0,0,0.2)' }}
-      transition={{ type: 'spring', stiffness: 300 }}
+      whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
+      transition={{ type: "spring", stiffness: 300 }}
     >
       <div className="text-4xl mb-4">{icon}</div>
       <h3 className="text-2xl font-semibold mb-2">{title}</h3>
@@ -499,7 +527,11 @@ const ServiceCard: React.FC<{ title: string; description: string; icon: string }
   );
 };
 
-const DestinationCard: React.FC<{ title: string; image: string; description: string }> = ({ title, image, description }) => {
+const DestinationCard: React.FC<{
+  title: string;
+  image: string;
+  description: string;
+}> = ({ title, image, description }) => {
   return (
     <div className="bg-white shadow-lg rounded-md overflow-hidden transition duration-300 ease-in-out transform hover:scale-105">
       <img src={image} alt={title} className="w-full h-64 object-cover" />
@@ -511,38 +543,42 @@ const DestinationCard: React.FC<{ title: string; image: string; description: str
   );
 };
 
-
-
-
-
-
-
 const labels: { [index: string]: string } = {
-  0.5: 'Useless',
-  1: 'Useless+',
-  1.5: 'Poor',
-  2: 'Poor+',
-  2.5: 'Ok',
-  3: 'Ok+',
-  3.5: 'Good',
-  4: 'Good+',
-  4.5: 'Excellent',
-  5: 'Excellent+',
+  0.5: "Useless",
+  1: "Useless+",
+  1.5: "Poor",
+  2: "Poor+",
+  2.5: "Ok",
+  3: "Ok+",
+  3.5: "Good",
+  4: "Good+",
+  4.5: "Excellent",
+  5: "Excellent+",
 };
 
 function getLabelText(value: number) {
-  return `${value} Star${value !== 1 ? 's' : ''}, ${labels[value]}`;
+  return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
 }
 
-const TestimonialCard: React.FC<{ name: string; location: string; quote: string; rating: number }> = ({ name, location, quote, rating }) => {
+const TestimonialCard: React.FC<{
+  name: string;
+  location: string;
+  quote: string;
+  rating: number;
+}> = ({ name, location, quote, rating }) => {
   // Extracting initials from the name
-  const initials = name.split(' ').map((n) => n[0]).join('');
+  const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .join("");
 
   return (
     <div className="bg-white shadow-lg rounded-md p-6 transition duration-300 ease-in-out transform hover:shadow-xl">
       <div className="flex items-center mb-4">
         {/* Custom Avatar with initials and background color */}
-        <Avatar sx={{ bgcolor: "violet", marginRight: '8px' }}>{initials}</Avatar>
+        <Avatar sx={{ bgcolor: "violet", marginRight: "8px" }}>
+          {initials}
+        </Avatar>
         <div>
           <p className="text-lg font-semibold">{name}</p>
 
@@ -556,19 +592,19 @@ const TestimonialCard: React.FC<{ name: string; location: string; quote: string;
           readOnly
           emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
         />
-
       </div>
       <p className="text-lg mb-4">{quote}</p>
-
     </div>
   );
 };
 
-
-
-
-
-const PackageCard: React.FC<{ name: string; image: string; price: string; duration: string; includes: string[] }> = ({ name, image, price, duration, includes }) => {
+const PackageCard: React.FC<{
+  name: string;
+  image: string;
+  price: string;
+  duration: string;
+  includes: string[];
+}> = ({ name, image, price, duration, includes }) => {
   return (
     <div className="bg-white shadow-lg rounded-md overflow-hidden transition duration-300 transform hover:-translate-y-1 hover:shadow-xl font-serif">
       <img src={image} alt={name} className="w-full h-64 object-cover" />
@@ -580,7 +616,9 @@ const PackageCard: React.FC<{ name: string; image: string; price: string; durati
         </div>
         <ul className="list-disc list-inside">
           {includes.map((item, index) => (
-            <li key={index} className="text-gray-600">{item}</li>
+            <li key={index} className="text-gray-600">
+              {item}
+            </li>
           ))}
         </ul>
       </div>
@@ -588,9 +626,11 @@ const PackageCard: React.FC<{ name: string; image: string; price: string; durati
   );
 };
 
-
-
-const FeatureCard: React.FC<{ title: string; icon: string; description: string }> = ({ title, icon, description }) => {
+const FeatureCard: React.FC<{
+  title: string;
+  icon: string;
+  description: string;
+}> = ({ title, icon, description }) => {
   return (
     <div className="bg-white shadow-lg rounded-md p-6 hover:shadow-xl transition ease-in-out duration-300 transform hover:-translate-y-1">
       <div className="flex items-center justify-center bg-gray-200 rounded-full w-16 h-16 mb-4">
@@ -602,6 +642,4 @@ const FeatureCard: React.FC<{ title: string; icon: string; description: string }
   );
 };
 
-
 export default MiddleSection;
-

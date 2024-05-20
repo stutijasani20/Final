@@ -5,18 +5,18 @@ from .models import *
 
 class FlightSerializer(serializers.ModelSerializer):
     total_price_including_gst = serializers.SerializerMethodField()
-    arrival_airport_name = serializers.CharField(source='arrival_airport.name',read_only=True)
-    classes_name = serializers.CharField(source='classes.name',read_only=True)
-    departure_airport_name = serializers.CharField(source='departure_airport.name',read_only=True)
-    departure_code = serializers.CharField(source='departure_airport.code',read_only=True)
-    arrival_code = serializers.CharField(source='arrival_airport.code',read_only=True)
-    
+    arrival_airport_name = serializers.CharField(source='arrival_airport.name', read_only=True)
+    classes_name = serializers.CharField(source='classes.name', read_only=True)
+    departure_airport_name = serializers.CharField(source='departure_airport.name', read_only=True)
+    departure_code = serializers.CharField(source='departure_airport.code', read_only=True)
+    arrival_code = serializers.CharField(source='arrival_airport.code', read_only=True)
 
     class Meta:
         model = Flight
         fields = '__all__'
+
     def get_total_price_including_gst(self, obj):
-        return obj.total_price()  
+        return obj.total_price()
 
 
 class AirportSerializer(serializers.ModelSerializer):
