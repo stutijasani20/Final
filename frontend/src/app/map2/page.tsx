@@ -1,86 +1,69 @@
-"use client";
-import { Typography } from "@mui/material";
 
-import {
-  useState,
-  useEffect,
-  AwaitedReactNode,
-  JSXElementConstructor,
-  Key,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
-} from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Polyline,
-  Marker,
-  Popup,
-} from "react-leaflet";
+
+"use client";
+import React, { useState, useEffect } from "react";
+import { MapContainer, TileLayer, Polyline, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 
-
-
+interface RouteData {
+  routes: {
+    summary: {
+      travelTimeInSeconds: number;
+      lengthInMeters: number;
+      departureTime: string;
+      arrivalTime: string;
+    };
+    guidance: {
+      instructions: { combinedMessage: string }[];
+    };
+    legs: {
+      points: { latitude: number; longitude: number }[];
+    }[];
+  }[];
+}
 
 const MapWithRoute = () => {
-  const [routeData, setRouteData] = useState(null);
+  const [routeData, setRouteData] = useState<RouteData | null>(null);
   const [userLocation, setUserLocation] = useState({ lat: 0, lng: 0 });
   const [touristLocation, settouristLocation] = useState({ lat: 0, lng: 0 });
+  const [error, setError] = useState(false);
+
   const searchParams = useSearchParams();
 
-  const airport = searchParams.get("airport") || "Mumbai Airport"
+  const airport = searchParams.get("airport") || "Mumbai Airport";
 
   useEffect(() => {
-    
     const fetchUserLocation = async () => {
       try {
-        // Fetch airport data from the API endpoint
         const response = await axios.get(`http://127.0.0.1:8000/airports/?name=${airport}`);
-        console.log(response.data[0].lat);
-        console.log(response.data[0].lng);
-        
-        
-        // Extract latitude and longitude from the response data
-        const latitude = response.data[0].lat;
-        const longitude = response.data[0].lng;
-        // Set the user location state with the fetched latitude and longitude
-        setUserLocation({ lat: latitude, lng: longitude });
+        const { lat, lng } = response.data[0];
+        setUserLocation({ lat, lng });
       } catch (error) {
-        console.error("Error fetching user location:", error);
+        setError(true);
       }
     };
-  
-    // Call the fetchUserLocation function
     fetchUserLocation();
   }, [airport]);
-
-
-  
 
   useEffect(() => {
     const fetchRouteData = async () => {
       try {
-        // Extract tourist location from search params
         const touristLat = parseFloat(searchParams.get("touristLat") || "");
         const touristLng = parseFloat(searchParams.get("touristLng") || "");
-
         settouristLocation({ lat: touristLat, lng: touristLng });
 
-        // Fetch route data using TomTom API
         const response = await axios.get(
           `https://api.tomtom.com/routing/1/calculateRoute/${userLocation.lat},${userLocation.lng}:${touristLat},${touristLng}/json?&instructionsType=text&sectionType=lanes&instructionAnnouncementPoints=all&language=en-GB&routeType=eco&traffic=true&vehicleMaxSpeed=120&travelMode=car&key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb`
         );
 
         if (response.status === 200) {
-          const data = response.data;
-          setRouteData(data);
+          setRouteData(response.data);
         }
       } catch (error) {
-        console.error("Error fetching route data:", error);
+        // Handle error
       }
     };
 
@@ -90,19 +73,21 @@ const MapWithRoute = () => {
   }, [searchParams, userLocation]);
 
   const markerIcon = L.icon({
-    iconUrl: "/user.jpg",
-    iconSize: [31, 46],
+    iconUrl: "icons8-valet-48.png",
+    iconSize: [50, 50],
   });
+
   const markerIcon2 = L.icon({
-    iconUrl: "/tourist.png",
-    iconSize: [31, 46],
+    iconUrl: "tourist.png",
+    iconSize: [50, 50],
   });
+
   const secondsToHoursMinutes = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
 
     if (hours === 0) {
-      return `${minutes} minutes`;
+      return `${minutes} min`;
     } else if (minutes === 0) {
       return `${hours} hr`;
     } else {
@@ -112,12 +97,12 @@ const MapWithRoute = () => {
 
   const metersToKilometers = (meters: number) => {
     const kilometers = meters / 1000;
-    return kilometers.toFixed(2); // Round to 2 decimal places
+    return kilometers.toFixed(2);
   };
 
-  const formatDate = (timestamp: string | number | Date) => {
+  const formatDate = (timestamp: any) => {
     const date = new Date(timestamp);
-    const options = {
+    const options: any = {
       year: "numeric",
       month: "short",
       day: "2-digit",
@@ -126,81 +111,57 @@ const MapWithRoute = () => {
       second: "2-digit",
       timeZoneName: "short",
     };
-    return date.toLocaleDateString("en-US");
+    return date.toLocaleDateString("en-US", options);
   };
+
   return (
     <>
       {routeData && (
-        <div>
-          <div className="capitalize text-justify box-content h-100 w-96 p-4 flow-root  border-4 sm:w-full md:w-3/4 lg:w-1/2 xl:w-1/3">
-            {" "}
-            <p className="mb-2">
-              <span className="text-lime-500">
-                {secondsToHoursMinutes(
-                  routeData.routes[0].summary.travelTimeInSeconds
-                )}
-              </span>
-              <span className="text-sky-500"> ( </span>
-              <span className="text-sky-500">
-                {metersToKilometers(routeData.routes[0].summary.lengthInMeters)}{" "}
-                km
-              </span>
-              <span className="text-sky-500"> )</span>
-            </p>
-            <p>
-              Departure Time:{" "}
-              {formatDate(routeData.routes[0].summary.departureTime)}
-            </p>
-            <p>
-              Arrival Time:{" "}
-              {formatDate(routeData.routes[0].summary.arrivalTime)}
-            </p>
-          </div>
-          <div>
-            <div>
-              <h2>Route Instructions</h2>
-              <ol style={{ listStyleType: "none", padding: 0 }}>
-                {routeData.routes[0].guidance.instructions.map(
-                  (instruction, index) => (
-                    <>
-                      <li key={index}>{instruction.combinedMessage}</li>
-                    </>
-                  )
-                )}
-              </ol>
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-screen-lg mx-auto bg-white rounded-lg shadow-md p-8">
+            <div className="flex justify-between items-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-800">Route Information</h1>
+              <div className="text-gray-500">
+                <p className="font-semibold">From: {airport}</p>
+                <p className="font-semibold">To: tourist</p>
+              </div>
             </div>
-          </div>
-
-          <MapContainer
-            center={[userLocation.lat, userLocation.lng]}
-            zoom={15}
-            style={{ height: "700px", width: "100%" }}
-          >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <>
-              <Polyline
-                positions={routeData.routes[0].legs[0].points.map(
-                  (point: { latitude: any; longitude: any }) => [
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="border border-gray-200 rounded-lg p-6">
+                <h2 className="text-xl font-semibold mb-4">Summary</h2>
+                <p className="text-gray-700 mb-2">Travel Time: {secondsToHoursMinutes(routeData.routes[0].summary.travelTimeInSeconds)}</p>
+                <p className="text-gray-700 mb-2">Distance: {metersToKilometers(routeData.routes[0].summary.lengthInMeters)} km</p>
+                <p className="text-gray-700 mb-2">Departure Time: {formatDate(routeData.routes[0].summary.departureTime)}</p>
+                <p className="text-gray-700 mb-2">Arrival Time: {formatDate(routeData.routes[0].summary.arrivalTime)}</p>
+              </div>
+              <div className="border border-gray-200 rounded-lg p-6">
+                <h2 className="text-xl font-semibold mb-4">Instructions</h2>
+                <ol className="list-decimal list-inside text-gray-700">
+                  {routeData.routes[0].guidance.instructions.map((instruction: any, index: number) => (
+                    <li key={index}>{instruction.combinedMessage}</li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+            <div className="mt-8">
+              <MapContainer center={[userLocation.lat, userLocation.lng]} zoom={16} className="h-96">
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <Polyline
+                  positions={routeData.routes[0].legs[0].points.map((point: any) => [
                     point.latitude,
                     point.longitude,
-                  ]
-                )}
-                color="blue"
-              />
-              <Marker
-                position={[userLocation.lat, userLocation.lng]}
-                icon={markerIcon}
-              >
-                <Popup>Starting Point</Popup>
-              </Marker>
-              <Marker
-                position={[touristLocation.lat, touristLocation.lng]}
-                icon={markerIcon2}
-              >
-                <Popup>Ending Point</Popup>
-              </Marker>
-            </>
-          </MapContainer>
+                  ])}
+                  color="blue"
+                />
+                <Marker position={[userLocation.lat, userLocation.lng]} icon={markerIcon}>
+                  <Popup>Starting Point</Popup>
+                </Marker>
+                <Marker position={[touristLocation.lat, touristLocation.lng]} icon={markerIcon2}>
+                  <Popup>tourist</Popup>
+                </Marker>
+              </MapContainer>
+            </div>
+          </div>
         </div>
       )}
     </>
@@ -208,3 +169,4 @@ const MapWithRoute = () => {
 };
 
 export default MapWithRoute;
+``

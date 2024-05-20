@@ -6,6 +6,16 @@ import axios from 'axios';
 import BookingSuccessModal from '../customer/success'; // Import the success modal component
 import Link from 'next/link';
 
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import Button from '@mui/material/Button';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Image from 'next/image';
 const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -18,33 +28,94 @@ const style = {
     p: 4,
 };
 
+interface Booking {
+    id: number;
+    booking_date: string;
+    trip_type: string;
+    passengers: any[];
+    is_paid: boolean;
+    flight: number;
+    // Add more booking details
+}
+interface Flight {
+    id: number;
+    flight_number: string;
+    arrival_airport_name: string;
+    // Add more flight details
+}
+
+
 export default function MyBookingsPage() {
     const router = useRouter();
-    const userId = localStorage.getItem("userId"); // Assuming you store user ID after login
+    const userId = localStorage.getItem("userId"); 
 
-    const [bookings, setBookings] = useState([]);
+    const [bookings, setBookings] = useState<Booking[]>([]);
+    const [previousBookings, setPreviousBookings] = useState([]); 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const [flightData, setFlightData] = useState([]);
+    const [flightData, setFlightData] = useState<Flight[]>([]);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const itemsPerPage = 10;
+    const [flightNumberFilter, setFlightNumberFilter] = useState('');
+    const [paymentStatusFilter, setPaymentStatusFilter] = useState('');
+    const [bookingDateFilter, setBookingDateFilter] = useState("");
+    const [filteredBookings, setFilteredBookings] = useState([]);
+
+    
+
+    // Define function to handle filter button click
+    const handleFilter = async () => {
+        try {
+            // Construct query parameters based on filter values
+            const queryParams = {
+                flight: flightNumberFilter,
+                is_paid: paymentStatusFilter,
+                booking_date: bookingDateFilter
+            };
+            
+            // Fetch filtered bookings from backend API
+            const response = await axios.get('http://127.0.0.1:8000/bookings/', {
+                params: queryParams,
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+
+            // Update state variable with filtered bookings
+            setFilteredBookings(response.data);
+        } catch (error) {
+            console.error("Error fetching filtered bookings:", error);
+            // Handle error
+        }
+    };
+
+    
+   
+
+    const [open, setOpen] = React.useState(false);
+
+    const toggleDrawer = (newOpen: boolean) => () => {
+      setOpen(newOpen);
+    };
+  
+
+   
 
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/bookings/?passenger=${userId}&page=${currentPage}` ,{
+                const response = await axios.get(`http://127.0.0.1:8000/bookings/?passenger=${userId}&page=1` ,{
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
                 
             });
                 
-                setBookings(response.data.results);
+                
+
+                setBookings(response.data.results.slice(0,2));
             
 
-                setTotalPages(Math.ceil(response.data.count / itemsPerPage)); 
+                
             } catch (error) {
                 console.error("Error fetching bookings:", error);
                 setError("Failed to fetch bookings");
@@ -72,7 +143,12 @@ export default function MyBookingsPage() {
             // Redirect to login if user ID is not available
             router.push("/login");
         }
-    }, [userId, currentPage, router]);
+    }, [userId, router]);
+
+
+    
+
+   
 
     const handleCancelBooking = async (bookingId: any) => {
         try {
@@ -100,23 +176,60 @@ export default function MyBookingsPage() {
     const id = first_flight?.flight
     const flight = flightData.find(flight => flight.id === id)?.arrival_airport_name
 
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-          setCurrentPage(currentPage - 1);
-        }
-      };
-      
-        const handleNextPage = () => {
-          if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-          }
-        }; 
     
 
+    
+        const DrawerList = (
+            <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
+              <List>
+                {[
+                  { text: 'My Previous Bookings',  icon: <Image src="/hotel1.png" alt='menu' height={40} width={40}/> , link: '/user/customer/bookings' },
+                  { text: 'Hotel', icon: <Image src="/hotel.png" alt='menu' height={40} width={40}/>, link: `/individual/hotel?airport=${flightData.find(flight => flight.id === id)?.arrival_airport_name}` },
+                  { text: 'Restaurants', icon: <Image src="/restaurant1.png" alt='menu' height={40} width={40}/>, link: `/individual/restaurant?airport=${flightData.find(flight => flight.id === id)?.arrival_airport_name}` },
+                  { text: 'Tourist Places', icon: <Image src="/tourist1.png" alt='menu' height={40} width={40}/>, link: `/individual/tourist?airport=${flightData.find(flight => flight.id === id)?.arrival_airport_name}` },
+                ].map((item, index) => (
+                  <Link href={item.link} key={item.text} passHref>
+                    <ListItem disablePadding>
+                      <ListItemButton>
+                        <ListItemIcon>{item.icon}</ListItemIcon>
+                        <ListItemText sx={{color: "#263238"}} primary={item.text} />
+                      </ListItemButton>
+                    </ListItem>
+                  </Link>
+                ))}
+              </List>
+              <Divider />
+              <List>
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Box>
+          );
+        
     
 
     return (
+        <>
+
+<div>
+
+<Button onClick={toggleDrawer(true)}>
+    <Image src="/side.png" alt="side" height={50} width={50} />
+</Button>
+<Drawer
+  anchor="left"
+  open={open}
+  onClose={toggleDrawer(false)}
+>
+    {DrawerList}
+</Drawer>
+</div>
+
         <div className="container mx-auto p-8">
+            
             <h1 className="text-3xl font-bold mb-6">My Bookings</h1>
             <div className="mb-8">
                 {bookings.length === 0 ? (
@@ -161,39 +274,15 @@ export default function MyBookingsPage() {
             </div>
            
 
-            <div className="flex justify-between mt-4">
-        <button
-          onClick={handlePreviousPage}
-          disabled={currentPage === 1}
-          className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg"
-        >
-          Previous
-        </button>
-        <span>Page {currentPage} of {totalPages}</span>
-        <button
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages}
-          className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg"
-        >
-          Next
-        </button>
-      </div>
+          
 
 
-            <div className="mt-4 flex items-center justify-center space-x-4">
-            <Link href={`/individual/hotel?airport=${flightData.find(flight => flight.id === id)?.arrival_airport_name}`}  className="text-blue-600 hover:underline transition duration-300 ease-in-out">
-                Dashboard
-            </Link>
-            <Link href="/individual/hotel" className="text-blue-600 hover:underline transition duration-300 ease-in-out">
-               Profile
-            </Link>
-            <Link href="/settings" className="text-blue-600 hover:underline transition duration-300 ease-in-out">
-                Settings
-            </Link>
-        </div>
+         
             {/* Success Modal */}
             <BookingSuccessModal open={showSuccessModal} onClose={() => setShowSuccessModal(false)} />
         </div>
-    );
-}
+        </>
 
+        
+    );
+};

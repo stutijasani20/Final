@@ -1,8 +1,6 @@
 "use client";
-"use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {useSearchParams} from "next/navigation";
 
 import { useRouter } from "next/navigation";
 
@@ -25,17 +23,16 @@ interface tourist {
 }
 
 const MyComponent: React.FC = () => {
+  const params = new URLSearchParams(location.search);
+  const flightsParam = params.get("airport");
+  console.log(flightsParam);
   const [tourists, settourists] = useState<tourist[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const searchParams = useSearchParams();
-  
-
   const [searchQuery, setSearchQuery] = useState<string>("");
   
   const router = useRouter();
-  const flightsParam = searchParams.get("flight");
 
   useEffect(() => {
     setSearchQuery(flightsParam || ""); 
@@ -54,7 +51,7 @@ const MyComponent: React.FC = () => {
         const longitude = location.position.lon;
 
         const { data: tomTomResponse } = await axios.get(
-          `https://api.tomtom.com/search/2/search/tourist attraction.json?lat=${latitude}&lon=${longitude}&radius=5000&key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb&limit=10&ofs=${
+          `https://api.tomtom.com/search/2/search/tourist.json?lat=${latitude}&lon=${longitude}&radius=5000&key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb&limit=10&ofs=${
             (page - 1) * 10
           }`
         );
@@ -62,18 +59,16 @@ const MyComponent: React.FC = () => {
         const totalResults = tomTomResponse.summary.totalResults;
         setTotalPages(Math.ceil(totalResults / 10));
 
-        const touristData: tourist[] = tomTomResponse.results.map(
-          (tourist: any) => ({
-            id: tourist.id,
-            name: tourist.poi.name,
-            categories: tourist.poi.categories,
-            address: tourist.address,
-            position: {
-              lat: tourist.position.lat,
-              lon: tourist.position.lon,
-            },
-          })
-        );
+        const touristData: tourist[] = tomTomResponse.results.map((tourist: any) => ({
+          id: tourist.id,
+          name: tourist.poi.name,
+          categories: tourist.poi.categories,
+          address: tourist.address,
+          position: {
+            lat: tourist.position.lat,
+            lon: tourist.position.lon,
+          },
+        }));
         settourists(touristData);
         setLoading(false);
       } catch (error) {
@@ -96,7 +91,7 @@ const MyComponent: React.FC = () => {
 
   const handleViewMap = (tourist: tourist) => {
     // Navigate to MapComponent page with the tourist location
-    const queryString = `?touristLat=${tourist.position.lat}&touristLng=${tourist.position.lon}&name=${flightsParam}`;
+    const queryString = `?touristLat=${tourist.position.lat}&touristLng=${tourist.position.lon}&airport=${flightsParam}`;
     router.push(`/map2${queryString}`);
   };
 
@@ -132,9 +127,7 @@ const MyComponent: React.FC = () => {
                   {tourist.name}
                 </h2>
                 {tourist.phone && (
-                  <p className="mb-2 text-emerald-800">
-                    Phone: {tourist.phone}
-                  </p>
+                  <p className="mb-2 text-emerald-800">Phone: {tourist.phone}</p>
                 )}
 
                 <p className="mb-2 text-pink-400">

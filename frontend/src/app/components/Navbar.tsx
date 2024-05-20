@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import "../styles/navbar.scss";
 import { logout } from "../store/authSlice";
@@ -7,15 +7,26 @@ import { RootState } from "../store/store";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
 
+//Hydration error was removed with the use of useeffect hook
+
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isNestedOpen, setIsNestedOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  const isAuthenticated = useSelector(
+
+  
+
+
+  const isAuthenticatedRedux = useSelector(
     (state: RootState) => state.isAuthenticated
   );
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const dispatch = useDispatch();
+
+useEffect(() => {
+  setIsAuthenticated(isAuthenticatedRedux);
+} , [isAuthenticatedRedux]);
 
   const handleLogout = () => {
     dispatch(logout());

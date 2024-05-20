@@ -1,3 +1,4 @@
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
@@ -28,6 +29,7 @@ const authSlice = createSlice({
       localStorage.setItem("userRole", action?.payload?.role ?? "");
       localStorage.setItem("userId", action?.payload?.id ?? "");
       localStorage.setItem("isAuthenticated", "true");
+     
     },
     register(state, action: PayloadAction<User>) {
       state.isAuthenticated = true;
@@ -36,6 +38,7 @@ const authSlice = createSlice({
       localStorage.setItem("userId", action.payload.id || "");
       localStorage.setItem("userRole", action.payload.role || "");
       localStorage.setItem("isAuthenticated", "true");
+      
     },
     logout(state) {
       state.isAuthenticated = false;

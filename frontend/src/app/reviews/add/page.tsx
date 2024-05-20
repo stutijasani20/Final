@@ -29,7 +29,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ onAddReview }) => {
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
 
-  useAuthenticationRequired();
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

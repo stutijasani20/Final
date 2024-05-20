@@ -321,22 +321,35 @@ class BookingView(APIView):
     
     def get(self, request):
         passenger_id = request.query_params.get('passenger')
-        
-        
+        booking_date = request.query_params.get('booking_date')
+        is_paid = request.query_params.get('is_paid')
+        flight_id = request.query_params.get('flight')
+
+        bookings = Booking.objects.all()
+
         if passenger_id:
-            bookings = Booking.objects.filter(passenger=passenger_id).order_by('-booking_date')
-        else:
-           
-            bookings = Booking.objects.all().order_by('-booking_date')
-        
-       
+            bookings = bookings.filter(passenger=passenger_id).order_by('-booking_date')
+        if booking_date:
+            bookings = bookings.filter(booking_date=booking_date).order_by('-booking_date')
+        if is_paid:
+            is_paid = is_paid.lower() == 'true'
+            bookings = bookings.filter(is_paid=is_paid).order_by('-booking_date')
+        if flight_id:
+            bookings = bookings.filter(flight=flight_id).order_by('-booking_date')
+
         paginator = PageNumberPagination()
         paginator.page_size = 10
-        result_page = paginator.paginate_queryset(bookings, request)
-        serializer = BookingSerializer(result_page, many=True)
+
+        paginated_bookings = paginator.paginate_queryset(bookings, request)
         
-        # Return the paginated response
+        serializer = BookingSerializer(paginated_bookings, many=True)
+    
         return paginator.get_paginated_response(serializer.data)
+        
+        
+      
+       
+       
             
         
     def post(self, request):

@@ -38,8 +38,7 @@ const MapWithRoute = () => {
       try {
         // Fetch airport data from the API endpoint
         const response = await axios.get(`http://127.0.0.1:8000/airports/?name=${airport}`);
-        console.log(response.data[0].lat);
-        console.log(response.data[0].lng);
+      
         
         
         // Extract latitude and longitude from the response data
