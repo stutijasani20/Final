@@ -13,6 +13,20 @@ class JobDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 class ApplicantViewSet(generics.ListCreateAPIView):
     queryset = Applicant.objects.all()
     serializer_class = ApplicantSerializer
+    def create(self, request, *args, **kwargs):
+       
+        resume_file = request.data.get('resume')
+
+        if resume_file:
+            
+            request.data.pop('resume', None)
+
+          
+            request.data['resume'] = resume_file
+
+    
+        return super().create(request, *args, **kwargs)
+
 
 class ApplicantCreateAPIView(generics.CreateAPIView):
     queryset = Applicant.objects.all()

@@ -20,7 +20,7 @@ class FlightView(APIView):
 
     def get(self, request):
         paginator = PageNumberPagination()
-        paginator.page_size = 5
+        paginator.page_size = 10
 
         departure_airport_name = request.GET.get('departure_airport_name')
         arrival_airport_name = request.GET.get('arrival_airport_name')
@@ -144,7 +144,8 @@ class PassengerView(APIView):
                     
             # Initialize pagination class
                 pagination_class = PageNumberPagination()
-                pagination_class.page_size = 5  # Set the number of items per page
+                pagination_class.page_size = 10
+                  # Set the number of items per page
                     
                 paginated_passengers = pagination_class.paginate_queryset(passengers, request)
                     
@@ -350,7 +351,6 @@ class BookingView(APIView):
         
       
        
-       
             
         
     def post(self, request):
@@ -405,6 +405,8 @@ class Initiate_payment(APIView):
             return JsonResponse({'error': 'Booking does not exist'}, status=status.HTTP_404_NOT_FOUND)
         
         amount = Decimal(booking.calculate_total_price())
+        
+       
         
         try:
             client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))

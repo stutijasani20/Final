@@ -7,7 +7,7 @@ import { getToken } from './middleware.service'
 export async function middleware(request: NextRequest) {
     // const token = request.headers.get('token')
     const token = await getToken();
-console.log("token",token)
+
     if (!token) {
         return NextResponse.redirect(new URL('/auth/login', request.url))
     }

@@ -4,6 +4,7 @@ import React from "react";
 import Avatar from "@mui/material/Avatar";
 import Rating from "@mui/material/Rating";
 import StarIcon from "@mui/icons-material/Star";
+import { useRouter } from "next/navigation";
 
 import {
   FaFacebook,
@@ -532,10 +533,15 @@ const DestinationCard: React.FC<{
   image: string;
   description: string;
 }> = ({ title, image, description }) => {
+  const router = useRouter();
+  const handleCardClick = () => {
+    const query = title.split(",")[0].trim();
+    router.push(`flights/search/?city=${query}`);
+  };
   return (
     <div className="bg-white shadow-lg rounded-md overflow-hidden transition duration-300 ease-in-out transform hover:scale-105">
       <img src={image} alt={title} className="w-full h-64 object-cover" />
-      <div className="p-4">
+      <div className="p-4" onClick={handleCardClick}>
         <h3 className="text-2xl font-semibold mb-2">{title}</h3>
         <p className="text-gray-800">{description}</p>
       </div>

@@ -1,8 +1,8 @@
 "use client";
 import * as React from "react";
 import { useEffect, useState } from "react";
-import Image from "next/image";
-
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import Apply from "./apply";
 
 export default function Page({ params }: { params: { id: string } }) {
@@ -57,43 +57,55 @@ export default function Page({ params }: { params: { id: string } }) {
   const requirementPoints = jobData.requirements.split(",");
 
   return (
-    <div className="container mx-auto px-4 py-8 flex">
-      <div className="w-3/4">
+    <div className="container mx-auto px-4 py-8">
+      <Box
+        sx={{
+          border: 2,
+          borderRadius: 5,
+          borderColor: "black.300",
+          p: 4,
+          position: "relative",
+        }}
+      >
         <h1 className="text-3xl font-bold mb-4 mt-5">{jobData.title}</h1>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={8}>
+            <div className="mb-4">
+              <h2 className="font-bold">Description:</h2>
+              <ul className="list-disc ml-8">
+                {descriptionPoints.map((point: string, index: number) => (
+                  <li key={index}>{point}</li>
+                ))}
+              </ul>
+            </div>
 
-        <div className="mb-4">
-          <h2 className="font-bold">Description:</h2>
-          <ul className="list-disc ml-8">
-            {descriptionPoints.map((point: string, index: number) => (
-              <li key={index}>{point}</li>
-            ))}
-          </ul>
-        </div>
+            <p className="fobt-bold mb-4">Department: {departmentName}</p>
+            <p className="font-bold mb-4">Requirements:</p>
 
-        <p className="fobt-bold mb-4">Department: {departmentName}</p>
-        <p className="font-bold mb-4">Requirements:</p>
+            <ul className="list-disc ml-8">
+              {requirementPoints.map((point: string, index: number) => (
+                <li key={index}>{point}</li>
+              ))}
+            </ul>
 
-        <ul className="list-disc ml-8">
-          {requirementPoints.map((point: string, index: number) => (
-            <li key={index}>{point}</li>
-          ))}
-        </ul>
+            <p className="font-bold mb-4">Salary: </p>
+            <p className="mt-2 mb-4">{jobData.salary}</p>
 
-        <p className="font-bold mb-4">Salary: </p>
-        <p className="mt-2 mb-4">{jobData.salary}</p>
-
-        <Apply jobId={params.id} />
-      </div>
-
-      <div className="w-1/4 flex justify-end">
-        <Image
-          src={jobData.image}
-          alt="Image"
-          width={800}
-          height={100}
-          className="mt-5 mb-5"
-        />
-      </div>
+            <Apply jobId={params.id} />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <img
+              src={jobData.image}
+              alt="Job Image"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "cover",
+              }}
+            />
+          </Grid>
+        </Grid>
+      </Box>
     </div>
   );
 }

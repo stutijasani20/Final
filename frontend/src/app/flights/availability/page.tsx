@@ -84,6 +84,7 @@ const AvailableFlightsPage: React.FC = () => {
           flight.classes_name === classes
         );
       });
+      console.log("this s nowe", filteredFlights);
       setFilteredFlights(filteredFlights);
       router.push(
         `/flights/availability?flights=${JSON.stringify(filteredFlights)}`
@@ -131,13 +132,20 @@ const AvailableFlightsPage: React.FC = () => {
     });
   };
 
-  const calculateDuration = (departureTime: string, arrivalTime: string) => {
-    const departure = new Date(departureTime);
-    const arrival = new Date(arrivalTime);
-    const diffMs = arrival.getTime() - departure.getTime();
-    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-    return `${diffHrs}h ${diffMins}m`;
+  const calculateDuration = (departureTime, arrivalTime) => {
+    // Parse departure and arrival times
+    const departure = new Date(`2000-01-01T${departureTime}`);
+    const arrival = new Date(`2000-01-01T${arrivalTime}`);
+
+    // Calculate time difference in milliseconds
+    const differenceMs = arrival.getTime() - departure.getTime();
+
+    // Convert difference to hours and minutes
+    const hours = Math.floor(differenceMs / (1000 * 60 * 60));
+    const minutes = Math.floor((differenceMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    // Return formatted string
+    return `${hours} hours ${minutes} minutes`;
   };
 
   return (
