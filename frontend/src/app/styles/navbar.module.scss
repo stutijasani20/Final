@@ -1,0 +1,59 @@
+/* navbar.module.scss */
+
+.header {
+  display: flex;
+  align-items: center; /* Align items vertically */
+  justify-content: space-between; /* Distribute items horizontally */
+  padding: 10px 20px; /* Add padding to the left and right sides */
+  font-family: 'Montserrat', sans-serif;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center; /* Align items vertically */
+}
+
+.navLinks {
+  display: flex;
+  align-items: center; /* Align items vertically */
+  justify-content: center; /* Distribute items horizontally */
+  list-style: none;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  flex-grow: 1; /* Allow navLinks to grow and take up available space */
+}
+
+.navLink,
+.registerLogin .navLink {
+  padding: 1em;
+  text-decoration: none;
+  font-weight: bold;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 19px;
+  color: #000 !important; /* Set default color to black */
+  transition: all 0.3s ease;
+}
+
+.navLink:hover,
+.registerLogin .navLink:hover {
+  background-color: #4b7bec;
+  color: #ffffff !important; /* Change color to white on hover */
+  font-weight: bold;
+  cursor: pointer;
+  transform: scale(1.05);
+  text-decoration: none;
+}
+
+.registerLogin {
+  display: flex;
+  align-items: center; /* Align items vertically */
+}
+
+.registerLogin .navLink {
+  color: #000 !important; /* Set default color to black */
+}
+
+.registerLogin .navLink:hover {
+  color: #fff !important; /* Change color to white on hover */
+}

@@ -291,7 +291,7 @@ const BookingPage: React.FC = () => {
                 console.log("Payment data sent to backend:", paymentResponse.data);
 
               
-  
+  const token = localStorage.getItem("token");
                 // Update is_paid field in booking API
                 const updateBookingResponse = await axios.put(`http://127.0.0.1:8000/bookings/${bookingResponse.data.id}/`, {
                   flight: flight?.id,
@@ -301,7 +301,7 @@ const BookingPage: React.FC = () => {
                   is_paid: true,
                   headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + localStorage.getItem("token") || "",
+                    "Authorization": `Bearer ${token}` ,
                   },
                 });
                 console.log("Booking payment status updated:", updateBookingResponse.data);

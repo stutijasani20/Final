@@ -3,13 +3,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { login } from "../store/authSlice";
- import "../styles/login.scss";
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Image from "next/image";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -70,7 +71,7 @@ const LoginPage = () => {
   
   return (
     <div className="flex-container items-start justify-center flex-row text-lg">
-      <img src="/back.png" alt="Login" className="w-1/2" />
+      <Image src="/back.png" alt="Login" width={1/2} height={1/2}   className="w-1/2" />
       <div className="content p-10 rounded-lg w-1/3 h-3/4 text-lg">
         <h2 className="text-4xl font-bold mb-8 text-gray-700 text-center">Sign In</h2><br />
         <div className="relative flex items-center mb-4 flex-col">

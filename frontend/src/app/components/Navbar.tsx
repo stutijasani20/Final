@@ -1,116 +1,65 @@
+
+
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import "../styles/navbar.scss";
+import styles from "../styles/Navbar.module.scss"; // Import the CSS module
 import { logout } from "../store/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FaUserCircle } from "react-icons/fa";
-
-//Hydration error was removed with the use of useeffect hook
+import Dropdown from "./Dropdown";
 
 const Header: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isNestedOpen, setIsNestedOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-
-
-  
-
-
+  const router = useRouter();
   const isAuthenticatedRedux = useSelector(
     (state: RootState) => state.isAuthenticated
   );
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const dispatch = useDispatch();
 
-useEffect(() => {
-  setIsAuthenticated(isAuthenticatedRedux);
-} , [isAuthenticatedRedux]);
+  useEffect(() => {
+    setIsAuthenticated(isAuthenticatedRedux);
+  }, [isAuthenticatedRedux]);
 
   const handleLogout = () => {
     dispatch(logout());
+    router.push("/");
   };
 
   return (
-    <nav className="header text-lg font-bold text-blue-600">
-      <div className="logo-container">
-        <Link href="/">
-          <div className="logo">
-            <Image src="/logo1.png" alt="logo" height={150} width={150} />
-          </div>
+    <div className={styles.header}>
+      <div className={styles.logoContainer}>
+        <Link href="/" className={styles.logo}>
+          <Image src="/logo1.png" alt="logo" height={150} width={150} />
         </Link>
       </div>
-      <ul className="nav-links">
-        <li>
-          <Link href="#">
-            <div className="dropdown" onClick={() => setIsOpen(!isOpen)}>
-              <div className="nav-link">Book & Manage</div>
-              {isOpen && (
-                <div className="dropdown-content">
-                  <Link href="/flights/search">
-                    <div className="dropdown-item hover:bg-gray-200 p-2">Book Flight</div>
-                  </Link>
-                  <Link href="/link2">
-                    <div className="dropdown-item hover:bg-gray-200 p-2">Web CheckIn</div>
-                  </Link>
-                  <div className="dropdown-item text-gray-700 hover:bg-gray-200 p-2" onMouseEnter={() => setIsNestedOpen(true)} onMouseLeave={() => setIsNestedOpen(false)}>
-                    Cancel/Reschedule Flight
-                    {isNestedOpen && (
-                      <div className="dropdown-content">
-                        <Link href="/link4">
-                          <div className="dropdown-item text-gray-700 hover:bg-gray-200 p-2">Cancel Flight</div>
-                        </Link>
-                        <Link href="/link5">
-                          <div className="dropdown-item text-gray-700 hover:bg-gray-200 p-2">Reschedule Flight</div>
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          </Link>
-        </li>
-        <li>
-          <div className="nav-link">Prepare to Travel</div>
-        </li>
-        <li>
-          <Link href="/reviews">
-            <div className="nav-link">Passenger Reviews</div>
-          </Link>
-        </li>
-        <li>
-          <Link href="/">
-            <div className="nav-link">Where We Fly</div>
-          </Link>
-        </li>
-        <li>
-          {isAuthenticated ? (
-            <div className="nav-link" onClick={handleLogout}>
-              Logout
-            </div>
-          ) : (
-            <Link href="/auth/login">
-              <div className="nav-link">Login</div>
-            </Link>
-          )}
-        </li>
-      </ul>
-      <div className="profile-container" onMouseEnter={() => setIsProfileOpen(true)} onMouseLeave={() => setIsProfileOpen(false)}>
-        <FaUserCircle size={50} />
-        {isProfileOpen && (
-          <div className="profile-dropdown">
-            <Link href="/auth/login">
-              <div className="dropdown-item hover:bg-gray-200 p-2">Login</div>
-            </Link>
-            <Link href="/auth/register">
-              <div className="dropdown-item hover:bg-gray-200 p-2">Register</div>
-            </Link>
+      <div className={styles.navLinks}>
+        <div className={styles.navLink}>
+          <Link href="/flights/search">Book & Manage</Link>
+        </div>
+        <div className={styles.navLink}>
+          <Link href="/flights/search">Prepare to Travel</Link>
+        </div>
+        <div className={styles.navLink}>
+          <Link href="/reviews">Passenger Reviews</Link>
+        </div>
+        <div className={styles.navLink}>
+          <Link href="/where_we_fly/route_map">Where We Fly</Link>
+        </div>
+      </div>
+      <div className={styles.registerLogin}>
+        {isAuthenticated ? (
+          <div className={styles.navLink}>
+            <Dropdown />
+          </div>
+        ) : (
+          <div className={styles.navLink}>
+            <Link href="/auth/register">Register/Login</Link>
           </div>
         )}
       </div>
-    </nav>
+    </div>
   );
 };
 

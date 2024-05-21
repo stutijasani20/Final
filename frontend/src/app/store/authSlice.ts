@@ -1,10 +1,14 @@
-
+import { setToken } from "@/middleware.service";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
   id: string | null;
   email: string | null;
   role: string | null;
+  jwt_token: {
+    access: string;
+    refresh: string;
+  };
 }
 
 interface AuthState {
@@ -26,17 +30,16 @@ const authSlice = createSlice({
       state.user = action.payload;
 
       localStorage.setItem("user", JSON.stringify(action.payload));
-      localStorage.setItem("userRole", action?.payload?.role ?? "");
       localStorage.setItem("userId", action?.payload?.id ?? "");
       localStorage.setItem("isAuthenticated", "true");
-     
+      setToken(action.payload.jwt_token.access)
     },
     register(state, action: PayloadAction<User>) {
       state.isAuthenticated = true;
       state.user = action.payload;
       localStorage.setItem("user", JSON.stringify(action.payload));
       localStorage.setItem("userId", action.payload.id || "");
-      localStorage.setItem("userRole", action.payload.role || "");
+    
       localStorage.setItem("isAuthenticated", "true");
       
     },
@@ -45,7 +48,7 @@ const authSlice = createSlice({
       state.user = null;
       localStorage.removeItem("user");
       localStorage.removeItem("userId");
-      localStorage.removeItem("userRole");
+   
       localStorage.removeItem("isAuthenticated");
     },
   },

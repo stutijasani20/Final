@@ -115,9 +115,9 @@ const FlightSearchPage: React.FC = () => {
         }
       );
 
-      console.log(response.data);
+     
 
-      console.log(encodeURIComponent(JSON.stringify(response.data)));
+      console.log(encodeURIComponent(JSON.stringify(flights)));
 
       setFlights(response.data);
       router.push(
