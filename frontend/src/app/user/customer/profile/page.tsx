@@ -95,13 +95,13 @@ const ProfilePage: React.FC = () => {
     <div className="p-4">
       <div className="w-full max-w-lg mx-auto border rounded-lg overflow-hidden relative">
         <div className="p-4 flex items-center">
-          {profile.profile_photo && (
+          {/* {profile.profile_photo && (
             <img
               className="w-20 h-20 object-cover rounded-full mr-4"
               src={profile.profile_photo}
               alt="Profile Photo"
             />
-          )}
+          )} */}
           <div>
             <h2 className="text-2xl font-bold mb-4">Profile Details</h2>
             <p className="text-lg">Name: {profile.name}</p>
