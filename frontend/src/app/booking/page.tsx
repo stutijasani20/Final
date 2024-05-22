@@ -248,7 +248,6 @@ const BookingPage: React.FC = () => {
             bookingId: bookingResponse.data.id, // Assuming the booking endpoint returns an id
           }
         );
-
         if (paymentInitiationResponse.status === 200) {
           console.log(
             "Payment initiation successful:",
