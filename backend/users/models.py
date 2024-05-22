@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from rest_framework.validators import UniqueTogetherValidator
-
+from cloudinary_storage.storage import MediaCloudinaryStorage
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -42,4 +42,5 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
-    
+
+

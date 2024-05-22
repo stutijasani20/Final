@@ -1,16 +1,37 @@
-"use client";
-import React, { useState } from 'react';
-import { Avatar, Menu, MenuItem } from '@mui/material';
-import Link  from 'next/link';
+import React, { useState, useEffect } from "react";
+import { Avatar, Menu, MenuItem } from "@mui/material";
+import Link from "next/link";
 import { logout } from "../store/authSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store/store"; // replace with the actual path
+import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const Dropdown = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const router = useRouter();
+  const token = localStorage.getItem("token");
+  const [isStaff, setIsStaff] = useState(false);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await axios.get("/api/user-details", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const userData = response.data;
+        setIsStaff(userData.is_staff);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    if (token) {
+      fetchUserDetails();
+    }
+  }, [token]);
 
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
@@ -23,7 +44,6 @@ const Dropdown = () => {
   const handleLogout = () => {
     dispatch(logout());
     router.push("/");
-    
   };
 
   return (
@@ -35,17 +55,19 @@ const Dropdown = () => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose} >
-          <Link href="/profile" className='font-bold text-neutral-950'>Profile</Link>
-        </MenuItem>
         <MenuItem onClick={handleClose}>
-          <Link href="/My_Bookings" className='font-bold text-neutral-950'>My Bookings</Link>
+          <Link href="/profile" className="font-bold text-neutral-950">
+            Profile
+          </Link>
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Link href="/My_Bookings" className='font-bold text-neutral-950'>Restaurants near me</Link>
-        </MenuItem>
+        {!isStaff && (
+          <MenuItem onClick={handleClose}>
+            <Link href="/user/customer" className="font-bold text-neutral-950">
+              My Bookings
+            </Link>
+          </MenuItem>
+        )}
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
-       
       </Menu>
     </div>
   );

@@ -2,7 +2,11 @@
 from rest_framework import serializers
 from .models import *
 
-
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
+        
 class FlightSerializer(serializers.ModelSerializer):
     total_price_including_gst = serializers.SerializerMethodField()
     arrival_airport_name = serializers.CharField(source='arrival_airport.name', read_only=True)

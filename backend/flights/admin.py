@@ -9,5 +9,6 @@ admin.site.register(Insurance)
 admin.site.register(ConnectionFlight)
 admin.site.register(Booking)
 admin.site.register(Class)
+admin.site.register(UserProfile)
 
 # Register your models here.

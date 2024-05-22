@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
+import Modal from "react-modal";
 import Rating from "@mui/material/Rating";
 import StarIcon from "@mui/icons-material/Star";
 import { useRouter } from "next/navigation";

@@ -55,8 +55,8 @@ const FlightSearchPage: React.FC = () => {
     infants: 0,
   });
   const [showTravellerPopup, setShowTravellerPopup] = useState(false);
-const [originAirports, setOriginAirports] = useState<Airport[]>([]);
-const [destinationAirports, setDestinationAirports] = useState<Airport[]>([]);
+  const [originAirports, setOriginAirports] = useState<Airport[]>([]);
+  const [destinationAirports, setDestinationAirports] = useState<Airport[]>([]);
   const [airports, setAirports] = useState<Airport[]>([]);
   const [flights, setFlights] = useState<Flight[]>([]);
 
@@ -147,27 +147,25 @@ const [destinationAirports, setDestinationAirports] = useState<Airport[]>([]);
   const handleOriginChange = (value: string) => {
     // Filter airports based on user's input
     const matchingAirports: any = airports.filter(
-      (airport) => airport.city.toLowerCase().includes(value.toLowerCase()) ||
-                   airport.name.toLowerCase().includes(value.toLowerCase())
+      (airport) =>
+        airport.city.toLowerCase().includes(value.toLowerCase()) ||
+        airport.name.toLowerCase().includes(value.toLowerCase())
     );
-  
-    
+
     setOriginAirports(matchingAirports);
-  
-    
+
     setOrigin(value);
   };
   const handleDestinationChange = (value: string) => {
     // Filter airports based on user's input
     const matchingAirports: any = airports.filter(
-      (airport) => airport.city.toLowerCase().includes(value.toLowerCase()) ||
-                   airport.name.toLowerCase().includes(value.toLowerCase())
+      (airport) =>
+        airport.city.toLowerCase().includes(value.toLowerCase()) ||
+        airport.name.toLowerCase().includes(value.toLowerCase())
     );
-  
-    
+
     setDestinationAirports(matchingAirports);
-  
-    
+
     setDestination(value);
   };
   return (
@@ -213,7 +211,7 @@ const [destinationAirports, setDestinationAirports] = useState<Airport[]>([]);
               </div>{" "}
               <br /> <br />
               <div className="flex justify-between mb-4">
-                             <div className="w-1/2 mr-2">
+                <div className="w-1/2 mr-2">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="origin"
@@ -258,7 +256,7 @@ const [destinationAirports, setDestinationAirports] = useState<Airport[]>([]);
                     className="dropdown-input shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="destination"
                     list="destinationAirportsList"
-                    value={origin}
+                    value={destination}
                     onChange={(e) => handleDestinationChange(e.target.value)}
                     placeholder="Enter Destination City or Airport"
                   />

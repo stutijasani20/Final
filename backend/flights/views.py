@@ -348,9 +348,7 @@ class BookingView(APIView):
     
         return paginator.get_paginated_response(serializer.data)
         
-        
-      
-       
+
             
         
     def post(self, request):
@@ -439,6 +437,7 @@ class BookingDetailView(APIView):
                 booking = self.get_object(pk)
                 booking.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
+                
 class BookingCancelView(APIView):
     authentication_classes = [JWTAuthentication]  # Use JWTAuthentication for authentication
     permission_classes = [IsAuthenticated]
@@ -500,3 +499,39 @@ class PassengerReviewListCreate(generics.ListCreateAPIView):
 class PassengerReviewRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Reviews.objects.all()
     serializer_class = PassengerReviewSerializer
+
+
+
+class UserProfileView(generics.ListCreateAPIView):
+    
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination
+
+    def get_queryset(self):
+        user_id = self.request.query_params.get('user')
+    
+        if user_id is not None:
+            return UserProfile.objects.filter(user=user_id)
+        return super().get_queryset()
+
+class UserProfileDetail(APIView):
+    def get_object(self, pk):
+        try:
+            return UserProfile.objects.get(pk=pk)
+        except UserProfile.DoesNotExist:
+            raise Http404
+
+    def put(self, request, pk, format=None):
+        user_profile = self.get_object(pk)
+        serializer = UserProfileSerializer(user_profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    
+    
+    
