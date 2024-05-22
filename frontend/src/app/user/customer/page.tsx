@@ -16,7 +16,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Image from "next/image";
-import ProfilePage from "@/app/components/Modal";
+import UserProfileModal from "@/app/components/Modal";
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -232,7 +232,7 @@ export default function MyBookingsPage() {
     <>
       <div>
         {showProfileModal && (
-          <ProfilePage onClose={() => setShowProfileModal(false)} />
+          <UserProfileModal />
         )}
       </div>
       <div>

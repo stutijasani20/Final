@@ -510,7 +510,12 @@ class UserProfileView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     pagination_class = PageNumberPagination
 
+    print(serializer_class.data)
+
+
+
     def get_queryset(self):
+        
         user_id = self.request.query_params.get('user')
     
         if user_id is not None:
