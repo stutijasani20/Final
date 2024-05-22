@@ -178,8 +178,8 @@ class UserProfile(models.Model):
     user = models.ForeignKey(CustomUser,  on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     profile_photo = models.ImageField(upload_to="profile/", storage=MediaCloudinaryStorage, null=True, blank=True)
-    phone = models.IntegerField()
     birth_date = models.DateField(null=True, blank=True)
-
+    phone = models.BigIntegerField(unique=True, null=True)
+   
     def __str__(self):
         return self.name
