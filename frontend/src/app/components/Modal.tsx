@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { FiUser, FiPhone, FiCalendar, FiCamera } from "react-icons/fi";
 import axios from "axios"; // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
-
+import { toast, Toaster } from "react-hot-toast";
 function UserProfileModal() {
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState("");
@@ -27,9 +27,7 @@ function UserProfileModal() {
     formData.append("name", name);
     formData.append("phone", phone);
     formData.append("birth_date", dateOfBirth);
-    if (profilePhoto) {
-      formData.append("profilePhoto", profilePhoto);
-    }
+    formData.append("profile_photo", profilePhoto);
 
     try {
       const response = await axios.post(
@@ -44,11 +42,14 @@ function UserProfileModal() {
       );
 
       if (response.status === 200) {
-        console.log("Profile updated successfully");
-        
+        console.log("Profile Data added successfully");
+
         setShowModal(false);
+        toast.success("Profile Data added Successfully !");
+        localStorage.setItem("profileData", "true");
       } else {
-        console.error("Failed to update profile");
+        console.error("Failed to add profile");
+        toast.error("Error in setting Up Profile. Try Again Later");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -105,10 +106,10 @@ function UserProfileModal() {
           >
             Close
           </button>
-          <div className="p-4 border-b border-gray-200 bg-gray-50 rounded-lg shadow-lg w-full max-w-md">
+          <div className="mt-4 p-4 border-b border-gray-200 bg-gray-50 rounded-lg shadow-lg w-full max-w-md">
             <h2 className="text-xl font-semibold mb-4 flex items-center">
               <FiUser className="mr-2 text-blue-600" />
-              <span className="text-lg">Edit Profile</span>
+              <span className="text-lg">Add Profile Details</span>
             </h2>
             <form onSubmit={handleSubmit} className="w-full">
               <div className="mb-4">
@@ -204,6 +205,7 @@ function UserProfileModal() {
           </div>
         </div>
       </Modal>
+      <Toaster position="top-right" />
     </div>
   );
 }

@@ -70,19 +70,14 @@ class UpdateStaffStatusSerializer(serializers.ModelSerializer):
 
 
         
-class ChangePasswordSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
-    password2 = serializers.CharField(write_only=True, required=True)
+class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(write_only=True, required=True)
-
-    class Meta:
-        model = CustomUser
-        fields = ('old_password', 'password', 'password2')
+    new_password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    confirm_new_password = serializers.CharField(write_only=True, required=True)
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
-
+        if attrs['new_password'] != attrs['confirm_new_password']:
+            raise serializers.ValidationError({"new_password": "New password fields didn't match."})
         return attrs
 
     def validate_old_password(self, value):
@@ -91,7 +86,8 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"old_password": "Old password is not correct"})
         return value
 
-    def update(self, instance, validated_data):
-
-        instance.set_password(validated_data['password'])
-        instance.save()
+    def save(self, **kwargs):
+        user = self.context['request'].user
+        user.set_password(self.validated_data['new_password'])
+        user.save()
+        return user

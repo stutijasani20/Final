@@ -17,6 +17,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Image from "next/image";
 import UserProfileModal from "@/app/components/Modal";
+
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -36,6 +37,7 @@ interface Booking {
   passengers: any[];
   is_paid: boolean;
   flight: number;
+
   // Add more booking details
 }
 interface Flight {
@@ -45,12 +47,21 @@ interface Flight {
   // Add more flight details
 }
 
+interface Passenger {
+  id: number;
+  first_name: string;
+  last_name: string;
+  age: number;
+  gender: string;
+}
+
 export default function MyBookingsPage() {
   const router = useRouter();
   const userId = localStorage.getItem("userId");
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [previousBookings, setPreviousBookings] = useState([]);
+  const [passengerData, setPassengers] = useState<Passenger[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [flightData, setFlightData] = useState<Flight[]>([]);
@@ -138,6 +149,11 @@ export default function MyBookingsPage() {
       router.push("/login");
     }
   }, [userId, router]);
+  const all = bookings.map((booking: any) => booking.passengers);
+  
+   
+
+  
 
   const handleCancelBooking = async (bookingId: any) => {
     try {
@@ -230,11 +246,7 @@ export default function MyBookingsPage() {
 
   return (
     <>
-      <div>
-        {showProfileModal && (
-          <UserProfileModal />
-        )}
-      </div>
+      <div>{showProfileModal && <UserProfileModal />}</div>
       <div>
         <Button onClick={toggleDrawer(true)}>
           <Image src="/side.png" alt="side" height={50} width={50} />
@@ -244,79 +256,89 @@ export default function MyBookingsPage() {
         </Drawer>
       </div>
 
-      <div className="container mx-auto p-8">
-        <h1 className="text-3xl font-bold mb-6">My Bookings</h1>
-        <div className="mb-8">
+      {/* Bookings Table */}
+      <div className="container  mx-auto p-8">
+        <h1 className="text-3xl flex justify-center  font-bold mb-6">
+          My Bookings
+        </h1>
+        <div className="mb-8 flex justify-center">
           {bookings.length === 0 ? (
             <p>No bookings found.</p>
           ) : (
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Booking Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Trip Type
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Total Passengers
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Payment Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Flight Number
-                  </th>
-                  {/* Add more table headers for other booking details */}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {bookings.map((booking: any, index) => (
-                  <tr key={booking.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {new Date(booking.booking_date).toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {booking.trip_type}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {booking.passengers.length}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div
-                        className={`inline-block px-2 py-1 rounded-lg ${
-                          booking.is_paid
-                            ? "bg-green-200 text-green-800"
-                            : "bg-red-200 text-red-800"
-                        }`}
-                      >
-                        {booking.is_paid ? "Success" : "Pending"}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {
-                        flightData.find(
-                          (flight) => flight.id === booking.flight
-                        )?.flight_number
-                      }
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => handleCancelBooking(booking.id)}
-                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                      >
-                        Cancel
-                      </button>
-                    </td>
+            <div>
+              <table className="min-w-full  divide-y divide-gray-200">
+                {/* Table Headers */}
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      ID
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Booking Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Trip Type
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Total Passengers
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Payment Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Flight Number
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {bookings.map((booking, index) => (
+                    <tr key={booking.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {index + 1}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {new Date(booking.booking_date).toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {booking.trip_type}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {booking.passengers.length}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div
+                          className={`inline-block px-2 py-1 rounded-lg ${
+                            booking.is_paid
+                              ? "bg-green-200 text-green-800"
+                              : "bg-red-200 text-red-800"
+                          }`}
+                        >
+                          {booking.is_paid ? "Success" : "Pending"}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {
+                          flightData.find(
+                            (flight) => flight.id === booking.flight
+                          )?.flight_number
+                        }
+                      </td>
+                      <td>
+                        <button
+                          onClick={() => handleCancelBooking(booking.id)}
+                          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                        >
+                          Cancel
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
 

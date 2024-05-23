@@ -31,13 +31,12 @@ const MyComponent: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  
+
   const router = useRouter();
 
   useEffect(() => {
-    setSearchQuery(flightsParam || ""); 
+    setSearchQuery(flightsParam || "");
   }, [flightsParam]);
-  
 
   useEffect(() => {
     const fetchData = async () => {
