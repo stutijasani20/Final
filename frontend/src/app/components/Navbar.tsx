@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "../styles/Navbar.module.scss"; // Import the CSS module

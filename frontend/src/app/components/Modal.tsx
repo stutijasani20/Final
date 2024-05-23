@@ -9,7 +9,7 @@ function UserProfileModal() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
-  const [profilePhoto, setProfilePhoto] = useState(null);
+  const [profilePhoto, setProfilePhoto] = useState("");
 
   useEffect(() => {
     const profileData = localStorage.getItem("profileData");
@@ -22,7 +22,7 @@ function UserProfileModal() {
     e.preventDefault();
 
     const formData = new FormData();
-    const id = localStorage.getItem("userId");
+    const id: any = localStorage.getItem("userId");
     formData.append("user", id);
     formData.append("name", name);
     formData.append("phone", phone);
@@ -41,7 +41,7 @@ function UserProfileModal() {
         }
       );
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         console.log("Profile Data added successfully");
 
         setShowModal(false);

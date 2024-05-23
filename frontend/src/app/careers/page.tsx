@@ -1,41 +1,62 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import Image from "next/image";
 
+const JobCard: React.FC<{
+  title: string;
+  image: string;
+  location: string;
+  jobId: number;
+}> = ({ title, image, location, jobId }) => {
+  return (
+    <div className="bg-white shadow-lg rounded-md overflow-hidden transition duration-300 transform hover:-translate-y-1 hover:shadow-xl font-serif">
+      <div className="relative h-48">
+        <Image
+          src={image}
+          alt={title}
+          className="object-cover w-full h-full"
+          layout="fill"
+        />
+      </div>
+      <div className="p-4">
+        <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        <p className="text-gray-600 mb-2 font-semibold">{location}</p>
+        <a
+          href={`/careers/${jobId}`}
+          className="text-indigo-500 hover:text-indigo-600 font-semibold"
+        >
+          Learn More
+        </a>
+      </div>
+    </div>
+  );
+};
+
 export default function Page() {
   const [jobs, setJobs] = useState([]);
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    axios
-      .get(`http://127.0.0.1:8000/jobs/?page=${page}`)
-      .then((response) => {
+    const fetchJobs = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/jobs/");
         setJobs(response.data.results);
-        setTotalPages(Math.ceil(response.data.count / pageSize));
         setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching jobs:", error);
         setError(
           "An error occurred while fetching job listings. Please try again later."
         );
         setLoading(false);
-      });
-  }, [page, pageSize]);
+      }
+    };
 
-  const handlePageChange = (newPage: number) => {
-    if (newPage !== page) {
-      setPage(newPage);
-    }
-  };
+    fetchJobs();
+  }, []);
 
   if (error) {
     return (
@@ -55,36 +76,16 @@ export default function Page() {
           <p className="text-gray-600">Loading careers...</p>{" "}
         </div>
       ) : (
-        <div className="flex justify-center items-center mx-auto ">
-          <div className="jobs-container   justify-center items-center grid grid-cols-1 md:grid-cols-3 gap-4">
-            {jobs.map((job: any) => (
-              <div
-                key={job.id}
-                className="job-item w-96 bg-red-400 rounded-lg shadow-md overflow-hidden transition-transform transform hover:scale-105 p-4"
-              >
-                <div className="relative h-48">
-                  <Image
-                    className="object-cover rounded-md w-full h-full"
-                    src={job.image}
-                    alt={job.title}
-                    layout="fill"
-                  />
-                </div>
-                <div className="mt-4">
-                  <h2 className="text-lg font-semibold">{job.title}</h2>
-                  <p className="text-gray-600 mb-2">
-                    <span className="font-bold">{job.location}</span>{" "}
-                  </p>
-                  <Link
-                    href={`/careers/${job.id}`}
-                    className="text-indigo-500 hover:text-indigo-600 font-semibold"
-                  >
-                    Learn More
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="jobs-container grid grid-cols-1 md:grid-cols-3 gap-4">
+          {jobs.map((job: any) => (
+            <JobCard
+              key={job.id}
+              title={job.title}
+              image={job.image}
+              location={job.location}
+              jobId={job.id}
+            />
+          ))}
         </div>
       )}
     </div>

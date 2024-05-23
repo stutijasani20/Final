@@ -150,10 +150,6 @@ export default function MyBookingsPage() {
     }
   }, [userId, router]);
   const all = bookings.map((booking: any) => booking.passengers);
-  
-   
-
-  
 
   const handleCancelBooking = async (bookingId: any) => {
     try {

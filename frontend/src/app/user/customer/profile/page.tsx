@@ -21,14 +21,14 @@ const ProfilePage: React.FC = () => {
     birth_date: null,
   });
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false); // New state for password modal
+  const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false); 
   const [passwords, setPasswords] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
-  const [notification, setNotification] = useState("");
+
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 

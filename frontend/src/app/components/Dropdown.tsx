@@ -5,32 +5,55 @@ import { logout } from "../store/authSlice";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Person3Icon from "@mui/icons-material/Person3";
+import LogoutIcon from "@mui/icons-material/Logout";
+import Image from "next/image";
 
 const Dropdown = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isStaff, setIsStaff] = useState(false);
+  const [profileImage, setProfileImage] = useState(null); // State to store profile image URL
   const dispatch = useDispatch();
   const router = useRouter();
-  const token = localStorage.getItem("token");
-  const [isStaff, setIsStaff] = useState(false);
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/users", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const userData = response.data;
-        setIsStaff(userData.is_staff);
-      } catch (error) {
-        console.error("Error fetching user details:", error);
+      if (token) {
+        setIsAuthenticated(true);
+
+        try {
+          const response = await axios.get("http://127.0.0.1:8000/users", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const userData = response.data;
+          setIsStaff(userData.is_staff);
+
+          // Fetch profile image
+          const profileImageResponse = await axios.get(
+            "http://127.0.0.1:8000/profile",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setProfileImage(
+            profileImageResponse.data.results.map(
+              (data: any) => data.profile_photo
+            )
+          );
+        } catch (error) {
+          console.error("Error fetching user details or profile image:", error);
+        }
       }
     };
 
-    if (token) {
-      fetchUserDetails();
-    }
+    fetchUserDetails();
   }, [token]);
 
   const handleClick = (event: any) => {
@@ -43,31 +66,90 @@ const Dropdown = () => {
 
   const handleLogout = () => {
     dispatch(logout());
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    setAnchorEl(null);
     router.push("/");
   };
 
   return (
     <div>
-      <Avatar onClick={handleClick} />
+      <Avatar
+        onClick={handleClick}
+        src={profileImage || undefined}
+        sx={{ width: 60, height: 60, cursor: "pointer" }}
+      />
       <Menu
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>
-          <Link href="/profile" className="font-bold text-neutral-950">
-            Profile
-          </Link>
-        </MenuItem>
-        {!isStaff && (
-          <MenuItem onClick={handleClose}>
-            <Link href="/user/customer" className="font-bold text-neutral-950">
-              My Bookings
-            </Link>
-          </MenuItem>
+        {isAuthenticated ? (
+          <>
+            <MenuItem onClick={handleClose}>
+              <Link
+                href="/user/customer/profile"
+                className="font-bold text-neutral-950"
+              >
+                <Person3Icon /> Profile
+              </Link>
+            </MenuItem>
+            {!isStaff && (
+              <MenuItem onClick={handleClose}>
+                <Link
+                  href="/user/customer"
+                  className="font-bold text-neutral-950"
+                >
+                  <Image
+                    src="/booking.png"
+                    alt="Dashboard"
+                    width={20}
+                    className="inline-block"
+                    height={20}
+                  />{" "}
+                  My Bookings
+                </Link>
+              </MenuItem>
+            )}
+            <MenuItem onClick={handleClose}>
+              <Link href="/user/customer" className="font-bold text-green-800">
+                <Image
+                  src="/support.png"
+                  alt="Dashboard"
+                  width={20}
+                  className="inline-block text-green-800"
+                  height={20}
+                />{" "}
+                Support
+              </Link>
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
+              <Image
+                src="/power-off.png"
+                alt="Dashboard"
+                width={20}
+                className="inline-block mr-2"
+                height={20}
+              />
+
+              <span style={{ fontWeight: "bold", color: "red" }}>Logout</span>
+            </MenuItem>
+          </>
+        ) : (
+          <>
+            <MenuItem onClick={handleClose}>
+              <Link href="/login" className="font-bold text-neutral-950">
+                Login
+              </Link>
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <Link href="/register" className="font-bold text-neutral-950">
+                Register
+              </Link>
+            </MenuItem>
+          </>
         )}
-        <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </div>
   );
