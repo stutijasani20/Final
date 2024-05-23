@@ -88,10 +88,10 @@ export default function MyBookingsPage() {
   };
 
   useEffect(() => {
-    if (!profileExists) {
+    if (userId && !profileExists) {
       setShowProfileModal(true);
     }
-  }, [profileExists]);
+  }, [profileExists, userId]);
 
   const [open, setOpen] = React.useState(false);
 

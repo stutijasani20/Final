@@ -509,9 +509,7 @@ class UserProfileView(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = PageNumberPagination
-    print(serializer_class.data)
 
-    print(serializer_class.data)
 
 
 
