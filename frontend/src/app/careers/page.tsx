@@ -10,8 +10,16 @@ const JobCard: React.FC<{
   location: string;
   jobId: number;
 }> = ({ title, image, location, jobId }) => {
+  const [hovered, setHovered] = useState(false);
+
   return (
-    <div className="bg-white shadow-lg rounded-md overflow-hidden transition duration-300 transform hover:-translate-y-1 hover:shadow-xl font-serif">
+    <div
+      className={`bg-blue-50 rounded-md overflow-hidden shadow-lg transition duration-300 transform ${
+        hovered ? "hover:-translate-y-2 hover:shadow-xl" : ""
+      }`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <div className="relative h-48">
         <Image
           src={image}
@@ -21,13 +29,16 @@ const JobCard: React.FC<{
         />
       </div>
       <div className="p-4">
-        <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        <h3 className="text-xl font-semibold mb-2 text-blue-700">{title}</h3>
         <p className="text-gray-600 mb-2 font-semibold">{location}</p>
         <a
           href={`/careers/${jobId}`}
-          className="text-indigo-500 hover:text-indigo-600 font-semibold"
+          className="text-blue-500 hover:text-blue-600 font-semibold transition-colors duration-300"
         >
-          Learn More
+          
+          <div className="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer">
+  Learn More
+</div>
         </a>
       </div>
     </div>
@@ -60,7 +71,7 @@ export default function Page() {
 
   if (error) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen text-2xl text-red-500">
+      <div className="flex justify-center items-center h-screen text-2xl text-red-500">
         <Image src="/error.webp" alt="Error" width={900} height={500} />
         <p>{error}</p>
       </div>
@@ -68,26 +79,29 @@ export default function Page() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div>
       <h1 className="text-4xl font-bold text-center pt-5 mb-10">Careers</h1>
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <ClipLoader size={50} color={"#123abc"} loading={loading} />
-          <p className="text-gray-600">Loading careers...</p>{" "}
-        </div>
-      ) : (
-        <div className="jobs-container grid grid-cols-1 md:grid-cols-3 gap-4">
-          {jobs.map((job: any) => (
-            <JobCard
-              key={job.id}
-              title={job.title}
-              image={job.image}
-              location={job.location}
-              jobId={job.id}
-            />
-          ))}
-        </div>
-      )}
+      <div className="container mx-auto flex justify-center bg-slate-100 items-center h-screen">
+        
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <ClipLoader size={50} color={"#123abc"} loading={loading} />
+            <p className="text-gray-600">Loading careers...</p>{" "}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {jobs.map((job: any) => (
+              <JobCard
+                key={job.id}
+                title={job.title}
+                image={job.image}
+                location={job.location}
+                jobId={job.id}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

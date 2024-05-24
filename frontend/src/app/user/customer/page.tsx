@@ -72,7 +72,16 @@ export default function MyBookingsPage() {
   const [filteredBookings, setFilteredBookings] = useState([]);
   const [showProfileModal, setShowProfileModal] = useState(false); // State to control the profile modal visibility
   const profileExists = localStorage.getItem("profileData");
-  // Define function to handle filter button click
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
+  const handleToggleDropdown = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
+
+  const handleCloseDropdown = () => {
+    setDropdownVisible(false);
+  };
+
   const handleFilter = async () => {
     try {
       // Construct query parameters based on filter values
@@ -243,17 +252,36 @@ export default function MyBookingsPage() {
   return (
     <>
       <div>{showProfileModal && <UserProfileModal />}</div>
-      <div>
-        <Button onClick={toggleDrawer(true)}>
+      <div style={{ position: "relative", display: "flex", justifyContent: "flex-start", padding: "10px" }}>
+        <Button onClick={handleToggleDropdown}>
           <Image src="/side.png" alt="side" height={50} width={50} />
         </Button>
-        <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
-          {DrawerList}
-        </Drawer>
+        {dropdownVisible && (
+          <div className="dropdown-menu" style={{ position: "absolute", top: "60px", left: "10px", background: "#fff", boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)", borderRadius: "8px", zIndex: 1000 }}>
+            <ul style={{ listStyle: "none", padding: "10px", margin: "0" }}>
+              <li style={{ padding: "8px 16px", display: "flex", alignItems: "center" }} onClick={handleCloseDropdown}>
+                <Image src="/booking.png" alt="book" width={20} height={20} style={{ marginRight: "10px" }} />
+                <Link href="/user/customer/bookings">My Previous Bookings</Link>
+              </li>
+              <li style={{ padding: "8px 16px", display: "flex", alignItems: "center" }} onClick={handleCloseDropdown}>
+              <Image src="/hotel1.png" alt="book" width={20} height={20} style={{ marginRight: "10px" }} />
+                <Link href={`/individual/hotel?airport=${flight}`}>Hotel</Link>
+              </li>
+              <li style={{ padding: "8px 16px", display: "flex", alignItems: "center" }} onClick={handleCloseDropdown}>
+              <Image src="/restaurant1.png" alt="book" width={20} height={20} style={{ marginRight: "10px" }} />
+                <Link href={`/individual/restaurant?airport=${flight}`}>Restaurants</Link>
+              </li>
+              <li style={{ padding: "8px 16px", display: "flex", alignItems: "center" }} onClick={handleCloseDropdown}>
+              <Image src="/tourist1.png" alt="book" width={20} height={20} style={{ marginRight: "10px" }} />
+                <Link href={`/individual/tourist?airport=${flight}`}>Tourist Places</Link>
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
 
       {/* Bookings Table */}
-      <div className="container  mx-auto p-8">
+      <div className="container bg-slate-100  mx-auto p-8">
         <h1 className="text-3xl flex justify-center  font-bold mb-6">
           My Bookings
         </h1>

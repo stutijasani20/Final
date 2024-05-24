@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -15,7 +15,8 @@ import {
 } from "@mui/material";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import FlightLandIcon from "@mui/icons-material/FlightLand";
-
+import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
+import Image from "next/image";
 interface Flight {
   id: number;
   flight_number: string;
@@ -84,7 +85,6 @@ const AvailableFlightsPage: React.FC = () => {
           flight.classes_name === classes
         );
       });
-      console.log("this s nowe", filteredFlights);
       setFilteredFlights(filteredFlights);
       router.push(
         `/flights/availability?flights=${JSON.stringify(filteredFlights)}`
@@ -132,25 +132,24 @@ const AvailableFlightsPage: React.FC = () => {
     });
   };
 
-  const calculateDuration = (departureTime, arrivalTime) => {
-    // Parse departure and arrival times
-    const departure = new Date(`2000-01-01T${departureTime}`);
-    const arrival = new Date(`2000-01-01T${arrivalTime}`);
+  function calculateTimeDifference(time1: string, time2: string): string {
+    const date1 = new Date(time1);
+    const date2 = new Date(time2);
 
-    // Calculate time difference in milliseconds
-    const differenceMs = arrival.getTime() - departure.getTime();
+    const timeDifferenceMs = Math.abs(date2.getTime() - date1.getTime());
 
-    // Convert difference to hours and minutes
-    const hours = Math.floor(differenceMs / (1000 * 60 * 60));
-    const minutes = Math.floor((differenceMs % (1000 * 60 * 60)) / (1000 * 60));
+    const hours = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifferenceMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDifferenceMs % (1000 * 60)) / 1000);
 
-    // Return formatted string
-    return `${hours} hours ${minutes} minutes`;
-  };
+    return `${hours} hours : ${minutes} minutes`;
+}
+
 
   return (
-    <div className="container mx-auto py-8 mt-4">
-      <div className="rounded-lg shadow-md p-6">
+  
+    <div className="container flex flex-col justify-center items-center bg-slate-100 mx-auto py-8 mt-2" style={{ maxWidth: '12000px' }}>
+    <div className="rounded-lg shadow-md p-6 mt-5 bg-gray-100" style={{ width: '100%', maxWidth: '600px' }}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-1">
             <label className="block text-sm font-medium text-gray-700">
@@ -210,7 +209,21 @@ const AvailableFlightsPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <h1 className="text-3xl font-bold mb-4 mt-5">Available Flights</h1>
+
+      <h1
+        className="text-3xl font-bold mb-4 mt-5"
+        style={{
+          textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
+          color: '#ffffff',
+          background: 'linear-gradient(90deg, #1e3c72, #2a5298)',
+          padding: '10px 20px',
+          borderRadius: '10px',
+          textAlign: 'center',
+        }}
+      >
+        Available Flights
+      </h1>
+
       {error ? (
         <div className="text-red-500 mb-4">{error}</div>
       ) : filteredFlights.length === 0 ? (
@@ -218,52 +231,41 @@ const AvailableFlightsPage: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 mb-5 gap-4">
           {filteredFlights.map((flight) => (
-            <div
-              key={flight.id}
-              className="border border-gray-200 p-4 rounded-lg shadow-md font-serif"
-            >
-              <div>
-                <Typography
-                  variant="h6"
-                  className="font-bold mb-2 font-serif"
-                  style={{ fontWeight: "bold" }}
-                >
-                  {flight.flight_number}
-                </Typography>
-                <hr />
-                <br />
+            <Paper key={flight.id} elevation={3} className="p-4" style={{ width: '600px', height: 'auto' }}>
+              <div className="flex justify-between p-4 bg-white rounded-lg shadow-md items-center mb-2">
+               
+                  <Typography variant="h6" className="font-bold text-2xl text-blue-600">
+  {flight.flight_number}
+</Typography>
+<div className="flex items-center space-x-2">
+  <FlightTakeoffIcon style={{ color: 'green' }} />
+  <Typography variant="body1" className="font-semibold text-lg text-gray-700">
+    {calculateTimeDifference(flight.departure_time, flight.arrival_time)}
+  </Typography>
+
+                  <FlightLandIcon sx={{ color: 'red' }} />
+                </div>
               </div>
               <div className="flex justify-between">
-                <div className="w-1/3 pr-2">
-                  <Typography variant="body1" className="mb-2">
-                    <strong>{flight.departure_code}</strong>
-                  </Typography>
-                  <Typography variant="body1" className="mb-2">
-                    <strong>{formatDate(flight.departure_time)}</strong>
-                  </Typography>
-                  <Typography variant="body1" className="mb-2">
-                    <strong>{formatTime(flight.departure_time)}</strong>
-                  </Typography>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <FlightTakeoffIcon style={{ color: '#1e88e5', marginRight: '10px' }} />
+                    <div>
+                      <Typography variant="subtitle1" style={{ fontWeight: 'bold', color: '#1e88e5' }}>
+                        Departure: {flight.departure_code}
+                      </Typography>
+                      <Typography variant="body2" style={{ color: '#424242' }}>
+                        {formatDate(flight.departure_time)} | {formatTime(flight.departure_time)}
+                      </Typography>
+                    </div>
+                  </div>
                 </div>
-                <div className="w-1/2 flex items-center justify-center space-x-2">
-                  <FlightTakeoffIcon sx={{ color: "red" }} /> -----------{" "}
-                  <Typography variant="body1" className="mb-2 text-center">
-                    {calculateDuration(
-                      flight.departure_time,
-                      flight.arrival_time
-                    )}
-                  </Typography>{" "}
-                  --------- <FlightLandIcon sx={{ color: "red" }} />
-                </div>
-                <div className="w-1/3 pl-2">
-                  <Typography variant="body1" className="mb-2">
-                    <strong>{flight.arrival_code}</strong>
+                <div>
+                  <Typography variant="subtitle1" style={{ color: '#1e88e5', fontWeight: 'bold' }}>
+                    Arrival: {flight.arrival_code}
                   </Typography>
-                  <Typography variant="body1" className="mb-2">
-                    <strong>{formatDate(flight.arrival_time)}</strong>
-                  </Typography>
-                  <Typography variant="body1" className="mb-2">
-                    <strong>{formatTime(flight.arrival_time)}</strong>
+                  <Typography variant="body2" style={{ color: '#424242' }}>
+                    {formatDate(flight.arrival_time)} | {formatTime(flight.arrival_time)}
                   </Typography>
                 </div>
               </div>
@@ -272,84 +274,135 @@ const AvailableFlightsPage: React.FC = () => {
                   variant="contained"
                   color="primary"
                   onClick={() => handleBooking(flight.id)}
+                  style={{
+                    textTransform: 'none',
+                    backgroundColor: '#3f51b5',
+                    color: 'white',
+                    padding: '10px 20px',
+                    display: 'flex',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: '10px',
+                  }}
                 >
+                  <Image src="/book.png" width={30} height={30} alt="book" style={{ marginRight: '10px' }} />
                   Book Now
                 </Button>
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   color="primary"
                   onClick={() => handleViewDetails(flight)}
+                  style={{
+                    textTransform: 'none',
+                    backgroundColor: '#87CEEB',
+                    color: 'white',
+                    padding: '10px 20px',
+                    display: 'flex',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: '10px',
+                  }}
                 >
-                  View Flight Details
+                  <Image src="/view.png" width={30} height={30} alt="details" style={{ marginRight: '10px' }} />
+                  View Details
                 </Button>
               </div>
-            </div>
+            </Paper>
           ))}
         </div>
       )}
-      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle>Flight Details</DialogTitle>
-        <DialogContent>
+
+      <Dialog open={isDialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="sm">
+        <DialogTitle style={{ background: '#FF69B4', color: '#fff', padding: '20px' }}>
+          Flight Details
+          <Button
+            onClick={handleCloseDialog}
+            color="primary"
+            variant="contained"
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '10px',
+              backgroundColor: '#D70040',
+            }}
+          >
+            <CancelPresentationIcon />
+          </Button>
+        </DialogTitle>
+
+        <DialogContent style={{ backgroundColor: '#f0f0f0', padding: '20px' }}>
           {selectedFlight && (
-            <>
-              <Typography variant="body1" className="mb-2">
-                <strong>Flight Number:</strong> {selectedFlight.flight_number}
+            <div className="space-y-4">
+              <Typography variant="body1" style={{ color: '#333', display: 'flex', alignItems: 'center' }}>
+                <Image width={30} height={30} alt="flight" src="/number.png" style={{ color: 'red', marginRight: '10px' }} />
+                <span>
+                  <strong>Flight Number:</strong> {selectedFlight.flight_number}
+                </span>
               </Typography>
-              <Typography variant="body1" className="mb-2">
-                <strong>Departure Airport:</strong>{" "}
-                {selectedFlight.departure_airport_name} (
-                {selectedFlight.departure_code})
+              <Typography variant="body1" style={{ color: '#333', display: 'flex', alignItems: 'center' }}>
+                <Image width={24} height={24} alt="flight" src="/airport.png" style={{ marginRight: '10px' }} />
+                <span>
+                  <strong>Departure Airport:</strong> {selectedFlight.departure_airport_name} ({selectedFlight.departure_code})
+                </span>
               </Typography>
-              <Typography variant="body1" className="mb-2">
-                <strong>Departure Date:</strong>{" "}
-                {formatDate(selectedFlight.departure_time)}
+              <Typography variant="body1" style={{ color: '#333', display: 'flex', alignItems: 'center' }}>
+                <Image width={30} height={30} alt="flight" src="/date.png" style={{ color: 'red', marginRight: '10px' }} />
+                <span>
+                  <strong>Departure Date:</strong> {formatDate(selectedFlight.departure_time)}
+                </span>
               </Typography>
-              <Typography variant="body1" className="mb-2">
-                <strong>Departure Time:</strong>{" "}
-                {formatTime(selectedFlight.departure_time)}
+              <Typography variant="body1" style={{ color: '#333', display: 'flex', alignItems: 'center' }}>
+                <Image width={30} height={30} alt="flight" src="/depart.png" style={{ color: 'red', marginRight: '10px' }} />
+                <span>
+                  <strong>Departure Time:</strong> {formatTime(selectedFlight.departure_time)}
+                </span>
               </Typography>
-              <Typography variant="body1" className="mb-2">
-                <strong>Arrival Airport:</strong>{" "}
-                {selectedFlight.arrival_airport_name} (
-                {selectedFlight.arrival_code})
+              <Typography variant="body1" style={{ color: '#333', display: 'flex', alignItems: 'center' }}>
+                <Image width={30} height={30} alt="flight" src="/airport.png" style={{ marginRight: '10px' }} />
+                <span>
+                  <strong>Arrival Airport:</strong> {selectedFlight.arrival_airport_name} ({selectedFlight.arrival_code})
+                </span>
               </Typography>
-              <Typography variant="body1" className="mb-2">
-                <strong>Arrival Date:</strong>{" "}
-                {formatDate(selectedFlight.arrival_time)}
+              <Typography variant="body1" style={{ color: '#333', display: 'flex', alignItems: 'center' }}>
+                <Image width={30} height={30} alt="flight" src="/date2.jpg" style={{ color: 'red', marginRight: '10px' }} />
+                <span>
+                  <strong>Arrival Date:</strong> {formatDate(selectedFlight.arrival_time)}
+                </span>
               </Typography>
-              <Typography variant="body1" className="mb-2">
-                <strong>Arrival Time:</strong>{" "}
-                {formatTime(selectedFlight.arrival_time)}
+              <Typography variant="body1" style={{ color: '#333', display: 'flex', alignItems: 'center' }}>
+                <Image width={50} height={50} alt="flight" src="/arrival3.png" style={{ color: 'red' }} />
+                <span>
+                  <strong>Arrival Time:</strong> {formatTime(selectedFlight.arrival_time)}
+                </span>
               </Typography>
-              <Typography variant="body1" className="mb-2">
-                <strong>Total Duration:</strong>{" "}
-                {calculateDuration(
-                  selectedFlight.departure_time,
-                  selectedFlight.arrival_time
-                )}
+              <Typography variant="body1" style={{ color: '#333', display: 'flex', alignItems: 'center' }}>
+                <Image width={30} height={30} alt="flight" src="/time1.png" style={{ color: 'red', marginRight: '10px' }} />
+                <span>
+                  <strong>Total Duration:</strong> {calculateTimeDifference(selectedFlight.departure_time, selectedFlight.arrival_time)}
+                </span>
               </Typography>
-              <Typography variant="body1" className="mb-2">
-                <strong>Price:</strong>{" "}
-                {selectedFlight.price.toLocaleString("en-IN", {
-                  style: "currency",
-                  currency: "INR",
-                })}
+              <Typography variant="body1" style={{ color: '#333', display: 'flex', alignItems: 'center' }}>
+                <Image width={30} height={30} alt="flight" src="/rs.png" style={{ color: 'red', marginRight: '10px' }} />
+                <span>
+                  <strong>Price:</strong> {selectedFlight.price.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
+                </span>
               </Typography>
-              <Typography variant="body1" className="mb-2">
-                <strong>Available Seats:</strong>{" "}
-                {selectedFlight.available_seats}
+              <Typography variant="body1" style={{ color: '#333', display: 'flex', alignItems: 'center' }}>
+                <Image width={30} height={30} alt="flight" src="/seats.png" style={{ color: 'red', marginRight: '10px' }} />
+                <span>
+                  <strong>Available Seats:</strong> {selectedFlight.available_seats}
+                </span>
               </Typography>
-            </>
+            </div>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
       </Dialog>
     </div>
   );
 };
 
-export default AvailableFlightsPage;
+                export default AvailableFlightsPage;

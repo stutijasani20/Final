@@ -3,6 +3,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import Apply from "./apply";
 
 export default function Page({ params }: { params: { id: string } }) {
@@ -57,55 +58,68 @@ export default function Page({ params }: { params: { id: string } }) {
   const requirementPoints = jobData.requirements.split(",");
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="flex justify-center items-center mb-5 mt-5 h-full">
       <Box
         sx={{
+          width: "80%",
+          maxWidth: 1000,
           border: 2,
           borderRadius: 5,
-          borderColor: "black.300",
+          borderColor: "primary.main",
           p: 4,
-          position: "relative",
+          boxShadow: 3,
         }}
       >
-        <h1 className="text-3xl font-bold mb-4 mt-5">{jobData.title}</h1>
+        <Typography variant="h3" sx={{ mb: 4, color: "primary.main" }}>
+          {jobData.title}
+        </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={8}>
-            <div className="mb-4">
-              <h2 className="font-bold">Description:</h2>
-              <ul className="list-disc ml-8">
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h5" sx={{ mb: 2, color: "primary.main" }}>
+                Description:
+              </Typography>
+              <ul style={{ marginLeft: "1rem", color: "text.secondary" }}>
                 {descriptionPoints.map((point: string, index: number) => (
-                  <li key={index}>{point}</li>
+                  <Typography key={index} component="li" variant="body1" sx={{ mb: 1 }}>
+                    {point}
+                  </Typography>
                 ))}
               </ul>
-            </div>
-
-            <p className="fobt-bold mb-4">Department: {departmentName}</p>
-            <p className="font-bold mb-4">Requirements:</p>
-
-            <ul className="list-disc ml-8">
+            </Box>
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              Department: {departmentName}
+            </Typography>
+            <Typography variant="h5" sx={{ mb: 2, color: "primary.main" }}>
+              Requirements:
+            </Typography>
+            <ul style={{ marginLeft: "1rem", color: "text.secondary" }}>
               {requirementPoints.map((point: string, index: number) => (
-                <li key={index}>{point}</li>
+                <Typography key={index} component="li" variant="body1" sx={{ mb: 1 }}>
+                  {point}
+                </Typography>
               ))}
             </ul>
+            <p className="font-bold text-lg text-blue-500 mb-4">Salary: </p>
+<div className="mt-2 mb-4 text-gray-700 bg-gray-100 p-2 rounded">{jobData.salary}</div>
 
-            <p className="font-bold mb-4">Salary: </p>
-            <p className="mt-2 mb-4">{jobData.salary}</p>
-
-            <Apply jobId={params.id} />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <img
-              src={jobData.image}
-              alt="Job Image"
-              style={{
-                maxWidth: "100%",
-                maxHeight: "100%",
-                objectFit: "cover",
-              }}
-            />
-          </Grid>
-        </Grid>
-      </Box>
-    </div>
+<Apply jobId={params.id} />
+</Grid>
+<Grid item xs={12} sm={4}>
+  <div className="shadow-lg rounded overflow-hidden">
+    <img
+      src={jobData.image}
+      alt="Job Image"
+      style={{
+        maxWidth: "100%",
+        maxHeight: "100%",
+        objectFit: "cover",
+      }}
+    />
+  </div>
+</Grid>
+</Grid>
+</Box>
+</div>
   );
 }

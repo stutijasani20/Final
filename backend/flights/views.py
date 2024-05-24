@@ -1,3 +1,4 @@
+
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,7 +16,7 @@ from django.utils.html import strip_tags
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import authentication, permissions
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-
+from datetime import datetime
 class FlightView(APIView):
 
     def get(self, request):
@@ -27,7 +28,7 @@ class FlightView(APIView):
         price = request.GET.get('price')
         travel_date = request.GET.get('travel_date')
         class_name = request.GET.get('class_name')
-        
+       
         flights = Flight.objects.all()
         
         
@@ -41,8 +42,7 @@ class FlightView(APIView):
         if travel_date:
             flights = flights.filter(travel_date=travel_date)
         if class_name:
-
-            flights = flights.filter(classes__name=class_name)
+             flights = flights.filter(classes__name=class_name)
        
         serializer = FlightSerializer(flights, many=True)
       
@@ -332,12 +332,15 @@ class BookingView(APIView):
         if passenger_id:
             bookings = bookings.filter(passenger=passenger_id).order_by('-booking_date')
         if booking_date:
-            bookings = bookings.filter(booking_date=booking_date).order_by('-booking_date')
+            booking_date = datetime.strptime(booking_date, '%Y-%m-%d')
+            bookings = bookings.filter(booking_date__date=booking_date).order_by('-booking_date')
         if is_paid:
             is_paid = is_paid.lower() == 'true'
             bookings = bookings.filter(is_paid=is_paid).order_by('-booking_date')
         if flight_id:
             bookings = bookings.filter(flight=flight_id).order_by('-booking_date')
+
+
 
         paginator = PageNumberPagination()
         paginator.page_size = 10

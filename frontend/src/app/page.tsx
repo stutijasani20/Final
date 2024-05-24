@@ -18,12 +18,27 @@ import {
   FaPlane,
 } from "react-icons/fa"; // import social media icons
 import { motion } from "framer-motion";
+import Slider from "react-slick";
+ import ScrollAnimation from 'react-animate-on-scroll';
 
 // import "./styles/main.scss"
 
 const MiddleSection: React.FC = () => {
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+  };
   return (
+
     <>
+
+
+
       <motion.div
         className="main-container pt-16"
         initial={{ opacity: 0, y: 50 }}
@@ -31,7 +46,7 @@ const MiddleSection: React.FC = () => {
         transition={{ duration: 0.7 }}
       >
         {/* Add other content here */}
-
+      
         <div className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl italic font-semibold text-white text-center mb-8">
