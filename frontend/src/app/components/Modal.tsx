@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
@@ -46,7 +47,7 @@ function UserProfileModal() {
 
         setShowModal(false);
         toast.success("Profile Data added Successfully !");
-        localStorage.setItem("profileData", "true");
+        
       } else {
         console.error("Failed to add profile");
         toast.error("Error in setting Up Profile. Try Again Later");
@@ -145,6 +146,7 @@ function UserProfileModal() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full outline-none"
+                    maxLength={10}
                   />
                 </div>
               </div>

@@ -1,70 +1,79 @@
 import React from "react";
-import { FaFacebookF, FaTwitter, FaInstagram } from "react-icons/fa";
-import styles from "@/app/styles/footer.module.scss"
+import Styles from "@/app/styles/footer.module.scss"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFacebook, faTwitter, faInstagram, faLinkedin } from "@fortawesome/free-brands-svg-icons";
+import Image from "next/image";
 
 const Footer: React.FC = () => {
   return (
-    <footer className={styles.footer}>
-      <div className="container">
-        <div className="row">
-          <div className="col-md-3">
+    <footer className={Styles.footer}>
+      <div className={Styles.container}>
+        <div className={Styles.row}>
+          <div className={Styles.col}>
+            <h3>About Us</h3>
+            <ul>
+              <li><a href="/about">About Elegance Air</a></li>
+              <li><a href="/careers">Careers</a></li>
+              <li><a href="/corporate_info">Corporate Info</a></li>
+              <li><a href="/press">Press</a></li>
+              <li><a href="/cargo">Cargo</a></li>
+            </ul>
+          </div>
+          <div className={Styles.col}>
+            <h3>Book & Manage</h3>
+            <ul>
+              <li><a href="flights/search">Search Flight</a></li>
+              <li><a href="#">Manage Booking</a></li>
+              <li><a href="#">Flight Schedule</a></li>
+            </ul>
+          </div>
+          <div className={Styles.col}>
+            <h3>Where We Fly</h3>
+            <ul>
+              <li><a href="#">Popular Flights</a></li>
+              <li><a href="/where_we_fly/route_map">Route Map</a></li>
+            </ul>
+          </div>
+          <div className={Styles.col}>
+            <h3>Prepare to Travel</h3>
+            <ul>
+              <li><a href="/prepare_travel/baggage_guidelines">Baggage Guide</a></li>
+              <li><a href="/prepare_travel/Visa_Docs">Visas & Travel Tips</a></li>
+              <li><a href="/prepare_travel/Medical_Assistance">Health & Medical</a></li>
+            </ul>
+          </div>
+          <div className={Styles.col}>
+            <h3>Support</h3>
+            <ul>
+              <li><a href="/contact">Contact Us</a></li>
+              <li><a href="#">FAQ{"'"}s</a></li>
+              <li><a href="#">Grievance Resolution</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className={Styles.row}>
+          <div className={Styles.newsletter}>
+            <h3>Newsletter</h3>
+            <form>
+              <input type="email" placeholder="Enter your email" />
+              <button type="submit">Subscribe</button>
+            </form>
+          </div>
+          <div className={Styles.appIcons}>
+            <h3>Elegance Air App</h3><br />
+         
             <div>
-              <h3 className={styles.footerHeading}>About Us</h3>
-              <ul className={styles.footerList}>
-                <li>
-                  <a href="/about" className={styles.footerLink}>About Elegance Air</a>
-                </li>
-                <li>
-                  <a href="/careers" className={styles.footerLink}>Careers</a>
-                </li>
-                <li>
-                  <a href="/corporate_info" className={styles.footerLink}>Corporate Information</a>
-                </li>
-                <li>
-                  <a href="/press" className={styles.footerLink}>Press</a>
-                </li>
-                <li>
-                  <a href="/cargo" className={styles.footerLink}>Cargo</a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className={styles.footerHeading}>Follow Us</h3>
-              <ul className={styles.socialLinks}>
-                <li>
-                  <a href="#" className={styles.socialIcon}>
-                    <FaFacebookF style={{ color: "#3b5998", fontSize: "24px" }} />
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className={styles.socialIcon}>
-                    <FaTwitter style={{ color: "#1da1f2", fontSize: "24px" }} />
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className={styles.socialIcon}>
-                    <FaInstagram style={{ color: "#c32aa3", fontSize: "24px" }} />
-                  </a>
-                </li>
-                {/* Add more social media icons as needed */}
-              </ul>
+              <a><Image src="/google-play-badge.png" alt="Google Play" width={52} height={52} /></a>
+              <div>
+              <a><Image src="/Download_on_the_App_Store_2017.png" alt="App Store" width={52} height={52} /></a>
+              </div>
+              
             </div>
           </div>
-          {/* Add more columns as needed */}
         </div>
-        <hr className={styles.divider} />
-        <div className="row">
-          <div className="col-md-6">
-            <h3 className={styles.footerHeading}>Contact Us</h3>
-            <p className={styles.footerText}>
-              <strong>Address:</strong> 123 Example Street, City, Country
-            </p>
-            <p className={styles.footerText}>
-              <strong>Email:</strong> info@eleganceair.com
-            </p>
-            <p className={styles.footerText}>
-              <strong>Phone:</strong> +1 (123) 456-7890
-            </p>
+        <div className={Styles.row}>
+          <div className={Styles.copyright}>
+            &copy; {new Date().getFullYear()} Elegance Air. All rights reserved.
           </div>
         </div>
       </div>

@@ -137,18 +137,12 @@ const Page: React.FC = () => {
                     label="Booking Date"
                     name="bookingDate"
                     value={filterCriteria.bookingDate}
-                    onChange={handleFilterChange}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => handleFilterChange(e)}
                     InputLabelProps={{
                         shrink: true,
                     }}
                 />
-                <TextField
-                    type="text"
-                    label="Flight ID"
-                    name="flightId"
-                    value={filterCriteria.flightId}
-                    onChange={handleFilterChange}
-                />
+               
             </div>
             <Button variant="contained" color="secondary" onClick={clearFilters}>
     Clear Filters

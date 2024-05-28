@@ -61,31 +61,42 @@ class AuthViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         
         email = serializer.validated_data['email']
+
         try:
             existing_user = CustomUser.objects.get(email=email)
             return Response({'error': 'User with this email already exists'}, status=status.HTTP_400_BAD_REQUEST)
         except ObjectDoesNotExist:
             pass
 
+        user = create_user_account(**serializer.validated_data)
+        data = AuthUserSerializer(user).data
+       
 
-            data = {}  # Define data with a default value
+       
+        mail_subject = 'Welcome to Elegance Airline!'
+        message = render_to_string('Register.html', {
+            'user': user,
+        })
+        email = EmailMessage(
+            mail_subject, message, from_email=settings.DEFAULT_FROM_EMAIL, to=[user]
+        )  
+        email.content_subtype = "html"  
+        email.send()
+        logger.info(f"Registration email sent to {user}")
 
-        try:
-            user = create_user_account(**serializer.validated_data)
-            mail_subject = 'Welcome to Elegance Airline!'
-            message = render_to_string('Register.html', {
-                'user': user,
-            })
-            email = EmailMessage(
-            mail_subject, message, from_email=settings.DEFAULT_FROM_EMAIL, to=[user.email]
-            )  
-            email.content_subtype = "html"  # Set the email content type to HTML
-            email.send()
-            logger.info("Registration email sent to {user.email}")
-        except Exception as e:
-          logger.error(f"Failed to send registration email to {user.email}: {e}")
         return Response(data=data, status=status.HTTP_201_CREATED)
 
+    @action(methods=['POST'], detail=False)
+    def logout(self, request):
+        logout(request)
+        data = {'success': 'Successfully logged out'}
+        return Response(data=data, status=status.HTTP_200_OK)
+    
+  
+
+
+
+         
     @action(methods=['POST'], detail=False)
     def logout(self, request):
         logout(request)

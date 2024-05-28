@@ -1,10 +1,13 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-// import Notification from "@/app/components/notification";
+
 import { toast, Toaster } from "react-hot-toast";
+import UserProfileModal from "@/app/components/Modal";
 
 interface UserProfile {
+  results: any;
   id: number;
   name: string;
   profile_photo: string;
@@ -19,6 +22,7 @@ const ProfilePage: React.FC = () => {
     profile_photo: "",
     phone: 0,
     birth_date: null,
+    results: "",
   });
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false); 
@@ -47,6 +51,7 @@ const ProfilePage: React.FC = () => {
         }
       );
       setProfile(response.data.results[0]);
+     
     } catch (error) {
       console.error("Error fetching profile:", error);
     }
@@ -99,7 +104,7 @@ const ProfilePage: React.FC = () => {
           },
         }
       );
-      console.log("Profile updated successfully");
+      
       setShowModal(false);
       toast.success("Profile Update Successfully !")
     } catch (error) {
@@ -160,7 +165,7 @@ const ProfilePage: React.FC = () => {
             <h2 className="text-2xl font-bold mb-4">Profile Details</h2>
             <p className="text-lg">Name: {profile.name}</p>
             <p className="text-lg">Phone: {profile.phone}</p>
-            <p className="text-lg">Birth Date:{new Date(profile.birth_date).toLocaleDateString('en-GB')}</p>
+            <p className="text-lg">Birth Date: {profile.birth_date ? new Date(profile.birth_date).toLocaleDateString('en-GB') : 'N/A'}</p>
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
               onClick={() => setShowModal(true)}

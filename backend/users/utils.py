@@ -9,11 +9,12 @@ def get_and_authenticate_user(email, password):
     return user
 
 
-def create_user_account(email, password, 
-                         **extra_fields):
+def create_user_account(email, password):
     user = get_user_model().objects.create_user(
-        email=email, password=password,  **extra_fields)
+        email=email, password=password)
+   
     return user
+
 
 
 

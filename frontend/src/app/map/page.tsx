@@ -12,7 +12,9 @@ import Modal from "react-modal";
 import CancelIcon from '@mui/icons-material/Cancel';
 import TurnLeftIcon from '@mui/icons-material/TurnLeft';
 import TurnRightIcon from '@mui/icons-material/TurnRight';
+import RoundaboutLeftIcon from '@mui/icons-material/RoundaboutLeft';
 import Image from "next/image";
+import TimeToLeaveIcon from '@mui/icons-material/TimeToLeave';
 interface RouteData {
     routes: {
         summary: {
@@ -235,6 +237,10 @@ const MapWithRoute = () => {
         <li key={index} className="mb-2">
             {instruction.message.includes('left') && <TurnLeftIcon />}
             {instruction.message.includes('right') && <TurnRightIcon />}
+            {instruction.message.includes('roundabout') && <RoundaboutLeftIcon />}
+            {instruction.message.includes('Leave') && <TimeToLeaveIcon />}
+            
+
             {instruction.message}
         </li>
     ))}

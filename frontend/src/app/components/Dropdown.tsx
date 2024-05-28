@@ -60,7 +60,7 @@ const Dropdown = () => {
     fetchUserDetails();
   }, [token]);
 
-  const handleClick = (event) => {
+  const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -117,7 +117,7 @@ const Dropdown = () => {
               </MenuItem>
             ),
             <MenuItem key="support" onClick={handleClose}>
-              <Link href="/user/customer" className="font-bold text-green-800">
+              <Link href="/contact" className="font-bold text-green-800">
                 <Image
                   src="/support.png"
                   alt="Dashboard"

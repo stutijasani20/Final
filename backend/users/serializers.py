@@ -40,10 +40,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'email', 'password']
-
-
-
-
     def validate(self, value): 
       
         user_email = value.get('email')
@@ -59,7 +55,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop('password')
-        user = CustomUser.objects.create_user(password=password, **validated_data)
+        email = validated_data.pop('email')
+        user = CustomUser.objects.create_user(email=email,password=password, **validated_data)
         return user
     
 class UpdateStaffStatusSerializer(serializers.ModelSerializer):

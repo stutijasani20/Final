@@ -48,6 +48,8 @@ const RegisterPage = () => {
         "http://127.0.0.1:8000/api/auth/register/",
         { email, password }
       );
+
+      console.log(response)
       toast.success("Registration successful! Please check your email for verification.", {
         position: "top-right",
       });
@@ -61,7 +63,7 @@ const RegisterPage = () => {
       if (error.response) {
         if (error.response.data && error.response.data.email) {
           // If the response contains email error messages
-          error.response.data.email.forEach(errorMessage => {
+          error.response.data.email.forEach((errorMessage: any )=> {
             toast.error(errorMessage, { position: "top-right" });
           });
         } else {
@@ -101,7 +103,7 @@ const RegisterPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className={styles.input}
               />
-              <p className={styles.hint}>Hint: Email should contain "@" and be a verified account.</p>
+              <p className={styles.hint}>Hint: Email should contain {"@"} and be a verified account.</p>
             </div>
 
             <div className={styles['input-container']}>
@@ -144,7 +146,7 @@ const RegisterPage = () => {
 
             {!passwordsMatch && <p className={styles['text-red-500']}>Passwords do not match</p>}
             <ReCAPTCHA
-              sitekey="6LelgdkpAAAAAK7Td6htpzXSSzEEuKSljTYS8ZCr"
+              sitekey= "6LelgdkpAAAAAK7Td6htpzXSSzEEuKSljTYS8ZCr"
               onChange={() => setRecaptchaVerified(true)}
               onExpired={() => setRecaptchaVerified(false)}
             /><br />

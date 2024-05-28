@@ -6,18 +6,10 @@ import axios from "axios";
 import BookingSuccessModal from "../customer/success"; // Import the success modal component
 import Link from "next/link";
 
-import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
+
 import Button from "@mui/material/Button";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import Image from "next/image";
 import UserProfileModal from "@/app/components/Modal";
-import { profile } from "console";
 
 const style = {
   position: "absolute" as "absolute",
@@ -35,17 +27,15 @@ interface Booking {
   id: number;
   booking_date: string;
   trip_type: string;
-  passengers: any[];
+  passengers: number[];
   is_paid: boolean;
   flight: number;
-
-  // Add more booking details
 }
+
 interface Flight {
   id: number;
   flight_number: string;
   arrival_airport_name: string;
-  // Add more flight details
 }
 
 interface Passenger {
@@ -71,9 +61,10 @@ export default function MyBookingsPage() {
   const [paymentStatusFilter, setPaymentStatusFilter] = useState("");
   const [bookingDateFilter, setBookingDateFilter] = useState("");
   const [filteredBookings, setFilteredBookings] = useState([]);
-  const [showProfileModal, setShowProfileModal] = useState(false); // State to control the profile modal visibility
-  const profileExists = localStorage.getItem("profileData");
+  const [showProfileModal, setShowProfileModal] = useState(false);
+ 
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [passengerDetails, setPassengerDetails] = useState<Passenger[]>([]);
 
   const handleToggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
@@ -85,14 +76,12 @@ export default function MyBookingsPage() {
 
   const handleFilter = async () => {
     try {
-      // Construct query parameters based on filter values
       const queryParams = {
         flight: flightNumberFilter,
         is_paid: paymentStatusFilter,
         booking_date: bookingDateFilter,
       };
 
-      // Fetch filtered bookings from backend API
       const response = await axios.get("http://127.0.0.1:8000/bookings/", {
         params: queryParams,
         headers: {
@@ -100,40 +89,38 @@ export default function MyBookingsPage() {
         },
       });
 
-      // Update state variable with filtered bookings
       setFilteredBookings(response.data);
     } catch (error) {
       console.error("Error fetching filtered bookings:", error);
-      // Handle error
     }
   };
 
   useEffect(() => {
     const checkProfileCompleteness = async () => {
       try {
-
-        const response = await axios.get(`http://127.0.0.1:8000/profile/?user=${userId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await axios.get(
+          `http://127.0.0.1:8000/profile/?user=${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
         const profileData = response.data.results;
         console.log("Profile data:", profileData);
-        
+
         if (profileData === null || profileData.length === 0) {
           setShowProfileModal(true);
         }
       } catch (error) {
         console.error("Error checking profile completeness:", error);
-        
       }
     };
-  
-    if (userId && !profileExists) {
+
+    if (userId ) {
       checkProfileCompleteness();
     }
-  }, [profileExists, userId]);
-  
+  }, [ userId]);
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -170,16 +157,38 @@ export default function MyBookingsPage() {
       fetchBookings();
       fetchFlights();
     } else {
-      // Redirect to login if user ID is not available
       router.push("/login");
     }
   }, [userId, router]);
-  const all = bookings.map((booking: any) => booking.passengers);
+
+  useEffect(() => {
+    if (bookings.length === 0) return;
+
+    async function fetchPassengerDetails() {
+      try {
+        const ids = bookings.flatMap((booking: Booking) => booking.passengers);
+        console.log(ids);
+        const passengerDetailResponses = await Promise.all(
+          ids.map((passengerId: number) =>
+            axios.get<Passenger>(`http://127.0.0.1:8000/passengers/${passengerId}`)
+          )
+        );
+
+        const details = passengerDetailResponses.map((response) => response.data);
+
+        setPassengerDetails(details);
+        console.log(details);
+      } catch (error) {
+        console.error("Error fetching passenger details:", error);
+      }
+    }
+
+    fetchPassengerDetails();
+  }, [bookings]);
 
   const handleCancelBooking = async (bookingId: any) => {
     try {
       await axios.delete(`http://127.0.0.1:8000/bookings/${bookingId}`);
-      // Remove canceled booking from state
       setBookings(bookings.filter((booking) => booking.id !== bookingId));
       setShowSuccessModal(true);
       console.log("Booking canceled successfully");
@@ -199,36 +208,62 @@ export default function MyBookingsPage() {
 
   const first_flight = bookings[0];
   const id = first_flight?.flight;
-  const flight = flightData.find(
-    (flight) => flight.id === id
-  )?.arrival_airport_name;
-
-
+  const flight = flightData.find((flight) => flight.id === id)?.arrival_airport_name;
 
   return (
     <>
       <div>{showProfileModal && <UserProfileModal />}</div>
-      <div style={{ position: "relative", display: "flex", justifyContent: "flex-start", padding: "10px" }}>
+      <div
+        style={{
+          position: "relative",
+          display: "flex",
+          justifyContent: "flex-start",
+          padding: "10px",
+        }}
+      >
         <Button onClick={handleToggleDropdown}>
           <Image src="/side.png" alt="side" height={50} width={50} />
         </Button>
         {dropdownVisible && (
-          <div className="dropdown-menu" style={{ position: "absolute", top: "60px", left: "10px", background: "#fff", boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)", borderRadius: "8px", zIndex: 1000 }}>
+          <div
+            className="dropdown-menu"
+            style={{
+              position: "absolute",
+              top: "60px",
+              left: "10px",
+              background: "#fff",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+              borderRadius: "8px",
+              zIndex: 1000,
+            }}
+          >
             <ul style={{ listStyle: "none", padding: "10px", margin: "0" }}>
-              <li style={{ padding: "8px 16px", display: "flex", alignItems: "center" }} onClick={handleCloseDropdown}>
+              <li
+                style={{ padding: "8px 16px", display: "flex", alignItems: "center" }}
+                onClick={handleCloseDropdown}
+              >
                 <Image src="/booking.png" alt="book" width={20} height={20} style={{ marginRight: "10px" }} />
                 <Link href="/user/customer/bookings">My Previous Bookings</Link>
               </li>
-              <li style={{ padding: "8px 16px", display: "flex", alignItems: "center" }} onClick={handleCloseDropdown}>
-              <Image src="/hotel1.png" alt="book" width={20} height={20} style={{ marginRight: "10px" }} />
+              <li
+                style={{ padding: "8px 16px", display: "flex", alignItems: "center" }}
+                onClick={handleCloseDropdown}
+              >
+                <Image src="/hotel1.png" alt="book" width={20} height={20} style={{ marginRight: "10px" }} />
                 <Link href={`/individual/hotel?airport=${flight}`}>Hotel</Link>
               </li>
-              <li style={{ padding: "8px 16px", display: "flex", alignItems: "center" }} onClick={handleCloseDropdown}>
-              <Image src="/restaurant1.png" alt="book" width={20} height={20} style={{ marginRight: "10px" }} />
+              <li
+                style={{ padding: "8px 16px", display: "flex", alignItems: "center" }}
+                onClick={handleCloseDropdown}
+              >
+                <Image src="/restaurant1.png" alt="book" width={20} height={20} style={{ marginRight: "10px" }} />
                 <Link href={`/individual/restaurant?airport=${flight}`}>Restaurants</Link>
               </li>
-              <li style={{ padding: "8px 16px", display: "flex", alignItems: "center" }} onClick={handleCloseDropdown}>
-              <Image src="/tourist1.png" alt="book" width={20} height={20} style={{ marginRight: "10px" }} />
+              <li
+                style={{ padding: "8px 16px", display: "flex", alignItems: "center" }}
+                onClick={handleCloseDropdown}
+              >
+                <Image src="/tourist1.png" alt="book" width={20} height={20} style={{ marginRight: "10px" }} />
                 <Link href={`/individual/tourist?airport=${flight}`}>Tourist Places</Link>
               </li>
             </ul>
@@ -238,16 +273,13 @@ export default function MyBookingsPage() {
 
       {/* Bookings Table */}
       <div className="container bg-slate-100  mx-auto p-8">
-        <h1 className="text-3xl flex justify-center  font-bold mb-6">
-          My Bookings
-        </h1>
+        <h1 className="text-3xl flex justify-center  font-bold mb-6">My Bookings</h1>
         <div className="mb-8 flex justify-center">
           {bookings.length === 0 ? (
             <p>No bookings found.</p>
           ) : (
             <div>
               <table className="min-w-full  divide-y divide-gray-200">
-                {/* Table Headers */}
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -276,35 +308,40 @@ export default function MyBookingsPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {bookings.map((booking, index) => (
                     <tr key={booking.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {index + 1}
-                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {new Date(booking.booking_date).toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {booking.trip_type}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {booking.passengers.length}
+                      <td className="px-6 py-4 whitespace-nowrap">{booking.trip_type}</td>
+                      <td className="border p-4">
+                        {booking.passengers.length > 0 ? (
+                          booking.passengers.map((passengerId, i) => {
+                            const passenger = passengerDetails.find((p) => p.id === passengerId);
+                            return passenger ? (
+                              <div key={i} className="my-1">
+                                {passenger.first_name} {passenger.last_name}
+                              </div>
+                            ) : (
+                              <div key={i} className="my-1 text-red-500">
+                                No details for this passenger
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <div className="text-gray-500">No passengers</div>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div
                           className={`inline-block px-2 py-1 rounded-lg ${
-                            booking.is_paid
-                              ? "bg-green-200 text-green-800"
-                              : "bg-red-200 text-red-800"
+                            booking.is_paid ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"
                           }`}
                         >
                           {booking.is_paid ? "Success" : "Pending"}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {
-                          flightData.find(
-                            (flight) => flight.id === booking.flight
-                          )?.flight_number
-                        }
+                        {flightData.find((flight) => flight.id === booking.flight)?.flight_number}
                       </td>
                       <td>
                         <button

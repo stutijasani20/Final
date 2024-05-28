@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import Image from "next/image";
-
+import {useRouter} from "next/navigation"
 const JobCard: React.FC<{
   title: string;
   image: string;
@@ -11,6 +11,13 @@ const JobCard: React.FC<{
   jobId: number;
 }> = ({ title, image, location, jobId }) => {
   const [hovered, setHovered] = useState(false);
+  const router = useRouter();
+
+
+  const handlejob = () =>{
+    router.push(`/careers/${jobId}`)
+
+  }
 
   return (
     <div
@@ -31,15 +38,15 @@ const JobCard: React.FC<{
       <div className="p-4">
         <h3 className="text-xl font-semibold mb-2 text-blue-700">{title}</h3>
         <p className="text-gray-600 mb-2 font-semibold">{location}</p>
-        <a
-          href={`/careers/${jobId}`}
+        <button
+         onClick={handlejob}
           className="text-blue-500 hover:text-blue-600 font-semibold transition-colors duration-300"
         >
           
           <div className="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer">
   Learn More
 </div>
-        </a>
+        </button>
       </div>
     </div>
   );

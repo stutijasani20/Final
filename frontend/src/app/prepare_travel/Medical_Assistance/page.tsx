@@ -48,7 +48,7 @@ export default function HealthMedicalAssistance() {
                     className={styles.cardMedia}
                     component="img"
                     alt="Comfortable Travel, Accessible Journeys"
-                    image="/documents-to-carry.jpg"
+                    image="/comfort.jpg"
                 />
             </Card>
 
@@ -60,11 +60,11 @@ export default function HealthMedicalAssistance() {
                             className={styles.cardMedias}
                             component="img"
                             alt="Canada"
-                            height="220"
-                            image="/canada.jpg"
+                          
+                            image="/needs.jpeg"
                         />
                         <Typography variant="h5" align="center" className={styles.cardTitle}>Medical needs and clearance requirements </Typography>
-                        <p className={styles.cardDescription}>Whether it's medical care in the air or conditions that need attention, we are here to care.</p>
+                        <p className={styles.cardContent}>Whether {"it's"} medical care in the air or conditions that need attention, we are here to care.</p>
                         <a onClick={() => handleLearnMoreClick("Medical needs and clearance requirements")} className={styles.learnMore}>Learn More</a>
                     </Card>
                     <Card className={styles.cards}>
@@ -76,47 +76,47 @@ export default function HealthMedicalAssistance() {
                             image="/united-states.jpg"
                         />
                         <Typography variant="h5" align="center" className={styles.cardTitle}> Special needs assistance </Typography>
-                        <p className={styles.cardDescription}>Please learn about our accessible travel services for passengers with reduced mobility or visual and hearing impairments..</p>
+                        <p className={styles.cardContent}>Please learn about our accessible travel services for passengers with reduced mobility or visual and hearing impairments..</p>
                         <a onClick={() => handleLearnMoreClick("Special needs assistance")} className={styles.learnMore}>Learn More</a>
                     </Card>
                     <Card className={styles.cards}>
                         <CardMedia
-                            className={styles.cardMedia}
+                            className={styles.cardMedias}
                             component="img"
                             alt="Gulf Countries"
-                            height="220"
-                            image="/gulf-countries.jpg"
+                           
+                            image="/assistance.jpg"
                         />
                         <Typography variant="h5" align="center" className={styles.cardTitle}>Passengers who require a wheelchair</Typography>
-                        <p className={styles.cardDescription}>If you need a wheelchair, let us know at the time of your reservation, ticketing, or reconfirmation of the booking. </p>
+                        <p className={styles.cardContent}>If you need a wheelchair, let us know at the time of your reservation, ticketing, or reconfirmation of the booking. </p>
 
                         <a onClick={() => handleLearnMoreClick("Passengers who require a wheelchair")} className={styles.learnMore}>Learn More</a>
                     </Card>
 
                     <Card className={styles.cards}>
                         <CardMedia
-                            className={styles.cardMedia}
+                            className={styles.cardMedias}
                             component="img"
                             alt="Gulf Countries"
-                            height="220"
-                            image="/gulf-countries.jpg"
+                            
+                            image="/medical.jpg"
                         />
                         <Typography variant="h5" align="center" className={styles.cardTitle}>Flying with medical conditions </Typography>
-                        <p className={styles.cardDescription}>Medical clearance is required for medical conditions that raise concerns about completing the flight safely or pose a risk to other guests. </p>
+                        <p className={styles.cardContent}>Medical clearance is required for medical conditions that raise concerns about completing the flight safely or pose a risk to other guests. </p>
 
                         <a onClick={() => handleLearnMoreClick("Flying with medical conditions ")} className={styles.learnMore}>Learn More</a>
                     </Card>
 
                     <Card className={styles.cards}>
                         <CardMedia
-                            className={styles.cardMedia}
+                            className={styles.cardMedias}
                             component="img"
                             alt="Gulf Countries"
-                            height="220"
-                            image="/gulf-countries.jpg"
+        
+                            image="/dog.jpg"
                         />
                         <Typography variant="h5" align="center" className={styles.cardTitle}>Travelling with a Service Dog  </Typography>
-                        <p className={styles.cardDescription}>Flying with a loyal companion by your side? Read about the requirements and guidelines when travelling with your service dog. </p>
+                        <p className={styles.cardContent}>Flying with a loyal companion by your side? Read about the requirements and guidelines when travelling with your service dog. </p>
 
                         <a onClick={() => handleLearnMoreClick("ravelling with a Service Dog  ")} className={styles.learnMore}>Learn More</a>
                     </Card>

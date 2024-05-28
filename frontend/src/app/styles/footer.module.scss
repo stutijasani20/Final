@@ -1,65 +1,146 @@
-
-
 .footer {
-  background-color: #f8f9fa;
+  background-color: #2c3e50;
+  color: #fff;
   padding: 50px 0;
-}
+  font-family: 'Arial, sans-serif';
 
-.divider {
-  border-top: 1px solid #ccc;
-  margin-top: 40px;
-  margin-bottom: 40px;
-}
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
 
-.footerHeading {
-  font-size: 1.4rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 15px;
-}
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 30px;
 
-.footerList {
-  padding-left: 0;
-}
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 
-.footerList li {
-  list-style: none;
-  margin-bottom: 10px;
-}
+  .col {
+    width: 100%;
+    max-width: 200px;
+    margin-bottom: 20px;
 
-.footerLink {
-  color: #555;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
+    h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      white-space: nowrap;
+    }
 
-.footerLink:hover {
-  color: #007bff;
-}
+    ul {
+      list-style: none;
+      padding: 0;
 
-.footerText {
-  color: #666;
-  font-size: 0.95rem;
-  margin-bottom: 10px;
-}
+      li {
+        margin-bottom: 8px;
 
-.socialLinks {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+        a {
+          color: #fff;
+          text-decoration: none;
+          font-size: 0.9rem;
 
-.socialLinks li {
-  display: inline-block;
-  margin-right: 10px;
-}
+          &:hover {
+            text-decoration: underline;
+            color: #3498db;
+          }
+        }
+      }
+    }
 
-.socialIcon {
-  color: #333;
-  font-size: 1.5rem;
-  transition: color 0.3s ease;
-}
+    p {
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+  }
 
-.socialIcon:hover {
-  color: #007bff;
+  .socialMedia {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    a {
+      margin: 0 15px;
+      color: #fff;
+      font-size: 28px;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: #3498db;
+      }
+    }
+
+    .fa-icon {
+      font-size: 28px;
+      color: #fff;
+
+      &:hover {
+        color: #3498db;
+      }
+    }
+  }
+
+  .newsletter {
+    text-align: center;
+
+    h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      white-space: nowrap;
+    }
+
+    form {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      input {
+        padding: 8px;
+        border: none;
+        border-radius: 4px;
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        background-color: #3498db;
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #2980b9;
+        }
+      }
+    }
+  }
+
+  .appIcons {
+    display: flex;
+    justify-content: flex-start;
+
+    a {
+      margin-right: 10px;
+
+      img {
+        width: 130px;
+        height: auto;
+      }
+    }
+  }
+
+  .copyright {
+    text-align: center;
+    margin-top: 30px;
+    margin-left: 350px; 
+    font-size: 0.9rem;
+    color: #ccc; 
+  }
 }

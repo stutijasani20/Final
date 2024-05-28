@@ -4,6 +4,10 @@
     padding-left: 90px;
 
     font-family: 'Poppins', sans-serif;
+    @media (max-width: 768px) {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
 }
 
 .breadcontainer {
@@ -53,7 +57,7 @@
 
 .card {
     display: flex;
-    flex-direction: row; /* Ensure cards are horizontal */
+    flex-direction: row; 
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
@@ -61,6 +65,9 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     max-width: auto;
     font-family: 'Poppins', sans-serif;
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
 
 }
 
@@ -74,10 +81,10 @@
 }
 
 .cardMedia {
-    max-width: 487px; /* Set width */
-    height: 267px; /* Set height */
-    margin: 20px; /* Centering the image horizontally */
-    object-fit: cover; /* Maintain aspect ratio and cover container */
+    max-width: 487px; 
+    height: 267px;
+    margin: 20px; 
+    object-fit: cover; 
     font-family: 'Poppins', sans-serif;
 
 }
@@ -101,15 +108,18 @@
 
 .cardContainer {
     display: flex;
-    justify-content: space-between; /* Ensure cards are spaced out evenly */
+    justify-content: space-between; 
     flex-wrap: inherit;
     font-family: 'Poppins', sans-serif;
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
 
 }
 
 .imageWithText {
     text-align: center;
-    padding: 16px; /* Add padding for spacing */
+    padding: 16px;
     font-family: 'Poppins', sans-serif;
 
 }
@@ -192,13 +202,16 @@
     margin: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 }
 
 .cardMedias {
-    max-width: 330px; /* Set width */
-    height: 220px; /* Set height */
-    margin: 20px; /* Centering the image horizontally */
-    object-fit: cover; /* Maintain aspect ratio and cover container */
+    max-width: 330px; 
+    height: 220px; 
+    margin: 20px; 
+    object-fit: cover; 
     align-items: center;
 }
 

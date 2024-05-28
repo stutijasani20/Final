@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"; // Add this directive at the top
 
 import React, { useState } from "react";
@@ -109,9 +110,9 @@ export default function VisaDocuments() {
                     We are excited about your upcoming trip with us, and we promise to make it memorable and seamless. Before leaving for the airport, please check if you have your documents in place. Also, read Air India’s travel advisory for various airports and cities across India and the world.
                 </p>
                 <div className={styles.cardRow}>
-                    <Card className={styles.cards}>
+                    <Card >
                         <CardMedia
-                            className={styles.cardMedias}
+                           
                             component="img"
                             alt="Canada"
                             height="220"
@@ -120,9 +121,9 @@ export default function VisaDocuments() {
                         <Typography variant="h5" align="center" className={styles.cardTitle}>Canada</Typography>
                         <a onClick={() => handleLearnMoreClick("Canada")} className={styles.learnMore}>Learn More</a>
                     </Card>
-                    <Card className={styles.cards}>
+                    <Card >
                         <CardMedia
-                            className={styles.cardMedias}
+                          
                             component="img"
                             alt="USA"
                             height="220"
@@ -131,9 +132,9 @@ export default function VisaDocuments() {
                         <Typography variant="h5" align="center" className={styles.cardTitle}>USA</Typography>
                         <a onClick={() => handleLearnMoreClick("United States Of America")} className={styles.learnMore}>Learn More</a>
                     </Card>
-                    <Card className={styles.cards}>
+                    <Card >
                         <CardMedia
-                            className={styles.cardMedia}
+                           
                             component="img"
                             alt="Gulf Countries"
                             height="220"

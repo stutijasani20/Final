@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux"; // Import the useDispatch hook
 import Menu from "@mui/material/Menu";
@@ -15,12 +16,15 @@ import Flight from "../airport_staff/flight";
 import Airports from "./airports";
 import Jobs from "./jobs";
 import { useRouter } from "next/navigation";
-import { logout } from  "@/app/store/authSlice"; // Import the logout action
+import { logout } from  "@/app/store/authSlice";
+import Link from "next/link";
+import UserProfileModal from "@/app/components/Modal";
 const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
   const [anchorEl, setAnchorEl] = useState(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
   const open = Boolean(anchorEl);
-  const dispatch = useDispatch(); // Initialize useDispatch hook
+  const dispatch = useDispatch(); 
 
   const handleMenu = (event: any) => {
     setAnchorEl(event.currentTarget);
@@ -32,14 +36,45 @@ const AdminDashboard = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logout()); // Dispatch the logout action
+    dispatch(logout()); 
     router.push("/");
   };
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId")
+    const checkProfileCompleteness = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/profile/?user=${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const profileData = response.data.results;
+        console.log("Profile data:", profileData);
+
+        if (profileData === null || profileData.length === 0) {
+          setShowProfileModal(true);
+        }
+      } catch (error) {
+        console.error("Error checking profile completeness:", error);
+      }
+    };
+
+    if (userId ) {
+      checkProfileCompleteness();
+    }
+  }, []);
+
+
 
 
 
   return (
     <div className="admin-dashboard">
+       <div>{showProfileModal && <UserProfileModal />}</div>
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -47,8 +82,8 @@ const AdminDashboard = () => {
           </Typography>
           <div>
             <Button color="inherit">Profile</Button>
-            <Button color="inherit">My Account</Button>
-            <Button color="inherit" onClick={handleLogout}>Logout</Button> {/* Call handleLogout function on click */}
+           <Link href="/user/customer/profile" >Profile</Link>
+            <Button color="inherit" onClick={handleLogout}>Logout</Button>
             <IconButton
               size="large"
               edge="end"

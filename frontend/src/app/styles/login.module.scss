@@ -31,13 +31,18 @@
   padding: 2.5rem;
   border-radius: 0.5rem;
   margin: 20px;
-  width: 50%; /* Change width to 50% to center content */
+  width: 50%; 
   height: 75%;
   font-size: 1rem;
-  display: flex; /* Add display flex */
-  flex-direction: column; /* Set flex direction to column */
-  justify-content: center; /* Center content vertically */
-  align-items: center; /* Center content horizontally */
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 1rem;
+    height: auto;
+  }
 }
 
 .text-4xl {
@@ -54,7 +59,7 @@
 .input-container input {
   border: 2px solid #ccc;
   border-radius: 0.25rem;
-  padding: 0.625rem 2rem 0.625rem 3rem; /* Added padding on the right side */
+  padding: 0.625rem 2rem 0.625rem 3rem;
   width: 100%;
   outline: none;
   transition: border-color 0.2s;
@@ -66,20 +71,21 @@
 
 .input-container .icon {
   position: absolute;
-  top: 50%;
+  left: 14px;
+  top: 26%;
   transform: translateY(-50%);
-  right: 1rem; /* Adjusted the position */
+  color: #6b7280;
 }
 
 .input-container .icon:hover {
-  color: #4b5563; /* Change icon color on hover */
+  color: #4b5563;
 }
 
 .hint {
   color: lightgrey;
   font-style: italic;
   font-size: 0.8rem;
-  padding-right: 9.375rem; /* Adjust as needed */
+  padding-right: 9.375rem; 
 }
 
 .error {
@@ -93,15 +99,14 @@
   border-radius: 0.25rem;
   transition: background-color 0.2s;
   width: 100%;
-  margin-top: 1rem; /* Add margin to separate from input */
-}
+  margin-top: 1rem; }
 
 .button:hover {
   background-color: #4f46e5;
 }
 
 .button:hover {
-  transform: scale(1.05); /* Increase button size on hover */
+  transform: scale(1.05); 
 }
 
 .link {
@@ -117,14 +122,15 @@
 
 .right-icon {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 1rem; /* Adjusted position to the right */
-}
+    left: 14px;
+    top: 26%;
+    transform: translateY(-50%);
+    color: #6b7280;}
 
 .left-icon {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 1rem; /* Adjusted position to the left */
+    left: 14px;
+    top: 26%;
+    transform: translateY(-50%);
+    color: #6b7280;
 }

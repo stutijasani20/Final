@@ -209,17 +209,17 @@ const BookingPage: React.FC = () => {
             paymentInitiationResponse.data
           );
           if (paymentInitiationResponse.status === 200) {
-            // Load Razorpay SDK script dynamically
+          
             const script = document.createElement("script");
             script.src = "https://checkout.razorpay.com/v1/checkout.js";
             document.body.appendChild(script);
 
+
             script.async = true;
             script.onload = () => {
-              // Use data from payment initiation response to initialize Razorpay payment
+              
               const { id, amount } = paymentInitiationResponse.data;
-              console.log("Payment ID:", id);
-              console.log("Amount:", amount);
+
               const options: any = {
                 amount: amount,
                 currency: "INR",
@@ -463,7 +463,7 @@ const BookingPage: React.FC = () => {
                   labelId="insurance-label"
                   id="insurance"
                   value={selectedInsurance ?? ""}
-                  onChange={(e) =>
+                  onChange={(e: any) =>
                     setSelectedInsurance(parseInt(e.target.value))
                   }
                   label="Select Insurance"
@@ -591,8 +591,8 @@ const BookingPage: React.FC = () => {
                           name: "phoneNumber",
                           required: true,
                           className:
-                            "mt-1 p-2 block w-full md:w-90 border border-gray-500 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
-                          // Adjust width as needed, e.g., md:w-80
+                            "mt-1 p-2 block px-4 w-full md:w-100 border border-gray-500 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+                          
                         }}
                         value={passengerDetails.phone_number}
                         onChange={(phone) =>

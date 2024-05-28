@@ -2,29 +2,17 @@
 
 .header {
   display: flex;
-  align-items: center;
+  align-items: center; 
   justify-content: space-between; 
-  padding: 10px 20px; 
+  padding: 2px 14px;
   font-family: 'Montserrat', sans-serif;
   position: relative; 
-}
 
-.header {
-  transition: background-color 0.3s ease;
 }
-
-.header.sticky {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #fff;  
-  z-index: 1000; }
 
 .logoContainer {
   display: flex;
-  align-items: center; 
-}
+  align-items: center; }
 
 .navLinks {
   display: flex;
@@ -34,7 +22,7 @@
   text-align: center;
   margin: 0;
   padding: 0;
-  flex-grow: 1; }
+  flex-grow: 1;}
 
 .navLink,
 .registerLogin .navLink {
@@ -42,7 +30,7 @@
   text-decoration: none;
   font-weight: bold;
   font-family: 'Montserrat', sans-serif;
-  font-size: 19px;
+  font-size: 16px;
   color: #000 !important; 
   transition: all 0.3s ease;
 }
@@ -59,10 +47,14 @@
 
 .registerLogin {
   display: flex;
-  align-items: center; }
-.registerLogin .navLink {
-  color: #000 !important; 
+  align-items: center; 
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 }
+
+.registerLogin .navLink {
+  color: #000 !important; }
 
 .registerLogin .navLink:hover {
   color: #fff !important; 
@@ -73,9 +65,12 @@
   top: 100%;
   left: 0;
   background-color: #fff;
-  padding: 30px;
+  padding: 12px;
   z-index: 1;
   white-space: nowrap; 
+  @media (max-width: 768px) {
+    position: static;
+  }
 
 }
 

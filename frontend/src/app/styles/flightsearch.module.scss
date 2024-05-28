@@ -74,11 +74,11 @@
     0,
     0,
     0.5
-  ); // Semi-transparent background for the modal overlay
+  ); 
   display: flex;
   align-items: center;
   justify-content: center;
-  position: fixed; /* Ensure it covers the entire viewport */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -90,9 +90,9 @@
   border-radius: 10px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
   padding: 20px;
-  width: 90%; // Adjust the width as needed
-  max-width: 400px; // Limit the maximum width for smaller screens
-  position: relative; /* Position relative to the parent */
+  width: 90%; 
+  max-width: 400px; 
+  position: relative; 
   overflow: auto;
 }
 
@@ -108,19 +108,19 @@
 .modalTitle {
   font-weight: bold;
   margin-bottom: 20px;
-  text-align: center; /* Add this line to center the text */
+  text-align: center;
 }
 
 .modalControls > div {
-  /* Ensure each control fits within the modal */
-  width: calc(33.33% - 20px); /* Adjust as needed */
+  
+  width: calc(33.33% - 20px); 
   margin-right: 20px;
   margin-bottom: 10px;
 }
 
-/* Media query for smaller screens */
+
 @media (max-width: 768px) {
   .modalControls > div {
-    width: calc(50% - 20px); /* Adjust as needed */
+    width: calc(50% - 20px); 
   }
 }

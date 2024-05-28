@@ -1,4 +1,4 @@
-import { setToken } from "@/middleware.service";
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
@@ -33,7 +33,7 @@ const authSlice = createSlice({
       localStorage.setItem("userId", action?.payload?.id ?? "");
       localStorage.setItem("isAuthenticated", "true");
       console.log(action.payload.jwt_token.access);
-      setToken(action.payload.jwt_token.access)
+    
     },
     register(state, action: PayloadAction<User>) {
       state.isAuthenticated = true;

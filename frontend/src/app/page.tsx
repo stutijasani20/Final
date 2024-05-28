@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import React, {useState, useEffect} from "react";
 import Avatar from '@mui/material/Avatar';
@@ -189,35 +190,35 @@ const MiddleSection: React.FC = () => {
           />
           <PackageCard
             name="Luxury Cruise"
-            image="/cruise.jpg"
+            image="/cruise.avif"
             price="2999"
             duration="14 Days / 13 Nights"
             includes={["Cruise", "Meals", "Excursions"]}
           />
           <PackageCard
             name="Ski Adventure"
-            image="/ski.jpg"
+            image="/groups.jpg"
             price="1499"
             duration="7 Days / 6 Nights"
             includes={["Flight", "Accommodation", "Ski Pass"]}
           />
           <PackageCard
             name="Safari Expedition"
-            image="/safari.jpg"
+            image="/safari4.jpg"
             price="2499"
             duration="10 Days / 9 Nights"
             includes={["Flight", "Lodging", "Safari Tours"]}
           />
           <PackageCard
             name="Island Retreat"
-            image="/island.avif"
+            image="/island.jpg"
             price="1999"
             duration="8 Days / 7 Nights"
             includes={["Flight", "Accommodation", "Island Tours"]}
           />
           <PackageCard
             name="Historic Journey"
-            image="/historic.jpg"
+            image="/1020.jpg"
             price="1799"
             duration="9 Days / 8 Nights"
             includes={["Flight", "Accommodation", "Historic Tours"]}
@@ -229,49 +230,49 @@ const MiddleSection: React.FC = () => {
         <div className={styles.grid}>
           <ReviewCard
             name="John Doe"
-            avatar="/avatar1.jpg"
+           
             rating={5}
             review="Excellent service and great deals! Highly recommended."
           />
           <ReviewCard
             name="Jane Smith"
-            avatar="/avatar2.jpg"
+           
             rating={4}
             review="Had a wonderful experience booking with them. Will use again!"
           />
           <ReviewCard
             name="Alice Johnson"
-            avatar="/avatar3.jpg"
+          
             rating={5}
             review="Top-notch customer support and seamless booking process."
           />
           <ReviewCard
             name="Michael Brown"
-            avatar="/avatar4.jpg"
+          
             rating={4}
             review="Great travel packages and competitive prices. Very satisfied."
           />
           <ReviewCard
             name="Emily Davis"
-            avatar="/avatar5.jpg"
+           
             rating={5}
             review="Amazing vacation experience! Everything was perfect."
           />
           <ReviewCard
             name="Daniel Wilson"
-            avatar="/avatar6.jpg"
+          
             rating={4}
             review="Good service but some room for improvement. Overall happy."
           />
           <ReviewCard
             name="Sophia Martinez"
-            avatar="/avatar7.jpg"
+          
             rating={5}
             review="Best travel agency I've used. Highly recommend to everyone!"
           />
           <ReviewCard
             name="James Anderson"
-            avatar="/avatar8.jpg"
+         
             rating={4}
             review="Easy booking and excellent customer care. Will book again."
           />
@@ -281,8 +282,9 @@ const MiddleSection: React.FC = () => {
       
     </div>
 </div>
-</div>
 <Footer />
+</div>
+
 </motion.div>
   );
 };
@@ -365,16 +367,16 @@ const PackageCard: React.FC<{ name: string; image: string; price: string; durati
   </div>
 );
 
-const ReviewCard: React.FC<{ name: string; avatar: string; rating: number; review: string }> = ({
+const ReviewCard: React.FC<{ name: string; rating: number; review: string }> = ({
   name,
-  avatar,
+
   rating,
   review,
 }) => (
   <div className={styles.card}>
     <div className={styles.cardContent}>
       <div className={styles.flex}>
-        <Avatar src={avatar} alt={name} className={styles.avatar} />
+        
         <div>
           <h3 className={styles.cardTitle}>{name}</h3>
           <Rating name="read-only" value={rating} readOnly precision={0.5} emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />} />
