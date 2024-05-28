@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Welcome to Elegance Air</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #4a5568;
+            background-color: #F7FAFC;
+        }
+
+        .container {
+            width: 600px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px 0 #d2d6dc, 0 1px 2px 0 #d2d6dc;
+            border-radius: .25rem;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+        }
+
+        .content,
+        .footer {
+            padding: 30px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #718096;
+            font-size: .75rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://i.ibb.co/RBkHQtM/6236d254385149d5a4f67ad2b637bbbc-removebg-preview.png" alt="Elegance Air Logo" style="width: 8rem; height: 8rem;">
+        </div>
+        <div class="content">
+            <h1 style="font-weight: bold; font-size: 1.5rem; margin-bottom: .5rem;">Welcome to Elegance Air, {{ user.email }}!</h1>
+            <p>Thank you for registering. Your username is your email address: {{ user.email }}</p>
+            <p>We're excited to have you on board and look forward to serving you. Elegance Air offers top-notch services to ensure your travel experience is smooth and enjoyable.</p>
+            <a href="#" style="background-color: #4299E1; color: white; font-weight: bold; padding: .5rem 1rem; border-radius: .25rem; margin-top: 1rem; text-decoration: none;">Explore Our Services</a>
+        </div>
+        <div class="footer">
+            <p>Best Regards,</p>
+            <p>The Elegance Air Team</p>
+            <p>Elegance Air, 1234 Street, City, State, 56789</p>
+            <p>Email: info@eleganceair.com | Phone: 123-456-7890</p>
+        </div>
+    </div>
+</body>
+
+</html>

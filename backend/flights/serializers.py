@@ -46,6 +46,11 @@ class BookingSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+    class Meta:
+        model = Booking
+        fields = '__all__'
+
+
 class FoodSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meal

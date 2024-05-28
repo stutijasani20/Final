@@ -32,6 +32,7 @@ const authSlice = createSlice({
       localStorage.setItem("user", JSON.stringify(action.payload));
       localStorage.setItem("userId", action?.payload?.id ?? "");
       localStorage.setItem("isAuthenticated", "true");
+      console.log(action.payload.jwt_token.access);
       setToken(action.payload.jwt_token.access)
     },
     register(state, action: PayloadAction<User>) {

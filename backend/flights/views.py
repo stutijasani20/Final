@@ -29,20 +29,20 @@ class FlightView(APIView):
         travel_date = request.GET.get('travel_date')
         class_name = request.GET.get('class_name')
        
-        flights = Flight.objects.all()
+        flights = Flight.objects.all().order_by('-travel_date')
         
         
         if departure_airport_name:
-            flights = flights.filter(departure_airport__name__icontains=departure_airport_name)
+            flights = flights.filter(departure_airport__name__icontains=departure_airport_name).order_by('-travel_date')
         if arrival_airport_name:
-            flights = flights.filter(arrival_airport__name__icontains=arrival_airport_name)
+            flights = flights.filter(arrival_airport__name__icontains=arrival_airport_name).order_by('-travel_date')
         if price:
             price = int(price)
-            flights = flights.filter(price__lte=price)
+            flights = flights.filter(price__lte=price).order_by('-travel_date')
         if travel_date:
-            flights = flights.filter(travel_date=travel_date)
+            flights = flights.filter(travel_date=travel_date).order_by('-travel_date')
         if class_name:
-             flights = flights.filter(classes__name=class_name)
+             flights = flights.filter(classes__name=class_name).order_by('-travel_date')
        
         serializer = FlightSerializer(flights, many=True)
       
@@ -84,14 +84,28 @@ class FlightDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class AirportView(APIView):
-            def get(self, request):
+        def get(self, request):
+            try:
                 name = request.query_params.get('name')
+                city = request.query_params.get('city')
+                country = request.query_params.get('country')
+
                 if name:
-                    airports = Airport.objects.filter(name=name)
+                    airports = Airport.objects.filter(name__icontains=name)
+                elif city:
+                    airports = Airport.objects.filter(city__icontains=city)
+                elif country:
+                    airports = Airport.objects.filter(country__icontains=country)
                 else:
                     airports = Airport.objects.all()
+
+                # Serialize the queryset
                 serializer = AirportSerializer(airports, many=True)
-                return Response(serializer.data)
+                serialized_airports = serializer.data
+
+                return Response( serialized_airports)
+            except Exception as e:
+                return Response({'error': str(e)}, status=500)
             def post(self, request):
                 serializer = AirportSerializer(data=request.data)
                 if serializer.is_valid():
@@ -207,7 +221,7 @@ class FoodView(APIView):
 
 class FoodDetailView(APIView):
             authentication_classes = [JWTAuthentication]  # Use JWTAuthentication for authentication
-            permission_classes = [IsAdminUser]
+            permission_classes = [IsAuthenticated]
             def get_object(self, pk):
                 try:
                     return Meal.objects.get(pk=pk)
@@ -249,7 +263,7 @@ class InsurancePolicyView(APIView):
 
 class InsurancePolicyDetailView(APIView):
             authentication_classes = [JWTAuthentication]  # Use JWTAuthentication for authentication
-            permission_classes = [IsAdminUser]
+            permission_classes = [IsAuthenticated]
             def get_object(self, pk):
                 try:
                     return Insurance.objects.get(pk=pk)
@@ -327,7 +341,7 @@ class BookingView(APIView):
         is_paid = request.query_params.get('is_paid')
         flight_id = request.query_params.get('flight')
 
-        bookings = Booking.objects.all()
+        bookings = Booking.objects.all().order_by('-booking_date')
 
         if passenger_id:
             bookings = bookings.filter(passenger=passenger_id).order_by('-booking_date')
@@ -415,6 +429,35 @@ class Initiate_payment(APIView):
             return JsonResponse(payment)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class RefundView(APIView):
+    def post(self, request, *args, **kwargs):
+        booking_id = request.data.get('booking_id')
+
+        if not booking_id:
+            return Response({'error': 'Booking ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            booking = Booking.objects.get(id=booking_id)
+        except Booking.DoesNotExist:
+            return Response({'error': 'Booking not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        payment_id = booking.payment_id  # Ensure you store payment_id in your Booking model
+        refund_amount = booking.calculate_refundable_amount()
+
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+        try:
+            refund = client.payment.refund(payment_id, {
+                'amount': int(refund_amount * 100)  # amount in paise
+            })
+            booking.is_paid = False  # Optionally mark the booking as unpaid
+            booking.save()
+            return Response(refund, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
 class BookingDetailView(APIView):
             authentication_classes = [JWTAuthentication]  # Use JWTAuthentication for authentication
             permission_classes = [IsAuthenticated]
@@ -506,23 +549,18 @@ class PassengerReviewRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView
 
 
 class UserProfileView(generics.ListCreateAPIView):
-    
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = PageNumberPagination
-
-
+    serializer_class = UserProfileSerializer
 
 
     def get_queryset(self):
-        
-        user_id = self.request.query_params.get('user')
-    
-        if user_id is not None:
-            return UserProfile.objects.filter(user=user_id)
-        return super().get_queryset()
+        user = self.request.query_params.get('user')
+        if user:
+            return UserProfile.objects.filter(user=user)
+        return UserProfile.objects.all()
+       
 
 class UserProfileDetail(APIView):
     def get_object(self, pk):

@@ -1,131 +1,70 @@
 import React from "react";
-import styles from "../styles/Footer.module.css";
+import { FaFacebookF, FaTwitter, FaInstagram } from "react-icons/fa";
+import styles from "@/app/styles/footer.module.scss"
 
 const Footer: React.FC = () => {
   return (
-    <footer>
+    <footer className={styles.footer}>
       <div className="container">
         <div className="row">
           <div className="col-md-3">
-            <h3>About Us</h3>
-            <ul>
-              <li>
-                <a href="/about">About Elegance Air</a>
-              </li>
-              <li>
-                <a href="/careers">Careers</a>
-              </li>
-              <li>
-                <a href="/corporate_info">Coorporate Information</a>
-              </li>
-              <li>
-                <a href="/press">Press</a>
-              </li>
-              <li>
-                <a href="/cargo">Cargos</a>
-              </li>
-            </ul>
+            <div>
+              <h3 className={styles.footerHeading}>About Us</h3>
+              <ul className={styles.footerList}>
+                <li>
+                  <a href="/about" className={styles.footerLink}>About Elegance Air</a>
+                </li>
+                <li>
+                  <a href="/careers" className={styles.footerLink}>Careers</a>
+                </li>
+                <li>
+                  <a href="/corporate_info" className={styles.footerLink}>Corporate Information</a>
+                </li>
+                <li>
+                  <a href="/press" className={styles.footerLink}>Press</a>
+                </li>
+                <li>
+                  <a href="/cargo" className={styles.footerLink}>Cargo</a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className={styles.footerHeading}>Follow Us</h3>
+              <ul className={styles.socialLinks}>
+                <li>
+                  <a href="#" className={styles.socialIcon}>
+                    <FaFacebookF style={{ color: "#3b5998", fontSize: "24px" }} />
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className={styles.socialIcon}>
+                    <FaTwitter style={{ color: "#1da1f2", fontSize: "24px" }} />
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className={styles.socialIcon}>
+                    <FaInstagram style={{ color: "#c32aa3", fontSize: "24px" }} />
+                  </a>
+                </li>
+                {/* Add more social media icons as needed */}
+              </ul>
+            </div>
           </div>
-          <div className="col-md-3">
-            <h3>Book and Manage</h3>
-            <ul>
-              <li>
-                <a href="flights/search">Search Flight</a>
-              </li>
-              <li>
-                <a href="#">Manage Booking</a>
-              </li>
-              <li>
-                <a href="#">Flight Schedule</a>
-              </li>
-            </ul>
-          </div>
-          <div className="col-md-3">
-            <h3>Where We Fly</h3>
-            <ul>
-              <li>
-                <a href="#">Popular Flights</a>
-              </li>
-              <li>
-                <a href="/where_we_fly/route_map">Route Map</a>
-              </li>
-              <li>
-                <a href="#">Non Stop International Flights</a>
-              </li>
-            </ul>
-          </div>
-          <div className="col-md-3">
-            <h3>Prepare To Travel</h3>
-            <ul>
-              <li>
-                <a href="/prepare_travel/baggage_guidelines">
-                  Baggage Guideline
-                </a>
-              </li>
-              <li>
-                <a href="#">Airport Information</a>
-              </li>
-              <li>
-                <a href="#">Visas, Documents and Travel Tips</a>
-              </li>
-              <li>
-                <a href="#">First Time Travelers, Childrens, pets</a>
-              </li>
-              <li>
-                <a href="#">Health and Medical Assistance</a>
-              </li>
-            </ul>
-          </div>
-          <div className="col-md-3">
-            <h3>Loyalty</h3>
-            <ul>
-              <li>
-                <a href="#">About Flying returns</a>
-              </li>
-              <li>
-                <a href="#">Points Calculator</a>
-              </li>
-              <li>
-                <a href="#">Earn Points</a>
-              </li>
-              <li>
-                <a href="#">Spend Points</a>
-              </li>
-            </ul>
-          </div>
-          <div className="col-md-3">
-            <h3>Travel Experience</h3>
-            <ul>
-              <li>
-                <a href="#">In the Air</a>
-              </li>
-              <li>
-                <a href="#">At the Airport</a>
-              </li>
-              <li>
-                <a href="#">Our Fleet</a>
-              </li>
-            </ul>
-          </div>
-          <div className="col-md-3">
-            <h3>Support</h3>
-            <ul>
-              <li>
-                <a href="#">Contact US</a>
-              </li>
-              <li>
-                <a href="#">FAQ`s</a>
-              </li>
-              <li>
-                <a href="#">Greviance Resolution</a>
-              </li>
-            </ul>
-          </div>
-          <div className="col-md-3">
-            <h3>Elegance Air App</h3>
-            <ul>
-              <li>Download the app and book & manage the flights on the go.</li>
-            </ul>
+          {/* Add more columns as needed */}
+        </div>
+        <hr className={styles.divider} />
+        <div className="row">
+          <div className="col-md-6">
+            <h3 className={styles.footerHeading}>Contact Us</h3>
+            <p className={styles.footerText}>
+              <strong>Address:</strong> 123 Example Street, City, Country
+            </p>
+            <p className={styles.footerText}>
+              <strong>Email:</strong> info@eleganceair.com
+            </p>
+            <p className={styles.footerText}>
+              <strong>Phone:</strong> +1 (123) 456-7890
+            </p>
           </div>
         </div>
       </div>

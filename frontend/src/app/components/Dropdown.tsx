@@ -30,12 +30,16 @@ const Dropdown = () => {
               Authorization: `Bearer ${token}`,
             },
           });
+        
           const userData = response.data;
+    
           setIsStaff(userData.is_staff);
 
+          const user =
+            typeof window !== "undefined" ? localStorage.getItem("userId") : null;
           // Fetch profile image
           const profileImageResponse = await axios.get(
-            "http://127.0.0.1:8000/profile",
+            `http://127.0.0.1:8000/profile/?user=${user}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -43,9 +47,9 @@ const Dropdown = () => {
             }
           );
           setProfileImage(
-            profileImageResponse.data.results.map(
-              (data: any) => data.profile_photo
-            )
+            profileImageResponse.data.results.length > 0
+              ? profileImageResponse.data.results[0].profile_photo
+              : null
           );
         } catch (error) {
           console.error("Error fetching user details or profile image:", error);
@@ -56,7 +60,7 @@ const Dropdown = () => {
     fetchUserDetails();
   }, [token]);
 
-  const handleClick = (event: any) => {
+  const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -86,17 +90,17 @@ const Dropdown = () => {
         onClose={handleClose}
       >
         {isAuthenticated ? (
-          <>
-            <MenuItem onClick={handleClose}>
+          [
+            <MenuItem key="profile" onClick={handleClose}>
               <Link
                 href="/user/customer/profile"
                 className="font-bold text-neutral-950"
               >
                 <Person3Icon /> Profile
               </Link>
-            </MenuItem>
-            {!isStaff && (
-              <MenuItem onClick={handleClose}>
+            </MenuItem>,
+            !isStaff && (
+              <MenuItem key="bookings" onClick={handleClose}>
                 <Link
                   href="/user/customer"
                   className="font-bold text-neutral-950"
@@ -111,8 +115,8 @@ const Dropdown = () => {
                   My Bookings
                 </Link>
               </MenuItem>
-            )}
-            <MenuItem onClick={handleClose}>
+            ),
+            <MenuItem key="support" onClick={handleClose}>
               <Link href="/user/customer" className="font-bold text-green-800">
                 <Image
                   src="/support.png"
@@ -123,8 +127,8 @@ const Dropdown = () => {
                 />{" "}
                 Support
               </Link>
-            </MenuItem>
-            <MenuItem onClick={handleLogout}>
+            </MenuItem>,
+            <MenuItem key="logout" onClick={handleLogout}>
               <Image
                 src="/power-off.png"
                 alt="Dashboard"
@@ -132,23 +136,22 @@ const Dropdown = () => {
                 className="inline-block mr-2"
                 height={20}
               />
-
               <span style={{ fontWeight: "bold", color: "red" }}>Logout</span>
-            </MenuItem>
-          </>
+            </MenuItem>,
+          ]
         ) : (
-          <>
-            <MenuItem onClick={handleClose}>
+          [
+            <MenuItem key="login" onClick={handleClose}>
               <Link href="/login" className="font-bold text-neutral-950">
                 Login
               </Link>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
+            </MenuItem>,
+            <MenuItem key="register" onClick={handleClose}>
               <Link href="/register" className="font-bold text-neutral-950">
                 Register
               </Link>
-            </MenuItem>
-          </>
+            </MenuItem>,
+          ]
         )}
       </Menu>
     </div>

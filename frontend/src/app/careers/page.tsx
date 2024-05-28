@@ -14,7 +14,7 @@ const JobCard: React.FC<{
 
   return (
     <div
-      className={`bg-blue-50 rounded-md overflow-hidden shadow-lg transition duration-300 transform ${
+      className={`bg-white rounded-md overflow-hidden shadow-lg transition duration-300 transform ${
         hovered ? "hover:-translate-y-2 hover:shadow-xl" : ""
       }`}
       onMouseEnter={() => setHovered(true)}
@@ -80,7 +80,7 @@ export default function Page() {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold text-center pt-5 mb-10">Careers</h1>
+      <h1 className="text-4xl font-bold text-blue-700 text-center pt-5 mb-10">Careers</h1>
       <div className="container mx-auto flex justify-center bg-slate-100 items-center h-screen">
         
         {loading ? (

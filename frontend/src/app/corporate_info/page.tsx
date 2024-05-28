@@ -1,24 +1,22 @@
 "use client";
 import React from "react";
 import Accordion from "./Accordian";
+
 export default function Page() {
   return (
-    <div>
-      <p style={{ color: "blue", fontSize: "12px" }}>HOME/CORPORATE_INFO</p>
-      <h1 style={{ color: "purple", fontFamily: "chiller", fontSize: "50px" }}>
-        Corporate Information
-      </h1>
-      <div
-        className="container"
-        style={{ backgroundColor: "ghostwhite", padding: "20px" }}
-      >
-        <h3>Corporate Information</h3>
-        <p style={{ color: "dimgray" }}>CIN NO:. AE2009SJ1709KV0112RM28B</p>
-        <h4>Registered Office Address</h4>
-        <p style={{ color: "dimgray" }}>3/73, Old Rajinder Nagar , </p>
-        <p style={{ color: "dimgray" }}> New Delhi, India, 110060</p>
-        <p style={{ color: "dimgray" }}>Phone No: 011 2576 7773</p>
+    <div className="container mx-auto px-4">
 
+      <h1 className="text-blue-600 font-bold text-5xl text-center">
+        Corporate Information
+
+      </h1><br />
+      <div className="bg-white p-5 m-5 shadow-lg rounded-lg">
+      
+      <p className="text-gray-700 font-medium">CIN NO:. AE2009SJ1709KV0112RM28B</p>
+<h4 className="font-bold text-lg text-blue-600 mt-2">Registered Office Address:</h4>
+<p className="text-gray-700 font-light">3/73, Old Rajinder Nagar , </p>
+<p className="text-gray-700 font-light"> New Delhi, India, 110060</p>
+<p className="text-gray-700 font-light">Phone No: 011 2576 7773</p>
         <Accordion
           title="Annual Returns"
           pdfFiles={[

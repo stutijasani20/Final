@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Apply from "./apply";
+import Image from "next/image";
 
 export default function Page({ params }: { params: { id: string } }) {
   const [jobData, setJobData] = useState<any>(null);
@@ -68,6 +69,7 @@ export default function Page({ params }: { params: { id: string } }) {
           borderColor: "primary.main",
           p: 4,
           boxShadow: 3,
+          backgroundColor: "background.paper",
         }}
       >
         <Typography variant="h3" sx={{ mb: 4, color: "primary.main" }}>
@@ -81,9 +83,11 @@ export default function Page({ params }: { params: { id: string } }) {
               </Typography>
               <ul style={{ marginLeft: "1rem", color: "text.secondary" }}>
                 {descriptionPoints.map((point: string, index: number) => (
-                  <Typography key={index} component="li" variant="body1" sx={{ mb: 1 }}>
+                  <li key={index}>
+                  <Typography component="span" variant="body1" sx={{ mb: 1 }}>
                     {point}
                   </Typography>
+                </li>
                 ))}
               </ul>
             </Box>
@@ -93,11 +97,13 @@ export default function Page({ params }: { params: { id: string } }) {
             <Typography variant="h5" sx={{ mb: 2, color: "primary.main" }}>
               Requirements:
             </Typography>
-            <ul style={{ marginLeft: "1rem", color: "text.secondary" }}>
+            <ul style={{ marginLeft: "1rem", color: "text.secondary", listStyleType: 'disc' }}>
               {requirementPoints.map((point: string, index: number) => (
-                <Typography key={index} component="li" variant="body1" sx={{ mb: 1 }}>
-                  {point}
-                </Typography>
+               <li key={index}>
+               <Typography component="span" variant="body1" sx={{ mb: 1 }}>
+                 {point}
+               </Typography>
+               </li>
               ))}
             </ul>
             <p className="font-bold text-lg text-blue-500 mb-4">Salary: </p>
@@ -107,9 +113,11 @@ export default function Page({ params }: { params: { id: string } }) {
 </Grid>
 <Grid item xs={12} sm={4}>
   <div className="shadow-lg rounded overflow-hidden">
-    <img
+    <Image
       src={jobData.image}
       alt="Job Image"
+      width={400}
+      height={300}
       style={{
         maxWidth: "100%",
         maxHeight: "100%",

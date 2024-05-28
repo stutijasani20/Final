@@ -8,7 +8,9 @@ from django.shortcuts import redirect
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
-
+from django.core.exceptions import ObjectDoesNotExist
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.decorators import action
 from django.contrib.auth import logout
@@ -26,11 +28,13 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import CustomUser
+import logging
 from .serializers import EmptySerializer, UserLoginSerializer, UserRegisterSerializer, AuthUserSerializer, UserSerializer
 from django.contrib.auth import logout
 
 from rest_framework.pagination import PageNumberPagination
 
+logger = logging.getLogger(__name__)
 class AuthViewSet(viewsets.GenericViewSet):
     permission_classes = [AllowAny]
     queryset = CustomUser.objects.all()
@@ -47,19 +51,39 @@ class AuthViewSet(viewsets.GenericViewSet):
         user = get_and_authenticate_user(**serializer.validated_data)
         serializer_class = AuthUserSerializer
         data = serializer_class(user).data
-        print(data)
+       
 
         return Response(data=data, status=status.HTTP_200_OK)
 
     @action(methods=['POST'], detail=False)
     def register(self, request):
         serializer = self.get_serializer(data=request.data)
-
         serializer.is_valid(raise_exception=True)
-        user = create_user_account(**serializer.validated_data)
-        data = AuthUserSerializer(user).data
         
+        email = serializer.validated_data['email']
+        try:
+            existing_user = CustomUser.objects.get(email=email)
+            return Response({'error': 'User with this email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            pass
 
+
+            data = {}  # Define data with a default value
+
+        try:
+            user = create_user_account(**serializer.validated_data)
+            mail_subject = 'Welcome to Elegance Airline!'
+            message = render_to_string('Register.html', {
+                'user': user,
+            })
+            email = EmailMessage(
+            mail_subject, message, from_email=settings.DEFAULT_FROM_EMAIL, to=[user.email]
+            )  
+            email.content_subtype = "html"  # Set the email content type to HTML
+            email.send()
+            logger.info("Registration email sent to {user.email}")
+        except Exception as e:
+          logger.error(f"Failed to send registration email to {user.email}: {e}")
         return Response(data=data, status=status.HTTP_201_CREATED)
 
     @action(methods=['POST'], detail=False)
@@ -83,9 +107,16 @@ class UserListAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = PageNumberPagination  
-    def get(self, request, format=None):
-        users = CustomUser.objects.all()
 
+    
+    def get(self, request, format=None):
+        staff = request.query_params.get('staff')
+
+        if staff is not None:
+            is_staff = staff.lower() == 'true'
+            users = CustomUser.objects.filter(is_staff=is_staff)
+        else:
+            users = CustomUser.objects.all()
         # Paginate the queryset
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(users, request)

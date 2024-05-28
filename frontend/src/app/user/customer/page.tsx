@@ -17,6 +17,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Image from "next/image";
 import UserProfileModal from "@/app/components/Modal";
+import { profile } from "console";
 
 const style = {
   position: "absolute" as "absolute",
@@ -108,16 +109,31 @@ export default function MyBookingsPage() {
   };
 
   useEffect(() => {
+    const checkProfileCompleteness = async () => {
+      try {
+
+        const response = await axios.get(`http://127.0.0.1:8000/profile/?user=${userId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const profileData = response.data.results;
+        console.log("Profile data:", profileData);
+        
+        if (profileData === null || profileData.length === 0) {
+          setShowProfileModal(true);
+        }
+      } catch (error) {
+        console.error("Error checking profile completeness:", error);
+        
+      }
+    };
+  
     if (userId && !profileExists) {
-      setShowProfileModal(true);
+      checkProfileCompleteness();
     }
   }, [profileExists, userId]);
-
-  const [open, setOpen] = React.useState(false);
-
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
-  };
+  
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -187,67 +203,7 @@ export default function MyBookingsPage() {
     (flight) => flight.id === id
   )?.arrival_airport_name;
 
-  const DrawerList = (
-    <Box
-      sx={{ width: 250 }}
-      role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
-    >
-      <List>
-        {[
-          {
-            text: "My Previous Bookings",
-            icon: <Image src="/hotel1.png" alt="menu" height={40} width={40} />,
-            link: "/user/customer/bookings",
-          },
-          {
-            text: "Hotel",
-            icon: <Image src="/hotel.png" alt="menu" height={40} width={40} />,
-            link: `/individual/hotel?airport=${
-              flightData.find((flight) => flight.id === id)
-                ?.arrival_airport_name
-            }`,
-          },
-          {
-            text: "Restaurants",
-            icon: (
-              <Image src="/restaurant1.png" alt="menu" height={40} width={40} />
-            ),
-            link: `/individual/restaurant?airport=${
-              flightData.find((flight) => flight.id === id)
-                ?.arrival_airport_name
-            }`,
-          },
-          {
-            text: "Tourist Places",
-            icon: (
-              <Image src="/tourist1.png" alt="menu" height={40} width={40} />
-            ),
-            link: `/individual/tourist?airport=${
-              flightData.find((flight) => flight.id === id)
-                ?.arrival_airport_name
-            }`,
-          },
-        ].map((item, index) => (
-          <Link href={item.link} key={item.text} passHref>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText sx={{ color: "#263238" }} primary={item.text} />
-              </ListItemButton>
-            </ListItem>
-          </Link>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        <ListItem disablePadding>
-          <ListItemButton></ListItemButton>
-        </ListItem>
-      </List>
-    </Box>
-  );
+
 
   return (
     <>

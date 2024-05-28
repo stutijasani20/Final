@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import styles from "../styles/Navbar.module.scss"; // Import the CSS module
+import styles from "../styles/Navbar.module.scss";
 import { logout } from "../store/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
@@ -14,11 +14,29 @@ const Header: React.FC = () => {
     (state: RootState) => state.isAuthenticated
   );
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false); // State for dropdown visibility
+  const [isScrolled, setIsScrolled] = useState(false); // State for tracking scroll
   const dispatch = useDispatch();
 
   useEffect(() => {
     setIsAuthenticated(isAuthenticatedRedux);
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      // Remove scroll event listener on component unmount
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [isAuthenticatedRedux]);
+
+  const handleScroll = () => {
+    // Check if the user has scrolled beyond the top position
+    if (window.scrollY > 0) {
+      setIsScrolled(true);
+    } else {
+      setIsScrolled(false);
+    }
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -26,7 +44,11 @@ const Header: React.FC = () => {
   };
 
   return (
-    <div className={styles.header}>
+    <div
+      className={`${styles.header} ${isScrolled ? styles.sticky : ""} ${
+        isScrolled ? "" : styles.transparent
+      }`}
+    >
       <div className={styles.logoContainer}>
         <Link href="/" className={styles.logo}>
           <Image src="/logo1.png" alt="logo" height={150} width={150} />
@@ -36,8 +58,25 @@ const Header: React.FC = () => {
         <div className={styles.navLink}>
           <Link href="/flights/search">Book & Manage</Link>
         </div>
-        <div className={styles.navLink}>
-          <Link href="/flights/search">Prepare to Travel</Link>
+        <div
+          className={styles.navLink}
+          onMouseEnter={() => setShowDropdown(true)}
+          onMouseLeave={() => setShowDropdown(false)}
+        >
+          <span>Prepare to Travel</span>
+          {showDropdown && (
+            <div className={styles.dropdown}>
+              <Link href="/prepare_travel/baggage_guidelines">
+                Baggage Guidelines
+              </Link>
+              <Link href="/prepare_travel/Visa_Docs">
+                Visa, Documents, and Travel Tips
+              </Link>
+              <Link href="/prepare_travel/Medical_Assistance">
+                Health and Medical Assistance
+              </Link>
+            </div>
+          )}
         </div>
         <div className={styles.navLink}>
           <Link href="/reviews">Passenger Reviews</Link>
@@ -53,7 +92,7 @@ const Header: React.FC = () => {
           </div>
         ) : (
           <div className={styles.navLink}>
-            <Link href="/auth/register">Register/Login</Link>
+            <Link href="/auth/login">Register/Login</Link>
           </div>
         )}
       </div>

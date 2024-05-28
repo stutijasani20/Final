@@ -1,29 +1,40 @@
 
-/* navbar.module.scss */
 
 .header {
   display: flex;
-  align-items: center; /* Align items vertically */
-  justify-content: space-between; /* Distribute items horizontally */
-  padding: 10px 20px; /* Add padding to the left and right sides */
+  align-items: center;
+  justify-content: space-between; 
+  padding: 10px 20px; 
   font-family: 'Montserrat', sans-serif;
+  position: relative; 
 }
+
+.header {
+  transition: background-color 0.3s ease;
+}
+
+.header.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;  
+  z-index: 1000; }
 
 .logoContainer {
   display: flex;
-  align-items: center; /* Align items vertically */
+  align-items: center; 
 }
 
 .navLinks {
   display: flex;
-  align-items: center; /* Align items vertically */
-  justify-content: center; /* Distribute items horizontally */
+  align-items: center; 
+  justify-content: center; 
   list-style: none;
   text-align: center;
   margin: 0;
   padding: 0;
-  flex-grow: 1; /* Allow navLinks to grow and take up available space */
-}
+  flex-grow: 1; }
 
 .navLink,
 .registerLogin .navLink {
@@ -32,14 +43,14 @@
   font-weight: bold;
   font-family: 'Montserrat', sans-serif;
   font-size: 19px;
-  color: #000 !important; /* Set default color to black */
+  color: #000 !important; 
   transition: all 0.3s ease;
 }
 
 .navLink:hover,
 .registerLogin .navLink:hover {
   background-color: #4b7bec;
-  color: #ffffff !important; /* Change color to white on hover */
+  color: #ffffff !important;
   font-weight: bold;
   cursor: pointer;
   transform: scale(1.05);
@@ -48,13 +59,35 @@
 
 .registerLogin {
   display: flex;
-  align-items: center; /* Align items vertically */
-}
-
+  align-items: center; }
 .registerLogin .navLink {
-  color: #000 !important; /* Set default color to black */
+  color: #000 !important; 
 }
 
 .registerLogin .navLink:hover {
-  color: #fff !important; /* Change color to white on hover */
+  color: #fff !important; 
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  padding: 30px;
+  z-index: 1;
+  white-space: nowrap; 
+
+}
+
+.dropdown a {
+  display: block ruby;
+  padding: 10px;
+  color: #000;
+  text-decoration: none;
+  text-align: -moz-left;
+}
+
+.dropdown a:hover {
+  background-color: #4b7bec;
+  color: #fff;
 }

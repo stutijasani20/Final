@@ -141,8 +141,8 @@ export default function Dashboard() {
           flightsData?.length || 0,
           airportsData?.length || 0,
           usersData?.count || 0,
-          jobsData?.length || 0,
-          applicantsData?.length || 0,
+          jobsData?.count || 0,
+          applicantsData?.count || 0,
         ],
         backgroundColor: [
           "rgba(54, 162, 235, 0.6)",
@@ -169,57 +169,67 @@ export default function Dashboard() {
 
   return (
     <div className="ml-64 px-6 py-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 bg-slate-500 text-white rounded shadow">
-          <Image src="/booking.png" alt="Dashboard" width={50} height={50} />
-          <h2 className="text-xl mt-5 font-semibold">
-            Total Bookings: {bookingsData.count}
+      <div className="grid grid-cols-4 gap-4">
+        <div className="p-4 bg-slate-500 text-white rounded shadow flex justify-between items-center">
+         
+          <h2 className="text-xl  font-semibold">
+             Bookings: {bookingsData.count}
           </h2>
+          <Image src="/booking.png" alt="Dashboard" width={50} height={50}  />
         </div>
-        <div className="p-4 bg-slate-500 text-white rounded shadow">
+        <div className="p-4 bg-slate-500 text-white rounded shadow flex justify-between items-center">
+        <h2 className="text-xl font-semibold">
+           Passengers: {passengersData.length}
+          </h2>
           <Image src="/passengers.png" alt="Dashboard" width={90} height={90} />
-          <h2 className="text-xl font-semibold">
-            Total Passengers: {passengersData.length}
-          </h2>
+          
         </div>
-        <div className="p-4 bg-slate-500 text-white rounded shadow">
+        <div className="p-4 bg-slate-500 text-white rounded shadow flex justify-between items-center">
+        <h2 className="text-xl font-semibold">
+         Flights: {flightsData.length}
+          </h2>
           <Image src="/flight.png" alt="Dashboard" width={100} height={100} />
-          <h2 className="text-xl font-semibold">
-            Total Flights: {flightsData.length}
-          </h2>
+          
         </div>
-        <div className="p-4 bg-slate-500 text-white rounded shadow">
+        <div className="p-4 bg-slate-500 text-white rounded shadow flex justify-between items-center">
+        <h2 className="text-xl font-semibold">
+             Airports: {airportsData.length}
+          </h2>
           <Image src="/airport.png" alt="Dashboard" width={100} height={100} />
-          <h2 className="text-xl font-semibold">
-            Total Airports: {airportsData.length}
-          </h2>
+          
         </div>
-        <div className="p-4 bg-slate-500 text-white rounded shadow">
+        <div className="p-4 bg-slate-500 text-white rounded shadow flex justify-between items-center">
+        <h2 className="text-xl font-semibold">
+          Users: {usersData.count}
+          </h2>
           <Image src="/user1.png" alt="users" width={100} height={100} />
-          <h2 className="text-xl font-semibold">
-            Total Users: {usersData.count}
-          </h2>
+         
         </div>
-        <div className="p-4 bg-slate-500 text-white rounded shadow">
+        <div className="p-4 bg-slate-500 text-white rounded shadow flex justify-between items-center">
+        <h2 className="text-xl font-semibold">
+          Jobs: {jobsData.count}
+          </h2>
           <Image src="/job.png" alt="users" width={100} height={100} />
-          <h2 className="text-xl font-semibold">
-            Total Jobs: {jobsData.length}
-          </h2>
+          
         </div>
-        <div className="p-4 bg-slate-500 text-white rounded shadow">
-          <Image src="/applicant.png" alt="users" width={100} height={100} />
-          <h2 className="text-xl font-semibold">
-            Total Applicants: {applicantsData.length}
+        <div className="p-4 bg-slate-500 text-white rounded shadow flex justify-between items-center">
+        <h2 className="text-xl font-semibold">
+           Applicants: {applicantsData.count}
           </h2>
+          <Image src="/applicant.png" alt="users" width={100} height={100} />
+       
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 mt-5 mb-5">
         <Bar data={data} />
       </div>
-      {/* <div className="p-4 bg-slate-500 text-white rounded shadow">
-        <Pie data={pieChartData} />
-      </div> */}
+
+      <div className="p-4 text-left shadow-lg">
+  Made By   
+  <span className="ml-2 text-blue-500">Stuti Jasani</span> 
+</div>
+      
     </div>
   );
 }

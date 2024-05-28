@@ -4,9 +4,13 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Razorpay from "razorpay";
-
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import useRazorpay from "react-razorpay";
-
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "react-phone-input-2/lib/style.css";
+import PhoneInput from "react-phone-input-2";
 
 interface Flight {
   id: number;
@@ -38,77 +42,6 @@ interface InsurancePolicy {
   coverage_details: string;
   price: number;
 }
-const PopupForm: React.FC<{
-  passengerDetails: {
-    first_name: string;
-    last_name: string;
-    age: number;
-    phone_number: string;
-    gender: string;
-    passenger_type: string;
-  };
-  setPassengerDetails: React.Dispatch<
-    React.SetStateAction<{
-      first_name: string;
-      last_name: string;
-      age: number;
-      phone_number: string;
-      gender: string;
-      passenger_type: string;
-    }>
-  >;
-  handleClosePopup: () => void;
-}> = ({ passengerDetails, setPassengerDetails, handleClosePopup }) => {
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setPassengerDetails((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-8 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-4">Passenger Details</h2>
-        <div className="mb-4">
-          <label
-            htmlFor="firstName"
-            className="block text-sm font-medium text-gray-700"
-          >
-            First Name:
-          </label>
-          <input
-            type="text"
-            id="firstName"
-            name="first_name"
-            className="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            value={passengerDetails.first_name}
-            onChange={handleChange}
-          />
-        </div>
-        {/* Other input fields for passenger details */}
-        {/* Add input fields for last name, age, phone number, and gender */}
-        <div className="flex justify-end">
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
-            onClick={handleClosePopup}
-          >
-            Close
-          </button>
-          <button
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-            onClick={handleClosePopup} // You can handle form submission here
-          >
-            Save
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const BookingPage: React.FC = () => {
   const [passengerData, setPassengerData] = useState<any>([]);
@@ -125,6 +58,11 @@ const BookingPage: React.FC = () => {
   const [selectedInsurance, setSelectedInsurance] = useState<number | null>(
     null
   );
+
+  const [firstNameError, setFirstNameError] = useState<string>("");
+  const [lastNameError, setLastNameError] = useState<string>("");
+  const [ageError, setAgeError] = useState<string>("");
+  const [phoneNumberError, setPhoneNumberError] = useState<string>("");
 
   const [passengerDetails, setPassengerDetails] = useState<{
     first_name: string;
@@ -181,6 +119,19 @@ const BookingPage: React.FC = () => {
         user: parseInt(localStorage.getItem("userId") as string),
       });
 
+      if (passengerDetails.first_name === "") {
+        setFirstNameError("First name is required");
+      }
+      if (passengerDetails.last_name === "") {
+        setLastNameError("Last name is required");
+      }
+      if (passengerDetails.age === 0) {
+        setAgeError("Age is required");
+      }
+      if (passengerDetails.phone_number === "") {
+        setPhoneNumberError("Phone number is required");
+      }
+
       const response = await axios.post(
         "http://127.0.0.1:8000/passengers/",
         passengerDetails,
@@ -198,33 +149,37 @@ const BookingPage: React.FC = () => {
         setPassengerList([...passengerList, passengerId]);
 
         setPassengerData([...passengerData, response.data]);
-
         console.log("Passenger added successfully:", response.data);
+        toast.success("Passenger added successfully!"); 
+
+        setShowPopup(false);
       } else {
         console.error("Error adding passenger:", response.statusText);
-      }
+        toast.error("Failed to add passenger. Please try again."); }
     } catch (error: any) {
       console.error("Error saving passenger details:", error);
-      console.log("Error saving passenger details:", error.response.data);
-      // Optionally, handle error scenarios here
+
     }
   };
 
   const handleConfirmBooking = async () => {
-    console.log(passengerList);
+    if (passengerData.length === 0) {
+      return;
+    }
+
     try {
-      // Construct payload for booking
+      
       const bookingPayload = {
         flight: flight?.id,
-        meal_id: selectedMeal,
-        insurance_id: selectedInsurance,
+        meals: [selectedMeal],
+        insurance: selectedInsurance,
         passenger: localStorage.getItem("userId")
           ? parseInt(localStorage.getItem("userId") as string)
           : 0,
         passengers: passengerList,
       };
 
-      // Send POST request to booking API
+      
 
       const bookingResponse = await axios.post(
         "http://127.0.0.1:8000/bookings/",
@@ -241,11 +196,11 @@ const BookingPage: React.FC = () => {
       if (bookingResponse.status === 201) {
         console.log("Booking confirmed successfully:", bookingResponse.data);
 
-        // Make request to backend to initiate payment
+      
         const paymentInitiationResponse = await axios.post(
           "http://127.0.0.1:8000/payment/",
           {
-            bookingId: bookingResponse.data.id, // Assuming the booking endpoint returns an id
+            bookingId: bookingResponse.data.id, 
           }
         );
         if (paymentInitiationResponse.status === 200) {
@@ -254,11 +209,6 @@ const BookingPage: React.FC = () => {
             paymentInitiationResponse.data
           );
           if (paymentInitiationResponse.status === 200) {
-            console.log(
-              "Payment initiation successful:",
-              paymentInitiationResponse.data
-            );
-
             // Load Razorpay SDK script dynamically
             const script = document.createElement("script");
             script.src = "https://checkout.razorpay.com/v1/checkout.js";
@@ -270,8 +220,7 @@ const BookingPage: React.FC = () => {
               const { id, amount } = paymentInitiationResponse.data;
               console.log("Payment ID:", id);
               console.log("Amount:", amount);
-              const options = {
-                key: "rzp_test_wWsetA6HFaDo8e",
+              const options: any = {
                 amount: amount,
                 currency: "INR",
                 name: "Elegance Air",
@@ -279,8 +228,7 @@ const BookingPage: React.FC = () => {
                 order_id: id,
 
                 handler: async function (response: any) {
-                  console.log("Payment successful!", response);
-                  // Send payment data to backend
+                     
                   try {
                     const paymentData = {
                       bookingId: bookingResponse.data.id,
@@ -294,13 +242,7 @@ const BookingPage: React.FC = () => {
                       paymentData
                     );
 
-                    console.log(
-                      "Payment data sent to backend:",
-                      paymentResponse.data
-                    );
-
                     const token = localStorage.getItem("token");
-                    console.log("++++", token);
 
                     // Update is_paid field in booking API
                     const updateBookingResponse = await axios.put(
@@ -321,12 +263,7 @@ const BookingPage: React.FC = () => {
                         },
                       }
                     );
-                    console.log(
-                      "Booking payment status updated:",
-                      updateBookingResponse.data
-                    );
 
-                    // Redirect to success page or perform other actions
                     const queryParams = new URLSearchParams();
 
                     queryParams.append(
@@ -337,14 +274,15 @@ const BookingPage: React.FC = () => {
                       "passengerId",
                       passengerDetails.user.toString()
                     );
-
+                    toast.success("Payment successful!"); // Notify success
                     router.push(`/booking/success?${queryParams.toString()}`);
                   } catch (error) {
                     console.error(
                       "Error sending payment data to backend:",
                       error
                     );
-                    // Optionally, display an error message to the user
+                    toast.error("Failed to confirm booking. Please try again."); // Notify failure
+                   
                   }
                 },
                 prefill: {
@@ -361,19 +299,19 @@ const BookingPage: React.FC = () => {
               razorpay.open();
             };
 
-            // Optionally, display an error message to the user
+         
           }
         } else {
           console.error(
             "Error confirming booking:",
             bookingResponse.statusText
           );
-          // Optionally, display an error message to the user
+         
         }
       }
     } catch (error) {
       console.error("Error confirming booking:", error);
-      // Optionally, display an error message to the user
+      
     }
   };
 
@@ -449,262 +387,318 @@ const BookingPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-4 mt-5">Booking Details</h1>
+    <div className="flex items-center justify-center">
+      <div className="w-full max-w-3xl p-8 relative">
+        <h1 className="text-3xl font-bold mb-6 text-center text-blue-800">
+          Booking Details
+        </h1>
+        {error ? (
+          <div className="text-red-500 mb-4 text-center">{error}</div>
+        ) : flight ? (
+          <div className="border border-gray-200 p-6 rounded-lg shadow-inner bg-gray-50">
+            <div className="mb-6">
+              <p className="text-lg font-bold mb-2">
+                Flight Number:{" "}
+                <span className="font-bold">{flight.flight_number}</span>
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Departure Airport:</span>{" "}
+                {flight.departure_airport_name}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Arrival Airport:</span>{" "}
+                {flight.arrival_airport_name}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Departure Time:</span>{" "}
+                {new Date(flight.departure_time).toLocaleString()}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Price:</span>{" "}
+                <span>
+                  <span className="font-bold">
+                    {flight.price.toLocaleString("en-IN", {
+                      style: "currency",
+                      currency: "INR",
+                    })}
+                  </span>
+                </span>
+              </p>
 
-      {error ? (
-        <div className="text-red-500 mb-4">{error}</div>
-      ) : flight ? (
-        <div className="border border-gray-200 p-4 rounded-lg shadow-md">
-          <p className="text-lg font-semibold mb-2">
-            Flight Number: {flight.flight_number}
-          </p>
-          <p className="text-sm mb-2">
-            Departure Airport: {flight.departure_airport_name}
-          </p>
-          <p className="text-sm mb-2">
-            Arrival Airport: {flight.arrival_airport_name}
-          </p>
-          <p className="text-sm mb-2">
-            Departure Time: {new Date(flight.departure_time).toLocaleString()}
-          </p>
-          <p className="text-sm mb-2">
-            Price:{" "}
-            {flight.price.toLocaleString("en-IN", {
-              style: "currency",
-              currency: "INR",
-            })}
-          </p>
-          <p className="text-sm mb-2">
-            Available Seats: {flight.available_seats}
-          </p>
-          <p className="text-sm mb-2">Travel Date: {flight.travel_date}</p>
-          <p className="text-sm mb-2">Class: {flight.classes_name}</p>
-          <div className="mb-4">
-            <label
-              htmlFor="meal"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Select Meal:
-            </label>
-            <select
-              id="meal"
-              name="meal"
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              value={selectedMeal ?? ""}
-              onChange={(e) => setSelectedMeal(parseInt(e.target.value))}
-            >
-              <option value="">None</option>
-              {mealOptions.map((meal) => (
-                <option key={meal.id} value={meal.id}>
-                  {meal.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="insurance"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Select Insurance:
-            </label>
-            <select
-              id="insurance"
-              name="insurance"
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              value={selectedInsurance ?? ""}
-              onChange={(e) => setSelectedInsurance(parseInt(e.target.value))}
-            >
-              <option value="">None</option>
-              {insurancePolicies.map((policy) => (
-                <option key={policy.id} value={policy.id}>
-                  {policy.name}, Rs{" "}
-                  {policy.price.toLocaleString("en-IN", {
-                    style: "currency",
-                    currency: "INR",
-                  })}
-                </option>
-              ))}
-            </select>
-          </div>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Available Seats:</span>{" "}
+                {flight.available_seats}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Travel Date:</span>
+                {new Date(flight.travel_date).toLocaleDateString("en-GB")}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Class:</span> {flight.classes_name}
+              </p>
+            </div>
+            <div className="mb-4">
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel id="meal-label">Select Meal</InputLabel>
+                <Select
+                  labelId="meal-label"
+                  id="meal"
+                  value={selectedMeal !== null ? selectedMeal : ""}
+                  onChange={(e) => setSelectedMeal(Number(e.target.value))}
+                  label="Select Meal"
+                >
+                  {mealOptions.map((meal) => (
+                    <MenuItem key={meal.id} value={meal.id}>
+                      {meal.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
 
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={handleOpenPopup}
-          >
-            Add Passenger Details
-          </button>
+            <div className="mb-6">
+              <FormControl variant="outlined" className="mb-6 w-full">
+                <InputLabel id="insurance-label">Select Insurance:</InputLabel>
+                <Select
+                  labelId="insurance-label"
+                  id="insurance"
+                  value={selectedInsurance ?? ""}
+                  onChange={(e) =>
+                    setSelectedInsurance(parseInt(e.target.value))
+                  }
+                  label="Select Insurance"
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {insurancePolicies.map((policy) => (
+                    <MenuItem key={policy.id} value={policy.id}>
+                      {policy.name}, Rs{" "}
+                      {policy.price.toLocaleString("en-IN", {
+                        style: "currency",
+                        currency: "INR",
+                      })}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
 
-          {showPopup && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-              <div className="bg-white p-8 rounded-lg shadow-md">
-                <h2 className="text-2xl font-bold mb-4">Passenger Details</h2>
-                {/* Form fields for passenger details */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="mb-4">
-                    <label
-                      htmlFor="firstName"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      First Name:
-                    </label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      className="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      value={passengerDetails.first_name}
-                      onChange={(e) =>
-                        setPassengerDetails({
-                          ...passengerDetails,
-                          first_name: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="lastName"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Last Name:
-                    </label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      className="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      value={passengerDetails.last_name}
-                      onChange={(e) =>
-                        setPassengerDetails({
-                          ...passengerDetails,
-                          last_name: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="age"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Age:
-                    </label>
-                    <input
-                      type="number"
-                      id="age"
-                      className="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      value={passengerDetails.age}
-                      onChange={(e) =>
-                        setPassengerDetails({
-                          ...passengerDetails,
-                          age: parseInt(e.target.value),
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="phoneNumber"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Phone Number:
-                    </label>
-                    <input
-                      type="text"
-                      id="phoneNumber"
-                      className="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      value={passengerDetails.phone_number}
-                      onChange={(e) =>
-                        setPassengerDetails({
-                          ...passengerDetails,
-                          phone_number: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="gender"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Gender:
-                    </label>
-                    <select
-                      id="gender"
-                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      value={passengerDetails.gender}
-                      onChange={(e) =>
-                        setPassengerDetails({
-                          ...passengerDetails,
-                          gender: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="">Select Gender</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                  <div className="mb-4">
-                    {/* New dropdown for selecting passenger type */}
-                    <label
-                      htmlFor="passengerType"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Passenger Type:
-                    </label>
-                    <select
-                      id="passengerType"
-                      name="passenger_type"
-                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      value={passengerDetails.passenger_type}
-                      onChange={handleClosePopup}
-                    >
-                      <option value="adult">Adult</option>
-                      <option value="child">Child</option>
-                      <option value="infant">Infant</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="flex justify-end">
+            <button
+              className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-700 hover:to-blue-900 text-white font-bold py-2 px-4 rounded mb-6 transition duration-300 justify-center"
+              onClick={handleOpenPopup}
+            >
+              Add Passenger Details
+            </button>
+
+            {showPopup && (
+              <div className="fixed inset-0 bg-black bg-opacity-50  flex justify-center items-center z-50">
+                <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md relative">
+                  <h2 className="text-2xl font-bold mb-4 text-center text-blue-600">
+                    Passenger Details
+                  </h2>
                   <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+                    className="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
                     onClick={handleClosePopup}
                   >
-                    Close
+                    <CancelPresentationIcon sx={{ color: "red" }} />
                   </button>
-                  <button
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={handleAddPassenger}
-                  >
-                    Add Passenger
-                  </button>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="mb-4">
+                      <label
+                        htmlFor="firstName"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        First Name:
+                      </label>
+                      <input
+                        type="text"
+                        id="firstName"
+                        required
+                        className="mt-1 p-2 block w-full border border-gray-700 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        value={passengerDetails.first_name}
+                        onChange={(e) => {
+                          setPassengerDetails({
+                            ...passengerDetails,
+                            first_name: e.target.value,
+                          });
+                        }}
+                      />
+                      {firstNameError && (
+                        <div className="text-red-500">{firstNameError}</div>
+                      )}
+                    </div>
+                    <div className="mb-4">
+                      <label
+                        htmlFor="lastName"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Last Name:
+                      </label>
+                      <input
+                        type="text"
+                        id="lastName"
+                        required
+                        className="mt-1 p-2 block w-full border border-gray-500 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        value={passengerDetails.last_name}
+                        onChange={(e) =>
+                          setPassengerDetails({
+                            ...passengerDetails,
+                            last_name: e.target.value,
+                          })
+                        }
+                      />
+                      {lastNameError && (
+                        <div className="text-red-500">{lastNameError}</div>
+                      )}
+                    </div>
+
+                    <div className="mb-4">
+                      <label
+                        htmlFor="age"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Age:
+                      </label>
+                      <input
+                        type="number"
+                        id="age"
+                        required
+                        className="mt-1 p-2 block w-full border border-gray-500 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        value={passengerDetails.age}
+                        onChange={(e) =>
+                          setPassengerDetails({
+                            ...passengerDetails,
+                            age: parseInt(e.target.value),
+                          })
+                        }
+                      />
+                      {ageError && (
+                        <div className="text-red-500">{ageError}</div>
+                      )}
+                    </div>
+                    <div className="mb-4">
+                      <label
+                        htmlFor="phoneNumber"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Phone Number :
+                      </label>
+                      <PhoneInput
+                        country={"in"} // Set default country to India
+                        inputProps={{
+                          id: "phoneNumber",
+                          name: "phoneNumber",
+                          required: true,
+                          className:
+                            "mt-1 p-2 block w-full md:w-90 border border-gray-500 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+                          // Adjust width as needed, e.g., md:w-80
+                        }}
+                        value={passengerDetails.phone_number}
+                        onChange={(phone) =>
+                          setPassengerDetails({
+                            ...passengerDetails,
+                            phone_number: phone,
+                          })
+                        }
+                      />
+                      {phoneNumberError && (
+                        <div className="text-red-500">{phoneNumberError}</div>
+                      )}
+                    </div>
+                    <div className="mb-4">
+                      <label
+                        htmlFor="gender"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Gender:
+                      </label>
+                      <select
+                        id="gender"
+                        required
+                        className="mt-1 p-2 block w-full border border-gray-500 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        value={passengerDetails.gender}
+                        onChange={(e) =>
+                          setPassengerDetails({
+                            ...passengerDetails,
+                            gender: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                    <div className="mb-4">
+                      <label
+                        htmlFor="passengerType"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Passenger Type:
+                      </label>
+                      <select
+                        id="passengerType"
+                        name="passenger_type"
+                        className="mt-1 p-2 block w-full border border-gray-500 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        value={passengerDetails.passenger_type}
+                        onChange={(e) =>
+                          setPassengerDetails({
+                            ...passengerDetails,
+                            passenger_type: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="adult">Adult</option>
+                        <option value="child">Child</option>
+                        <option value="infant">Infant</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex justify-end mt-4">
+                    <button
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                      onClick={handleAddPassenger}
+                    >
+                      Add Passenger
+                    </button>
+                  </div>
                 </div>
               </div>
+            )}
+
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold mb-4">Passenger List</h2>
+              {passengerData.map((passenger: any, index: number) => (
+                <div key={index} className="mb-2 border-b border-gray-200 pb-2">
+                  <p>{`${passenger.first_name} ${passenger.last_name}, Age: ${passenger.age}, Gender: ${passenger.gender}, Passenger Type: ${passenger.passenger_type}`}</p>
+                </div>
+              ))}
             </div>
-          )}
 
-          {/* Display the list of passengers */}
-          <div className="mt-4">
-            <h2 className="text-lg font-semibold mb-2">Passenger List</h2>
-            {passengerData.map((passenger: any, index: number) => (
-              <div key={index} className="mb-2">
-                <p>{`${passenger.first_name} ${passenger.last_name}, Age: ${passenger.age}, Gender: ${passenger.gender}, Passenger Type: ${passenger.passenger_type}`}</p>
-              </div>
-            ))}
+            <button
+              className={`bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold py-2 px-4 rounded mt-6 cursor-pointer transition duration-300  hover:from-blue-700 hover:to-blue-900`}
+              onClick={handleConfirmBooking}
+            >
+              Confirm Booking
+            </button>
           </div>
-
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={handleConfirmBooking}
-          >
-            Confirm Booking
-          </button>
-        </div>
-      ) : (
-        <div className="text-gray-500 mb-4">Loading...</div>
-      )}
+        ) : (
+          <div className="text-gray-500 text-center">Loading...</div>
+        )}
+        <ToastContainer
+          position="top-right"
+          autoClose={5000} // Close after 5 seconds
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />{" "}
+      </div>
     </div>
   );
 };

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { AddCircle, Favorite } from "@mui/icons-material";
 import { Avatar } from "@mui/material"; // Import Avatar from Material-UI
 
-
 interface Review {
   id: number;
   passenger_name: number;
@@ -21,16 +20,13 @@ const ReviewList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const itemsPerPage = 5;
-   // Define inappropriate words
 
   useEffect(() => {
-    
     const fetchReviews = async () => {
       try {
         const response = await axios.get(`http://127.0.0.1:8000/reviews/?page=${currentPage}`);
         setReviews(response.data.results);
-        setTotalPages(Math.ceil(response.data.count / itemsPerPage))
-        
+        setTotalPages(Math.ceil(response.data.count / itemsPerPage));
       } catch (error) {
         console.error("Error fetching reviews:", error);
       }
@@ -45,31 +41,26 @@ const ReviewList: React.FC = () => {
       "offensive",
       "disappointing",
     ];
-    // Filter out reviews containing inappropriate words
 
-   
+    const filtered = reviews.filter((review: any) => {
+      return !inappropriateWords.some((word) =>
+        review.review_text.toLowerCase().includes(word)
+      );
+    });
+    setFilteredReviews(filtered);
+  }, [reviews, currentPage, totalPages]);
 
-      const filtered = reviews.filter((review: any) => {
-        return !inappropriateWords.some((word) =>
-          review.review_text.toLowerCase().includes(word)
-        );
-      });
-      setFilteredReviews(filtered);
-    }, [reviews, currentPage, totalPages]);
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
-    const handlePreviousPage = () => {
-      if (currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-      }
-    };
-    
-      const handleNextPage = () => {
-        if (currentPage < totalPages) {
-          setCurrentPage(currentPage + 1);
-        }
-      }; 
-
-  
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  }; 
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -101,7 +92,6 @@ const ReviewList: React.FC = () => {
                 {Array.from({ length: 5 }, (_, index) => (
                   <span key={index}>
                     {index < review.rating ? <Favorite /> : ""}{" "}
-                    {/* Use Favorite icon for ratings */}
                   </span>
                 ))}
               </span>
@@ -131,8 +121,6 @@ const ReviewList: React.FC = () => {
           Next
         </button>
       </div>
-
-
       {filteredReviews.length === 0 && (
         <p className="text-gray-600 mt-4">No reviews available.</p>
       )}

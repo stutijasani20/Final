@@ -43,21 +43,24 @@ const YourComponent: NextPage = () => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <div className="container mx-auto">
-      <Head>
-        <title>Press Releases</title>
-        <meta
-          name="Press_Data"
-          content="Browse through the latest press releases."
-        />
-      </Head>
+    <div className="flex justify-center items-center h-screen ">
+  <div className="w-full max-w-4xl p-6">
+    <Head>
+      <title>Press Releases</title>
+      <meta
+        name="Press_Data"
+        content="Browse through the latest press releases."
+      />
+    </Head>
 
-      <h1 className="text-3xl font-bold mb-4 mt-8 text-violet-800">
-        Press Releases:
-      </h1>
+    <h1 className="text-3xl font-bold mb-4 mt- text-violet-800">
+      Press Releases:
+    </h1>
 
-      <div className="space-y-4">
-        {data.map((item) => (
+    <div className="space-y-4">
+      {data
+        .sort((a: any, b:any) => new Date(b.publication_date) - new Date(a.publication_date))
+        .map((item) => (
           <div key={item.id} className="border border-gray-300 rounded">
             <button
               className="flex justify-between items-center w-full px-4 py-2 text-left focus:outline-none hover:bg-gray-100"
@@ -65,7 +68,7 @@ const YourComponent: NextPage = () => {
             >
               <div className="font-semibold text-teal-800">{item.title}</div>
               <div className="text-sm text-rose-800">
-                {item.publication_date}
+                {new Date(item.publication_date).toLocaleDateString('en-GB')}
               </div>
             </button>
             {openItemId === item.id && (
@@ -81,29 +84,34 @@ const YourComponent: NextPage = () => {
                     />
                   </div>
                 )}
-                <p className="text-gray-700 col-span-2">{item.content}</p>
+                <p className="text-gray-700 col-span-2 flex items-center">
+                  {item.image && <div className="w-12"></div>} {/* Spacer */}
+                  {item.content}
+                </p>
               </div>
             )}
           </div>
         ))}
-      </div>
-
-      <div className="flex justify-center mt-4 space-x-4">
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => paginate(i + 1)}
-            className={`px-3 py-1 rounded ${
-              currentPage === i + 1
-                ? "bg-rose-300 text-red-500"
-                : "bg-amber-100 text-black"
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
     </div>
+
+    <div className="flex justify-center mt-4 space-x-4">
+      {Array.from({ length: totalPages }, (_, i) => (
+        <button
+          key={i}
+          onClick={() => paginate(i + 1)}
+          className={`px-3 py-1 rounded ${
+            currentPage === i + 1
+              ? "bg-rose-300 text-red-500"
+              : "bg-amber-100 text-black"
+          }`}
+        >
+          {i + 1}
+        </button>
+      ))}
+    </div>
+  </div>
+</div>
+
   );
 };
 

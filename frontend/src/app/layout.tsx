@@ -9,9 +9,8 @@ import { useEffect } from "react";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "../app/store/store";
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import { url } from "inspector";
-import { useRouter } from "next/navigation";
+import "../app/globals.css";
+
 import { usePathname } from "next/navigation";
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,23 +22,26 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const router = useRouter();
+
   const pathname = usePathname();
   const admin = pathname.includes("airport_staff");
   return (
+    
     <html lang="en" suppressHydrationWarning>
       <head>
         <title>Elegance Air</title>
-        <link rel="icon" href="/favicon.ico" />
-      </head>
+      
+                </head>
       <body className={inter.className}>
         <Provider store={store}>
+        <div className="bg-customBackground min-h-screen"> {/* Apply background color here */}
         {!admin && <Navbar />} 
           <PersistGate loading={null} persistor={persistor}>
             {children}
-        {!admin && <Footer />}
           </PersistGate>
+        </div>
         </Provider>
+
       </body>
     </html>
   );

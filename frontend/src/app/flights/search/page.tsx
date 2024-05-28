@@ -1,21 +1,9 @@
 "use client";
-import React, { useState, useEffect, MouseEvent, ChangeEvent } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import styles from "../../styles/flifgtsearch.module.scss";
-import {
-  Card,
-  DatePicker,
-  Form,
-  InputNumber,
-  Select,
-  Spin,
-  Tooltip,
-} from "antd";
-import { InfoCircleOutlined, SearchOutlined } from "@ant-design/icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faMinus, faTimes } from "@fortawesome/free-solid-svg-icons";
-import Modal from "react-modal";
+import styles from "@/app/styles/flightsearch.module.scss"
+import { InputNumber } from "antd";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 
@@ -44,7 +32,7 @@ interface Flight {
 const FlightSearchPage: React.FC = () => {
   const [origin, setOrigin] = useState<string>("");
   const [destination, setDestination] = useState<string>("");
-  const [passenger, setPassengers] = useState<number>(1);
+  const [passenger, setPassenger] = useState<number>(1);
   const [departureDate, setDepartureDate] = useState<string>("");
   const [flightClass, setFlightClass] = useState<string>("Economy");
   const [tripType, setTripType] = useState<string>("oneWay");
@@ -59,13 +47,14 @@ const FlightSearchPage: React.FC = () => {
   const [destinationAirports, setDestinationAirports] = useState<Airport[]>([]);
   const [airports, setAirports] = useState<Airport[]>([]);
   const [flights, setFlights] = useState<Flight[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const [error, setError] = useState<string>("");
   const router = useRouter();
   const query = useSearchParams();
 
   useEffect(() => {
-    // Fetch airports data when component mounts if no origin city in URL
+
     fetchAirports();
   }, []);
 
@@ -75,6 +64,7 @@ const FlightSearchPage: React.FC = () => {
         "http://127.0.0.1:8000/airports"
       );
       setAirports(response.data);
+      setLoading(false);
     } catch (error) {
       setError("Error fetching airports. Please try again.");
       console.error("Error fetching airports:", error);
@@ -82,7 +72,7 @@ const FlightSearchPage: React.FC = () => {
   };
 
   const handleTravellerChange =
-    (type: any, operation: any) => (event: MouseEvent<HTMLButtonElement>) => {
+    (type: any, operation: any) => (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       setTravellers((prevState: any) => {
         let newValue =
@@ -100,6 +90,10 @@ const FlightSearchPage: React.FC = () => {
         return { ...prevState, [type]: newValue };
       });
     };
+
+  const handlePassengerChange = (value: number) => {
+    setPassenger(value < 1 ? 1 : value); // Ensure the value is not below 1
+  };
 
   const handleSearch = async () => {
     try {
@@ -168,6 +162,33 @@ const FlightSearchPage: React.FC = () => {
 
     setDestination(value);
   };
+
+  const handleSwap = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    const temp = origin;
+    setOrigin(destination);
+    setDestination(temp);
+  };
+
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh', 
+        position: 'fixed', 
+        top: 0, 
+        left: 0, 
+        right: 0, 
+        bottom: 0, 
+        backdropFilter: 'blur(5px)', 
+        backgroundColor: 'rgba(255, 255, 255, 0.7)' 
+      }}>
+        <Image src="/flight.gif" alt="Loading..." width={500} height={500} />
+      </div>
+    );
+  }
   return (
     <>
       <div className={styles.body}>
@@ -234,12 +255,12 @@ const FlightSearchPage: React.FC = () => {
                     ))}
                   </datalist>
                 </div>
-                <div className="swap-container flex flex-col justify-center mx-2">
-                  <button type="button">
+                <div className="swapContainer flex items-center justify-center mx-2">
+                  <button className={styles.swapButton} onClick={handleSwap}>
                     <Image
                       src="/swap.png"
-                      width={50}
-                      height={50}
+                      width={24}
+                      height={24}
                       alt="Swap values"
                     />
                   </button>
@@ -269,279 +290,6 @@ const FlightSearchPage: React.FC = () => {
                   </datalist>
                 </div>
               </div>
-              <div
-                className="mb-4"
-                onClick={() => setShowTravellerPopup(true)}
-                style={{
-                  fontWeight: "bold",
-                  fontSize: "17px",
-                }}
-              >
-                Travellers:
-                <br />
-                <div
-                  style={{ display: "flex", justifyContent: "space-between" }}
-                >
-                  <div style={{ paddingRight: "10px" }}>
-                    Adults:
-                    <input
-                      type="text"
-                      value={travellers.adults}
-                      readOnly
-                      className={styles.readonlyInput}
-                    />
-                  </div>
-                  <div style={{ paddingRight: "0px" }}>
-                    Children:
-                    <input
-                      type="text"
-                      value={travellers.children}
-                      readOnly
-                      className={styles.readonlyInput}
-                    />
-                  </div>
-                  <div>
-                    Infants:
-                    <input
-                      type="text"
-                      value={travellers.infants}
-                      readOnly
-                      className={styles.readonlyInput}
-                    />
-                  </div>
-                </div>
-              </div>
-              {showTravellerPopup && (
-                <Modal
-                  isOpen={showTravellerPopup}
-                  onRequestClose={() => setShowTravellerPopup(false)}
-                  className={styles.modalContent}
-                  overlayClassName={styles.modelOverlay}
-                >
-                  <div>
-                    <button
-                      className={styles.closeButton}
-                      onClick={() => setShowTravellerPopup(false)}
-                    >
-                      <FontAwesomeIcon icon={faTimes} color="red" />
-                    </button>
-
-                    <h2 className={styles.modalTitle}>
-                      Please Select The Seats:
-                    </h2>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        width: "100%",
-                        marginTop: "20px",
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
-                          marginTop: "20px",
-                        }}
-                      >
-                        <span style={{ fontWeight: "bold" }}>Adults:</span>
-                        <div>
-                          <button
-                            style={{
-                              margin: "0 10px",
-                              transition: "background-color 0.3s",
-                            }}
-                            onClick={handleTravellerChange(
-                              "adults",
-                              "increase"
-                            )}
-                            onMouseOver={(e) =>
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "#ddd")
-                            }
-                            onMouseOut={(e) =>
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "")
-                            }
-                          >
-                            <FontAwesomeIcon icon={faPlus} />
-                          </button>
-                          <span
-                            style={{ fontWeight: "bold", margin: "0 10px" }}
-                          >
-                            {travellers.adults}
-                          </span>
-                          <button
-                            style={{
-                              margin: "0 10px",
-                              transition: "background-color 0.3s",
-                              cursor:
-                                travellers.adults === 1
-                                  ? "not-allowed"
-                                  : "pointer",
-                            }}
-                            onClick={
-                              travellers.adults === 1
-                                ? null
-                                : handleTravellerChange("adults", "decrease")
-                            }
-                            onMouseOver={(e) =>
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "#ddd")
-                            }
-                            onMouseOut={(e) =>
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "")
-                            }
-                            disabled={travellers.adults === 1}
-                          >
-                            <FontAwesomeIcon icon={faMinus} />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
-                          marginTop: "20px",
-                        }}
-                      >
-                        <span style={{ fontWeight: "bold" }}>Children:</span>
-                        <div>
-                          <button
-                            style={{
-                              margin: "0 10px",
-                              transition: "background-color 0.3s",
-                              cursor:
-                                travellers.children === 0
-                                  ? "not-allowed"
-                                  : "pointer",
-                            }}
-                            onClick={handleTravellerChange(
-                              "children",
-                              "increase"
-                            )}
-                            onMouseOver={(e) =>
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "#ddd")
-                            }
-                            onMouseOut={(e) =>
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "")
-                            }
-                          >
-                            <FontAwesomeIcon icon={faPlus} />
-                          </button>
-                          <span
-                            style={{ fontWeight: "bold", margin: "0 10px" }}
-                          >
-                            {travellers.children}
-                          </span>
-                          <button
-                            style={{
-                              margin: "0 10px",
-                              transition: "background-color 0.3s",
-                              cursor:
-                                travellers.children === 0
-                                  ? "not-allowed"
-                                  : "pointer",
-                            }}
-                            onClick={
-                              travellers.children === 0
-                                ? null
-                                : handleTravellerChange("children", "decrease")
-                            }
-                            onMouseOver={(e) =>
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "#ddd")
-                            }
-                            onMouseOut={(e) =>
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "")
-                            }
-                            disabled={travellers.children === 0}
-                          >
-                            <FontAwesomeIcon icon={faMinus} />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
-                          marginTop: "20px",
-                        }}
-                      >
-                        <span style={{ fontWeight: "bold" }}>Infants:</span>
-                        <div>
-                          <button
-                            style={{
-                              margin: "0 10px",
-                              transition: "background-color 0.3s",
-                              cursor:
-                                travellers.infants === 0
-                                  ? "not-allowed"
-                                  : "pointer",
-                            }}
-                            onClick={handleTravellerChange(
-                              "infants",
-                              "increase"
-                            )}
-                            onMouseOver={(e) =>
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "#ddd")
-                            }
-                            onMouseOut={(e) =>
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "")
-                            }
-                          >
-                            <FontAwesomeIcon icon={faPlus} />
-                          </button>
-                          <span
-                            style={{ fontWeight: "bold", margin: "0 10px" }}
-                          >
-                            {travellers.infants}
-                          </span>
-                          <button
-                            style={{
-                              margin: "0 10px",
-                              transition: "background-color 0.3s",
-                              cursor:
-                                travellers.infants === 0
-                                  ? "not-allowed"
-                                  : "pointer",
-                            }}
-                            onClick={
-                              travellers.infants === 0
-                                ? null
-                                : handleTravellerChange("infants", "decrease")
-                            }
-                            onMouseOver={(e) =>
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "#ddd")
-                            }
-                            onMouseOut={(e) =>
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "")
-                            }
-                            disabled={travellers.infants === 0}
-                          >
-                            <FontAwesomeIcon icon={faMinus} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Modal>
-              )}
               <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
@@ -580,6 +328,20 @@ const FlightSearchPage: React.FC = () => {
               <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="passengers"
+                >
+                  Passengers
+                </label>
+                <InputNumber
+                  min={1}
+                  value={passenger}
+                  onChange={handlePassengerChange}
+                  className="w-full"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="flightClass"
                 >
                   Class
@@ -597,7 +359,7 @@ const FlightSearchPage: React.FC = () => {
                 </select>
               </div>
               <button
-                className="bg-blue-500 hover:bg-blue-700 hover:text-black  text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="bg-blue-500 hover:bg-blue-700 hover:text-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="button"
                 onClick={handleSearch}
               >

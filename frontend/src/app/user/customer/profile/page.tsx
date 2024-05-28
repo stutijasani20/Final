@@ -146,9 +146,9 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4" >
       <div className="w-full max-w-lg mx-auto border rounded-lg overflow-hidden relative">
-        <div className="p-4 flex items-center">
+        <div className="p-4 flex items-center bg-white border-blue-500">
           {profile.profile_photo && (
             <img
               className="w-20 h-20 object-cover rounded-full mr-4"
@@ -160,7 +160,7 @@ const ProfilePage: React.FC = () => {
             <h2 className="text-2xl font-bold mb-4">Profile Details</h2>
             <p className="text-lg">Name: {profile.name}</p>
             <p className="text-lg">Phone: {profile.phone}</p>
-            <p className="text-lg">Birth Date: {profile.birth_date}</p>
+            <p className="text-lg">Birth Date:{new Date(profile.birth_date).toLocaleDateString('en-GB')}</p>
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
               onClick={() => setShowModal(true)}
