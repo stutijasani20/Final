@@ -85,6 +85,7 @@ const BookingPage: React.FC = () => {
   });
   const [showPopup, setShowPopup] = useState<boolean>(false);
 
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>("");
 
   const [passengerList, setPassengerList] = useState<
@@ -274,14 +275,14 @@ const BookingPage: React.FC = () => {
                       "passengerId",
                       passengerDetails.user.toString()
                     );
-                    toast.success("Payment successful!"); // Notify success
+                    toast.success("Payment successful!"); 
                     router.push(`/booking/success?${queryParams.toString()}`);
                   } catch (error) {
                     console.error(
                       "Error sending payment data to backend:",
                       error
                     );
-                    toast.error("Failed to confirm booking. Please try again."); // Notify failure
+                    toast.error("Failed to confirm booking. Please try again."); 
                    
                   }
                 },
@@ -330,7 +331,7 @@ const BookingPage: React.FC = () => {
 
   const fetchFlightDetails = async (flightId: string) => {
     try {
-      // Make an API call to fetch flight details using flightId
+    
       const response = await fetch(`http://127.0.0.1:8000/flights/${flightId}`);
       if (response.ok) {
         const flightData: Flight = await response.json();
@@ -585,7 +586,7 @@ const BookingPage: React.FC = () => {
                         Phone Number :
                       </label>
                       <PhoneInput
-                        country={"in"} // Set default country to India
+                        country={"in"} 
                         inputProps={{
                           id: "phoneNumber",
                           name: "phoneNumber",

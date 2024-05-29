@@ -4,19 +4,19 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import {
-  Grid,
+  
   Paper,
   Typography,
   Button,
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
 } from "@mui/material";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import FlightLandIcon from "@mui/icons-material/FlightLand";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import Image from "next/image";
+import { Hourglass } from "react-loader-spinner";
 interface Flight {
   id: number;
   flight_number: string;
@@ -134,7 +134,7 @@ const AvailableFlightsPage: React.FC = () => {
         backdropFilter: 'blur(5px)', 
         backgroundColor: 'rgba(255, 255, 255, 0.7)' 
       }}>
-        <Image src="/flight.gif" alt="Loading..." width={400} height={300} />
+      <Hourglass />
       </div>
     );
   }

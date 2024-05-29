@@ -14,7 +14,7 @@ import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
-
+import { TailSpin } from "react-loader-spinner";
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,6 +22,10 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [staff, setStaff] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+ 
+  
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -33,11 +37,10 @@ const LoginPage = () => {
         { email, password }
       );
 
-      console.log(response.data.is_staff);
   
       const token = response.data.jwt_token.access;
       localStorage.setItem("token", token);
-      setError(""); // Clear any previous errors
+      setError(""); 
       dispatch(login(response.data));
 
       setStaff(response.data.is_staff);
@@ -57,7 +60,7 @@ const LoginPage = () => {
     }
   };
 
-  // Redirect to home page after successful login
+
   useEffect(() => {
     if (loggedIn && staff) {
       router.push("/user/airport_staff");
@@ -65,6 +68,22 @@ const LoginPage = () => {
       router.push("/user/customer");
     }
   }, [router, loggedIn, staff]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); 
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center fixed top-0 left-0 w-full h-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-md z-50">
+      <TailSpin />
+      </div>
+    );
+  }
   
   return (
     <div className="flex justify-center items-start flex-row text-lg">

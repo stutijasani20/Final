@@ -12,6 +12,9 @@ import Modal from "react-modal";
 import CancelIcon from '@mui/icons-material/Cancel';
 import TurnLeftIcon from '@mui/icons-material/TurnLeft';
 import TurnRightIcon from '@mui/icons-material/TurnRight';
+import RoundaboutLeftIcon from '@mui/icons-material/RoundaboutLeft';
+import TimeToLeaveIcon from '@mui/icons-material/TimeToLeave';
+import Image from "next/image";
 interface RouteData {
     routes: {
         summary: {
@@ -35,6 +38,7 @@ const MapWithRoute = () => {
     const [restaurantLocation, setRestaurantLocation] = useState({ lat: 0, lng: 0 });
     const [error, setError] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const[loading, setLoading] = useState(true);
     const searchParams = useSearchParams();
     const airport = searchParams.get("airport") || "Mumbai Airport";
 
@@ -62,9 +66,11 @@ const MapWithRoute = () => {
 
                 if (response.status === 200) {
                     setRouteData(response.data);
+                    setLoading(false);
                 }
             } catch (error) {
                 setError(true);
+                setLoading(false);
             }
         };
 
@@ -229,8 +235,10 @@ const MapWithRoute = () => {
     <ol className="list-decimal list-inside text-gray-700">
     {routeData.routes[0].guidance.instructions.map((instruction: any, index: number) => (
         <li key={index} className="mb-2">
-            {instruction.message.includes('left') && <TurnLeftIcon />}
-            {instruction.message.includes('right') && <TurnRightIcon />}
+             {instruction.message.includes('left') && <TurnLeftIcon sx={{color: "red"}} />}
+            {instruction.message.includes('right') && <TurnRightIcon sx={{color: "blue"}} />}
+            {instruction.message.includes('roundabout') && <RoundaboutLeftIcon sx={{color: "green"}} />}
+            {instruction.message.includes('Leave') && <TimeToLeaveIcon sx={{color: "#b148d2"}}  />}
             {instruction.message}
         </li>
     ))}
@@ -247,6 +255,13 @@ const MapWithRoute = () => {
 
     if (error) {
         return <div className="text-red-600">Error fetching data. Please try again later.</div>;
+    }
+    if (loading) {
+        return (
+            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-50">
+                <Image src="/map.gif" alt="loading" width={150} height={150} />
+            </div>
+        );
     }
 
     if (!routeData) {

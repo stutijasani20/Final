@@ -4,7 +4,8 @@ import axios from "axios";
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FaSearch, FaPhone, FaMapMarkerAlt, FaMap } from 'react-icons/fa';
+import { FaPhone, FaMapMarkerAlt, FaMap } from 'react-icons/fa';
+import { RotatingLines } from "react-loader-spinner";
 interface tourist {
   position: {
     lat: number;
@@ -90,7 +91,7 @@ const MyComponent: React.FC = () => {
   };
 
   const handleViewMap = (tourist: tourist) => {
-    // Navigate to MapComponent page with the tourist location
+  
     const queryString = `?touristLat=${tourist.position.lat}&touristLng=${tourist.position.lon}&airport=${flightsParam}`;
     router.push(`/map2${queryString}`);
   };
@@ -106,16 +107,10 @@ const MyComponent: React.FC = () => {
       onChange={(e) => setSearchQuery(e.target.value)}
       className="mr-2 p-2 border border-sky-300 rounded-md focus:outline-none shadow-md"
     />
-    <button
-      type="submit"
-      className="px-4 py-2 bg-sky-500 text-white rounded-md hover:bg-sky-600 focus:outline-none shadow-md"
-    >
-      <FaSearch className="inline-block" /> Search
-    </button>
   </form>
   {loading ? (
     <div className="absolute inset-0 flex items-center mt-5 justify-center bg-white bg-opacity-80 z-50">
-      <Image src="/tourist.gif" alt="loading" width={200} height={200} />
+      <RotatingLines />
     </div>
   ) : (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

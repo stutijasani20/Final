@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -59,7 +60,9 @@ const YourComponent: NextPage = () => {
 
     <div className="space-y-4">
       {data
-        .sort((a: any, b:any) => new Date(b.publication_date) - new Date(a.publication_date))
+       .sort((a: PressItem, b: PressItem) =>
+        new Date(b.publication_date).getTime() - new Date(a.publication_date).getTime()
+      )
         .map((item) => (
           <div key={item.id} className="border border-gray-300 rounded">
             <button
@@ -85,7 +88,7 @@ const YourComponent: NextPage = () => {
                   </div>
                 )}
                 <p className="text-gray-700 col-span-2 flex items-center">
-                  {item.image && <div className="w-12"></div>} {/* Spacer */}
+                  {item.image && <div className="w-12"></div>} 
                   {item.content}
                 </p>
               </div>

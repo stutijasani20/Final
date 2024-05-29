@@ -1,12 +1,13 @@
-"use client";
 import React from "react";
 
-const CustomLayout = ({ children }) => {
+interface CustomLayoutProps {
+  children: React.ReactNode;
+}
+
+const CustomLayout: React.FC<CustomLayoutProps> = ({ children }) => {
   return (
     <div>
-      
       <main>{children}</main>
-      
     </div>
   );
 };

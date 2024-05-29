@@ -1,11 +1,28 @@
 "use client";
-import React from "react";
+import React, {useState, useEffect} from "react";
 import Accordion from "./Accordian";
-
+import { Grid } from "react-loader-spinner";
 
 
 
 export default function Page() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); 
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center fixed top-0 left-0 w-full h-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-md z-50">
+      <Grid />
+      </div>
+    );
+  }
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl text-purple-600 font-bold mt-4 mb-8">CORPORATE INFORMATION</h1>

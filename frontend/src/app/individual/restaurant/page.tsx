@@ -90,7 +90,7 @@ const MyComponent: React.FC = () => {
   };
 
   const handleViewMap = (restaurant: restaurant) => {
-    // Navigate to MapComponent page with the restaurant location
+    
     const queryString = `?restaurantLat=${restaurant.position.lat}&restaurantLng=${restaurant.position.lon}&airport=${flightsParam}`;
     router.push(`/map3${queryString}`);
   };
@@ -106,12 +106,6 @@ const MyComponent: React.FC = () => {
       onChange={(e) => setSearchQuery(e.target.value)}
       className="mr-2 p-2 border border-sky-300 rounded-md focus:outline-none shadow-md"
     />
-    <button
-      type="submit"
-      className="px-4 py-2 bg-sky-500 text-white rounded-md hover:bg-sky-600 focus:outline-none shadow-md"
-    >
-      <FaSearch className="inline-block" /> Search
-    </button>
   </form>
   {loading ? (
     <div className="absolute inset-0 flex items-center mt-5 justify-center bg-white bg-opacity-80 z-50">

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-import { Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material';
+import { Select, MenuItem, InputLabel, FormControl, Button, SelectChangeEvent } from '@mui/material';
 import Image from 'next/image';
 
 const User = () => {
@@ -54,7 +54,7 @@ const User = () => {
     setPage(newPage);
   };
 
-  const handleFilterChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+  const handleFilterChange = (event: SelectChangeEvent<"staff" | "customer">) => {
     setFilterCriteria({
       isStaff: event.target.value === 'staff' ? true : event.target.value === 'customer' ? false : null,
     });

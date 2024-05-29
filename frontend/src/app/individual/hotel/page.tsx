@@ -26,7 +26,6 @@ interface Hotel {
 const MyComponent: React.FC = () => {
   const params = new URLSearchParams(location.search);
   const flightsParam = params.get("airport");
-  console.log(flightsParam);
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
@@ -86,11 +85,12 @@ const MyComponent: React.FC = () => {
 
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     setPage(1);
   };
 
   const handleViewMap = (hotel: Hotel) => {
-    // Navigate to MapComponent page with the hotel location
+    
     const queryString = `?hotelLat=${hotel.position.lat}&hotelLng=${hotel.position.lon}&airport=${flightsParam}`;
     router.push(`/map${queryString}`);
   };

@@ -5,9 +5,10 @@ import CustomLayout from './layout';
 import {  FaBook, FaUser, FaPlane, FaBuilding, FaBriefcase } from 'react-icons/fa';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import Image from 'next/image';
-const Sidebar = ({ setActiveSection }) => {
+
+const Sidebar = ({ setActiveSection }: {setActiveSection: any}) => {
     const [activeItem, setActiveItem] = useState('dashboard');
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<any>(null);
     const userId = localStorage.getItem('userId');
 
     useEffect(() => {
@@ -17,7 +18,7 @@ const Sidebar = ({ setActiveSection }) => {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         }
-        ) // replace with your actual API endpoint
+        ) 
             .then(response => setUser(response.data))
             .catch(error => console.error('Error:', error));
     }, [userId]);

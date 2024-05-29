@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import BookingSuccessModal from "../customer/success"; // Import the success modal component
 import Link from "next/link";
-
-
+import { Bars } from 'react-loader-spinner';
 import Button from "@mui/material/Button";
 import Image from "next/image";
 import UserProfileModal from "@/app/components/Modal";
@@ -197,9 +196,12 @@ export default function MyBookingsPage() {
       setError("Failed to cancel booking");
     }
   };
-
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', top:"10px" }}>
+        <Bars color="#00BFFF" height={80} width={80} />
+      </div>
+    );
   }
 
   if (error) {

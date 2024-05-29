@@ -26,7 +26,8 @@ const Flights = () => {
         departureAirportName: "",
         arrivalAirportName: "",
         travelDate: "",
-        className: ""
+        className: "",
+
     });
 
     useEffect(() => {
@@ -64,21 +65,22 @@ const Flights = () => {
         };
 
         fetchFlights();
-    }, [filterCriteria.departureAirportName, filterCriteria.arrivalAirportName, filterCriteria.price, filterCriteria.travelDate, filterCriteria.className, page, pageSize]);
+    }, [filterCriteria.departureAirportName, filterCriteria.arrivalAirportName,  filterCriteria.travelDate, filterCriteria.className, page, pageSize]);
 
-    const handleFilterChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleFilterChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFilterCriteria((prev) => ({
             ...prev,
-            [name]: value
+            [name]: name === "price" ? (value ? parseInt(value) : undefined) : value
         }));
     };
+
 
     const clearFilters = () => {
         setFilterCriteria({
             departureAirportName: "",
             arrivalAirportName: "",
-            price: "",
+           
             travelDate: "",
             className: ""
         });
@@ -123,13 +125,6 @@ const Flights = () => {
                     label="Arrival Airport"
                     name="arrivalAirportName"
                     value={filterCriteria.arrivalAirportName}
-                    onChange={handleFilterChange}
-                />
-                <TextField
-                    type="number"
-                    label="Max Price"
-                    name="price"
-                    value={filterCriteria.price}
                     onChange={handleFilterChange}
                 />
                 <TextField

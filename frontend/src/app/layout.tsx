@@ -31,6 +31,7 @@ export default function RootLayout({
       <head>
         <title>Elegance Air</title>
       
+      
                 </head>
       <body className={inter.className}>
         <Provider store={store}>

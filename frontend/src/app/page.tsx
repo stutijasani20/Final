@@ -1,17 +1,39 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import React, {useState, useEffect} from "react";
-import Avatar from '@mui/material/Avatar';
+
 import Rating from '@mui/material/Rating';
 import StarIcon from '@mui/icons-material/Star';
-// import styles from '../styles/Homepage.module.scss';
+
 import { useRouter } from "next/navigation";
 import  Footer from "@/app/components/Footer";
 import {motion} from 'framer-motion';
 import styles from "@/app/styles/Homepage.module.scss"
 import Image from "next/image";
+import { RotatingLines } from "react-loader-spinner";
+
 
 const MiddleSection: React.FC = () => {
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Adjust the time according to your needs
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center fixed top-0 left-0 w-full h-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-md z-50">
+                    <RotatingLines />
+                </div>
+    );
+  }
+
+
 
   return (
     <motion.div

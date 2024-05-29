@@ -111,7 +111,7 @@ const Page: React.FC = () => {
         }
     };
 
-    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFilterCriteria((prev) => ({
             ...prev,
@@ -130,14 +130,14 @@ const Page: React.FC = () => {
     return (
         <div className="container mx-auto p-8 flex flex-col items-center bg-slate-100">
             <h1 className="text-3xl font-bold mb-6">My Previous Bookings</h1>
-            {/* Filter input fields */}
+          
             <div className="flex gap-2 mb-4">
                 <TextField
                     type="date"
                     label="Booking Date"
                     name="bookingDate"
                     value={filterCriteria.bookingDate}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => handleFilterChange(e)}
+                    onChange={handleFilterChange}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -189,7 +189,8 @@ const Page: React.FC = () => {
                             </>
                         ) : (
                             <>
-                                {bookings.length === 0 ? (                                    <p>No bookings found.</p>
+                                {bookings.length === 0 ? (                                   
+                                     <p>No bookings found.</p>
                                 ) : (
                                     <table className="min-w-full divide-y divide-gray-200">
                                         <thead className="bg-gray-50">

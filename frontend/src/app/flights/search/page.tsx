@@ -6,7 +6,7 @@ import styles from "@/app/styles/flightsearch.module.scss"
 import { InputNumber } from "antd";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-
+import { Oval } from "react-loader-spinner";
 interface Airport {
   id: number;
   name: string;
@@ -127,7 +127,7 @@ const FlightSearchPage: React.FC = () => {
     const city = query.get("city");
 
     if (city) {
-      // If the city is provided in the search query, find the corresponding airport
+
       const matchingAirport = airports.find(
         (airport) => airport.city.toLowerCase() === city.toLowerCase()
       );
@@ -139,7 +139,7 @@ const FlightSearchPage: React.FC = () => {
   }, [query, airports]);
 
   const handleOriginChange = (value: string) => {
-    // Filter airports based on user's input
+  
     const matchingAirports: any = airports.filter(
       (airport) =>
         airport.city.toLowerCase().includes(value.toLowerCase()) ||
@@ -151,7 +151,7 @@ const FlightSearchPage: React.FC = () => {
     setOrigin(value);
   };
   const handleDestinationChange = (value: string) => {
-    // Filter airports based on user's input
+    
     const matchingAirports: any = airports.filter(
       (airport) =>
         airport.city.toLowerCase().includes(value.toLowerCase()) ||
@@ -177,6 +177,7 @@ const FlightSearchPage: React.FC = () => {
         justifyContent: 'center', 
         alignItems: 'center', 
         height: '100vh', 
+       
         position: 'fixed', 
         top: 0, 
         left: 0, 
@@ -185,7 +186,7 @@ const FlightSearchPage: React.FC = () => {
         backdropFilter: 'blur(5px)', 
         backgroundColor: 'rgba(255, 255, 255, 0.7)' 
       }}>
-        <Image src="/flight.gif" alt="Loading..." width={500} height={500} />
+       <Oval  />
       </div>
     );
   }
@@ -333,10 +334,12 @@ const FlightSearchPage: React.FC = () => {
                   Passengers
                 </label>
                 <InputNumber
-                  min={1}
-                  value={passenger}
-                  onChange={handlePassengerChange}
-                  className="w-full"
+                min={1}
+                value={passenger}
+                onChange={(value: number | null) => {handlePassengerChange}}
+
+                 
+                className="w-full"
                 />
               </div>
               <div className="mb-4">

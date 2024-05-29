@@ -14,8 +14,8 @@ const Header: React.FC = () => {
     (state: RootState) => state.isAuthenticated
   );
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false); // State for dropdown visibility
-  const [isScrolled, setIsScrolled] = useState(false); // State for tracking scroll
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false); 
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -24,13 +24,12 @@ const Header: React.FC = () => {
     window.addEventListener("scroll", handleScroll);
 
     return () => {
-      // Remove scroll event listener on component unmount
+      
       window.removeEventListener("scroll", handleScroll);
     };
   }, [isAuthenticatedRedux]);
 
   const handleScroll = () => {
-    // Check if the user has scrolled beyond the top position
     if (window.scrollY > 0) {
       setIsScrolled(true);
     } else {

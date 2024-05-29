@@ -5,17 +5,41 @@ import Modal from "react-modal";
 import { FiUser, FiPhone, FiCalendar, FiCamera } from "react-icons/fi";
 import axios from "axios"; // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 import { toast, Toaster } from "react-hot-toast";
+import {ThreeDots} from 'react-loader-spinner';
 function UserProfileModal() {
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const profileData = localStorage.getItem("profileData");
-    if (!profileData) {
-      setShowModal(true);
+    const userId = localStorage.getItem("userId")
+    const checkProfileCompleteness = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/profile/?user=${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const profileData = response.data.results;
+        console.log("Profile data:", profileData);
+
+        if (profileData === null || profileData.length === 0) {
+          setShowModal(true);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error checking profile completeness:", error);
+      }
+    };
+
+    if (userId ) {
+      checkProfileCompleteness();
     }
   }, []);
 
@@ -62,6 +86,22 @@ function UserProfileModal() {
       setProfilePhoto(e.target.files[0]);
     }
   };
+
+  if(loading) {
+    return (
+      <div>
+        <ThreeDots   visible={true}
+      height="80"
+      width="80"
+      color="#4fa94d"
+      radius="9"
+      ariaLabel="three-dots-loading"
+      wrapperStyle={{}}
+      wrapperClass="" />
+      </div>
+      
+    )
+  }
 
   return (
     <div>
@@ -148,6 +188,7 @@ function UserProfileModal() {
                     className="w-full outline-none"
                     maxLength={10}
                   />
+                  
                 </div>
               </div>
               <div className="mb-4">
@@ -185,15 +226,7 @@ function UserProfileModal() {
                     className="w-full outline-none"
                   />
                 </div>
-                {profilePhoto && (
-                  <div className="mt-4">
-                    <img
-                      src={URL.createObjectURL(profilePhoto)}
-                      alt="Profile Preview"
-                      className="w-32 h-32 rounded-full object-cover"
-                    />
-                  </div>
-                )}
+               
               </div>
               <div className="flex justify-end">
                 <button

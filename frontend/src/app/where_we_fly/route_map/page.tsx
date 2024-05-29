@@ -23,7 +23,7 @@ export default function Map(): JSX.Element {
       zoom: zoom,
     });
 
-    // Load custom image and add it as a custom image to the map
+
 
     markers.forEach((marker) => {
       const popup = new maptilersdk.Popup({}).setHTML(`
@@ -33,7 +33,7 @@ export default function Map(): JSX.Element {
         </div>
       `);
 
-      // Use the custom image for the marker
+      
       const customMarker = new maptilersdk.Marker({
         color: "#FF0000",
       })
@@ -48,12 +48,11 @@ export default function Map(): JSX.Element {
   }, [markers]);
 
   useEffect(() => {
-    // Fetch marker data from backend URL
+   
     fetch("http://127.0.0.1:8000/airports/")
       .then((response) => response.json())
       .then((data) => {
-        // Set the received markers data
-        setMarkers(data);
+               setMarkers(data);
       })
       .catch((error) => {
         console.error("Error fetching marker data:", error);

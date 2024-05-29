@@ -18,7 +18,7 @@ const style = {
   p: 4,
 };
 
-export default function BookingSuccessModal({ open, onClose }) {
+export default function BookingSuccessModal({ open, onClose }:{open: any, onClose: any}) {
   return (
     <Modal
       open={open}

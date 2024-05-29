@@ -4,6 +4,7 @@ import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import Image from "next/image";
 import {useRouter} from "next/navigation"
+import { MagnifyingGlass } from "react-loader-spinner";
 const JobCard: React.FC<{
   title: string;
   image: string;
@@ -85,14 +86,15 @@ export default function Page() {
     );
   }
 
+
   return (
     <div>
       <h1 className="text-4xl font-bold text-blue-700 text-center pt-5 mb-10">Careers</h1>
       <div className="container mx-auto flex justify-center bg-slate-100 items-center h-screen">
         
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <ClipLoader size={50} color={"#123abc"} loading={loading} />
+        <div className="flex justify-center items-center fixed top-0 left-0 w-full h-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-md z-50">
+            <MagnifyingGlass width={100} height={100}  />
             <p className="text-gray-600">Loading careers...</p>{" "}
           </div>
         ) : (

@@ -26,14 +26,22 @@ ChartJS.register(
   ArcElement
 );
 
+interface Data {
+  count: any;
+ 
+}
+
+
+
+
 export default function Dashboard() {
-  const [bookingsData, setBookingsData] = useState([]);
-  const [passengersData, setPassengersData] = useState([]);
-  const [flightsData, setFlightsData] = useState([]);
-  const [airportsData, setAirportsData] = useState([]);
-  const [usersData, setUsersData] = useState([]);
-  const [jobsData, setJobsData] = useState([]);
-  const [applicantsData, setApplicantsData] = useState([]);
+  const [bookingsData, setBookingsData] = useState<Data[]>([]);
+  const [passengersData, setPassengersData] = useState<any[]>([]);
+  const [flightsData, setFlightsData] = useState<any[]>([]);
+  const [airportsData, setAirportsData] = useState<any[]>([]);
+  const [usersData, setUsersData] = useState<any[]>([]);
+  const [jobsData, setJobsData] = useState<any[]>([]);
+  const [applicantsData, setApplicantsData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
@@ -91,21 +99,7 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
-  //   const staffCount = usersData.results.filter(
-  //     (user: any) => user.is_staff
-  //   ).length;
-  //   const totalCount = usersData.length - staffCount;
-
-  //   const pieChartData = {
-  //     labels: ["Staff Users", "Regular Users"],
-  //     datasets: [
-  //       {
-  //         data: [staffCount, totalCount],
-  //         backgroundColor: ["rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)"],
-  //         borderWidth: 1,
-  //       },
-  //     ],
-  //   };
+ 
 
 
   if (loading) {

@@ -8,21 +8,19 @@
 .main-container {
   background-color: transparent;
   padding: 20px;
-  /* Add some padding for better spacing */
   margin: 0 auto;
-  /* Center align the container */
   max-width: 100%;
 
 }
 
-/* Adjustments for small screens */
+
 @media (max-width: 768px) {
   .grid-cols-1 {
       grid-template-columns: 1fr;
-      /* Display one column on small screens */
+      
   }
 
-  /* Adjust the font size and padding for better mobile experience */
+
   .text-3xl {
       font-size: 2rem;
   }
@@ -34,23 +32,22 @@
 
   .lg:text-left {
       text-align: center;
-      /* Center align text on small screens */
+     
   }
 }
 
-/* Styles for the footer */
 .footer {
   background-color: transparent;
   padding: 20px;
   text-align: center;
 }
 
-/* Social media icons */
+
 .footer a {
   margin-right: 10px;
 }
 
-/* Additional styles for the footer contact information */
+
 .contact-info {
   text-align: center;
 }
@@ -60,7 +57,7 @@
   margin-bottom: 10px;
 }
 
-/* Adjust styles for testimonial cards */
+
 .testimonial-card {
   padding: 20px;
   border-radius: 10px;
@@ -79,7 +76,6 @@ button {
 
 
 
-/* Additional adjustments for testimonial cards on small screens */
 @media (max-width: 768px) {
   .text-3xl {
       font-size: 2rem;
