@@ -65,7 +65,7 @@ const MapWithRoute = () => {
                 settouristLocation({ lat: touristLat, lng: touristLng });
 
                 const response = await axios.get(
-                    `https://api.tomtom.com/routing/1/calculateRoute/${userLat},${userLng}:${touristLat},${touristLng}/json?&instructionsType=text&sectionType=lanes&instructionAnnouncementPoints=all&language=en-GB&routeType=eco&traffic=true&vehicleMaxSpeed=120&travelMode=car&key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb`
+                    `https://api.tomtom.com/routing/1/calculateRoute/${userLat},${userLng}:${touristLat},${touristLng}/json?&instructionsType=text&sectionType=lanes&instructionAnnouncementPoints=all&language=en-GB&routeType=eco&traffic=true&vehicleMaxSpeed=120&travelMode=car&key=${process.env.NEXT_PUBLIC_TOMTOM_KEY}`
                 );
 
                 if (response.status === 200) {

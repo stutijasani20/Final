@@ -42,16 +42,6 @@ interface RouteData {
 }
 
 const MapWithRoute = () => {
-    
-
-
-
-
-
-
-
-
-
 
 
     const [routeData, setRouteData] = useState<RouteData | null>(null);
@@ -82,7 +72,7 @@ const MapWithRoute = () => {
                 sethotelLocation({ lat: hotelLat, lng: hotelLng });
 
                 const response = await axios.get(
-                    `https://api.tomtom.com/routing/1/calculateRoute/${userLat},${userLng}:${hotelLat},${hotelLng}/json?&instructionsType=text&sectionType=lanes&instructionAnnouncementPoints=all&language=en-GB&routeType=eco&traffic=true&vehicleMaxSpeed=120&travelMode=car&key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb`
+                    `https://api.tomtom.com/routing/1/calculateRoute/${userLat},${userLng}:${hotelLat},${hotelLng}/json?&instructionsType=text&sectionType=lanes&instructionAnnouncementPoints=all&language=en-GB&routeType=eco&traffic=true&vehicleMaxSpeed=120&travelMode=car&key=${process.env.NEXT_PUBLIC_TOMTOM_KEY}`
                 );
 
                 if (response.status === 200) {
@@ -270,29 +260,27 @@ const MapWithRoute = () => {
 </div>
 
                        
-                    </div>
-                </Modal>
-            </MapContainer>
-        );
-    };
+</div>
+</Modal>
+</MapContainer>
+);
+};
 
-    if (error) {
-        return <div className="text-red-600">Error fetching data. Please try again later.</div>;
-    }
+if (error) {
+    return <div className="text-red-600">Error fetching data. Please try again later.</div>;
+}
 
-    if (loading) {
-        return (
-            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-50">
-                <Image src="/map.gif" alt="loading" width={150} height={150} />
-            </div>
-        );
-    }
-    
-
+ if (loading) {
     return (
+    <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-50">
+        <Image src="/map.gif" alt="loading" width={150} height={150} />
+    </div>
+     );
+}
+    
+return (
         <div className="flex h-full w-full">
             <div className="bg-white p-1 flex flex-col overflow-auto">
-                {/* Placeholder for other components if needed */}
             </div>
             <div className="flex-grow h-full w-full transition-all duration-500 ease-in-out">
                 {renderMap()}

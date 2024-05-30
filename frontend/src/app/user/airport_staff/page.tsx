@@ -81,9 +81,9 @@ const AdminDashboard = () => {
             Admin Dashboard
           </Typography>
           <div>
-            <Button color="inherit">Profile</Button>
-           <Link href="/user/customer/profile" >Profile</Link>
-            <Button color="inherit" onClick={handleLogout}>Logout</Button>
+            
+           
+            
             <IconButton
               size="large"
               edge="end"
@@ -110,9 +110,8 @@ const AdminDashboard = () => {
               open={open}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>My account</MenuItem>
-              <MenuItem onClick={handleLogout}>Logout</MenuItem> {/* Call handleLogout function on click */}
+              <MenuItem><Link href="/user/customer/profile" >Profile</Link></MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem> 
             </Menu>
           </div>
         </Toolbar>

@@ -14,7 +14,8 @@ export default function Map(): JSX.Element {
 
     const center_map = { lng: 78.9629, lat: 20.5937 }; // Mumbai Airport coordinates
 
-    maptilersdk.config.apiKey = "oXA9UAqOuM8L6RQbCgHd";
+    maptilersdk.config.apiKey = process.env.NEXT_PUBLIC_MAPTILER_KEY || "";
+ 
 
     const map = new maptilersdk.Map({
       container: mapContainer.current,

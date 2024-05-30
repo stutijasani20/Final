@@ -26,8 +26,14 @@ const RegisterPage = () => {
   const [recaptchaVerified, setRecaptchaVerified] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
 
+
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || 'default_site_key';
+
+  
+ 
 
   useEffect(() => {
     const loadRecaptchaScript = () => {
@@ -146,7 +152,7 @@ const RegisterPage = () => {
 
             {!passwordsMatch && <p className={styles['text-red-500']}>Passwords do not match</p>}
             <ReCAPTCHA
-              sitekey= "6LelgdkpAAAAAK7Td6htpzXSSzEEuKSljTYS8ZCr"
+              sitekey= {siteKey}
               onChange={() => setRecaptchaVerified(true)}
               onExpired={() => setRecaptchaVerified(false)}
             /><br />

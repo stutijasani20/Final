@@ -43,7 +43,7 @@ const MyComponent: React.FC = () => {
     const fetchData = async () => {
       try {
         const { data: response } = await axios.get(
-          `https://api.tomtom.com/search/2/geocode/${flightsParam}.json?key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb`
+          `https://api.tomtom.com/search/2/geocode/${flightsParam}.json?key=${process.env.NEXT_PUBLIC_TOMTOM_KEY}`
         );
 
         const location = response.results[0];
@@ -51,7 +51,7 @@ const MyComponent: React.FC = () => {
         const longitude = location.position.lon;
 
         const { data: tomTomResponse } = await axios.get(
-          `https://api.tomtom.com/search/2/search/restaurant.json?lat=${latitude}&lon=${longitude}&radius=5000&key=gDHQcXzGojvGzDDLFc0ZMo4QNg84gjZb&limit=10&ofs=${
+          `https://api.tomtom.com/search/2/search/restaurant.json?lat=${latitude}&lon=${longitude}&radius=5000&key=${process.env.NEXT_PUBLIC_TOMTOM_KEY}&limit=10&ofs=${
             (page - 1) * 10
           }`
         );

@@ -672,7 +672,7 @@ const BookingPage: React.FC = () => {
                     <button
                       className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                       onClick={handleAddPassenger}
-                    >
+                                         >
                       Add Passenger
                     </button>
                   </div>
@@ -701,7 +701,7 @@ const BookingPage: React.FC = () => {
         )}
         <ToastContainer
           position="top-right"
-          autoClose={5000} // Close after 5 seconds
+          autoClose={5000}
           hideProgressBar={false}
           newestOnTop={false}
           closeOnClick

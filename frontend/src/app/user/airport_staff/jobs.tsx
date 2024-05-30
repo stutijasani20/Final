@@ -41,6 +41,7 @@ const Jobs = () => {
 
     fetchJobs();
   }, []);
+  
 
   return (
     <div className="p-4 ml-64 ">
@@ -80,6 +81,7 @@ const Jobs = () => {
                   <td className="border p-2">{job.location}</td>
                   <td className="border p-2">{formatDate(job.start_date)}</td>
                   <td className="border p-2">{job.type}</td>
+                  
                 </tr>
               ))}
             </tbody>

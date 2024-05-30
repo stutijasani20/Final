@@ -67,16 +67,18 @@ MEDIA_URL = '/media/'
 
 # Cloudinary settings
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': "dvueo2lkr",
-    'API_KEY': "543398397567745",
+    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
     
-    'API_SECRET': "VDLGFM607SOoSvUmM70YKZ8RSeA"}
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET')}
 
 
 
-RAZORPAY_KEY_ID = "rzp_test_wWsetA6HFaDo8e"
+RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
 
-RAZORPAY_KEY_SECRET = "XoeHdqwNbx6rk2bBed2YBddm"
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
+
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
