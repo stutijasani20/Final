@@ -232,7 +232,7 @@ const MapWithRoute = () => {
         <span className="text-lg">Instructions</span>
     </h2>
     <div className="border border-gray-200 rounded-lg p-4">
-    <ol className="list-decimal list-inside text-gray-700">
+    <ol className="list-inside text-gray-700">
     {routeData.routes[0].guidance.instructions.map((instruction: any, index: number) => (
         <li key={index} className="mb-2">
              {instruction.message.includes('left') && <TurnLeftIcon sx={{color: "red"}} />}
@@ -271,7 +271,7 @@ const MapWithRoute = () => {
     return (
         <div className="flex h-full w-full">
             <div className="bg-white p-1 flex flex-col overflow-auto">
-                {/* Placeholder for other components if needed */}
+                
             </div>
             <div className="flex-grow h-full w-full transition-all duration-500 ease-in-out">
                 {renderMap()}

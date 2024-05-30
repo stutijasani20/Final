@@ -124,15 +124,12 @@
 
   .appIcons {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 
     a {
       margin-right: 10px;
 
-      img {
-        width: 130px;
-        height: auto;
-      }
+     
     }
   }
 

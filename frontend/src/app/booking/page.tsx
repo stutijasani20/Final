@@ -43,8 +43,19 @@ interface InsurancePolicy {
   price: number;
 }
 
+interface Passenger {
+  id: number;
+  first_name: string;
+  last_name:  string;
+  age: number;
+  gender: string;
+  passenger_type: string;
+  phone_number: number;
+}
+
+
 const BookingPage: React.FC = () => {
-  const [passengerData, setPassengerData] = useState<any>([]);
+  const [passengerData, setPassengerData] = useState<Passenger[]>([]);
   const router = useRouter();
   const [Razorpay] = useRazorpay();
   const pathname = usePathname();
@@ -150,14 +161,14 @@ const BookingPage: React.FC = () => {
         setPassengerList([...passengerList, passengerId]);
 
         setPassengerData([...passengerData, response.data]);
-        console.log("Passenger added successfully:", response.data);
+
         toast.success("Passenger added successfully!"); 
 
         setShowPopup(false);
       } else {
         console.error("Error adding passenger:", response.statusText);
         toast.error("Failed to add passenger. Please try again."); }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error saving passenger details:", error);
 
     }
@@ -245,7 +256,7 @@ const BookingPage: React.FC = () => {
 
                     const token = localStorage.getItem("token");
 
-                    // Update is_paid field in booking API
+                   
                     const updateBookingResponse = await axios.put(
                       `http://127.0.0.1:8000/bookings/${bookingResponse.data.id}/`,
                       {

@@ -12,6 +12,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import withLoading from "../components/withLoading";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 
 const RegisterPage = () => {
   const [email, setEmail] = useState("");
@@ -26,6 +27,7 @@ const RegisterPage = () => {
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   const dispatch = useDispatch();
+  const router = useRouter();
 
   useEffect(() => {
     const loadRecaptchaScript = () => {
@@ -48,13 +50,11 @@ const RegisterPage = () => {
         "http://127.0.0.1:8000/api/auth/register/",
         { email, password }
       );
-
-      console.log(response)
       toast.success("Registration successful! Please check your email for verification.", {
         position: "top-right",
       });
       setTimeout(() => {
-        window.location.href = "/auth/login";
+        router.push("/auth/login")
       }, 3000);
     } catch (error: any) {
       console.error("Registration failed:", error.message);
@@ -62,20 +62,20 @@ const RegisterPage = () => {
       console.log(error.response.data.email);
       if (error.response) {
         if (error.response.data && error.response.data.email) {
-          // If the response contains email error messages
+         
           error.response.data.email.forEach((errorMessage: any )=> {
             toast.error(errorMessage, { position: "top-right" });
           });
         } else {
-          // If the response contains a generic error message
+
           toast.error(error.response.data, { position: "top-right" });
         }
       } else {
-        // If there is no response object in the error
+       
         toast.error("Registration failed. Please try again.", { position: "top-right" });
       }
     }
-    // Clear form fields and reset state
+   
     setEmail('');
     setPassword('');
     setConfirmPassword('');

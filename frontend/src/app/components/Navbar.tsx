@@ -21,11 +21,11 @@ const Header: React.FC = () => {
   useEffect(() => {
     setIsAuthenticated(isAuthenticatedRedux);
 
-    window.addEventListener("scroll", handleScroll);
+    typeof window !== "undefined" ? window.addEventListener("scroll", handleScroll) : '';
 
     return () => {
       
-      window.removeEventListener("scroll", handleScroll);
+      typeof window !== "undefined" ? window.removeEventListener("scroll", handleScroll) : '';
     };
   }, [isAuthenticatedRedux]);
 

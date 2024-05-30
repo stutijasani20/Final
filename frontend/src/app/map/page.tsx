@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Polyline, Marker, Popup } from "react-leaflet";
+
 import L from "leaflet";
 import Control from "react-leaflet-custom-control";
 import "leaflet/dist/leaflet.css";
@@ -15,7 +15,16 @@ import TurnRightIcon from '@mui/icons-material/TurnRight';
 import RoundaboutLeftIcon from '@mui/icons-material/RoundaboutLeft';
 import Image from "next/image";
 import TimeToLeaveIcon from '@mui/icons-material/TimeToLeave';
+import dynamic from "next/dynamic";
+const MapContainer = dynamic(() => import("react-leaflet").then((module) => module.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import("react-leaflet").then((module) => module.TileLayer), { ssr: false });
+const Polyline = dynamic(() => import("react-leaflet").then((module) => module.Polyline), { ssr: false });
+const Marker = dynamic(() => import("react-leaflet").then((module) => module.Marker), { ssr: false });
+const Popup = dynamic(() => import("react-leaflet").then((module) => module.Popup), { ssr: false });
+
 interface RouteData {
+
+
     routes: {
         summary: {
             travelTimeInSeconds: number;
@@ -33,6 +42,18 @@ interface RouteData {
 }
 
 const MapWithRoute = () => {
+    
+
+
+
+
+
+
+
+
+
+
+
     const [routeData, setRouteData] = useState<RouteData | null>(null);
     const [userLocation, setUserLocation] = useState({ lat: 0, lng: 0 });
     const [hotelLocation, sethotelLocation] = useState({ lat: 0, lng: 0 });
@@ -232,7 +253,7 @@ const MapWithRoute = () => {
         <span className="text-lg">Instructions</span>
     </h2>
     <div className="border border-gray-200 rounded-lg p-4">
-    <ol className="list-decimal list-inside text-gray-700">
+    <ol className="list-inside text-gray-700">
     {routeData.routes[0].guidance.instructions.map((instruction: any, index: number) => (
         <li key={index} className="mb-2">
             {instruction.message.includes('left') && <TurnLeftIcon sx={{color: "red"}} />}

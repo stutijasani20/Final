@@ -73,7 +73,7 @@ class AuthViewSet(viewsets.GenericViewSet):
        
 
        
-        mail_subject = 'Welcome to Elegance Airline!'
+        mail_subject = 'Welcome to Elegance Air!'
         message = render_to_string('Register.html', {
             'user': user,
         })

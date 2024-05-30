@@ -60,21 +60,28 @@ const Footer: React.FC = () => {
             </form>
           </div>
           <div className={Styles.appIcons}>
-            <h3>Elegance Air App</h3><br />
+          
          
             <div>
-              <a><Image src="/google-play-badge.png" alt="Google Play" width={52} height={52} /></a>
+              <a><Image src="/google-play-badge.png" alt="Google Play" width={135} height={40} /></a>
               <div>
-              <a><Image src="/Download_on_the_App_Store_2017.png" alt="App Store" width={52} height={52} /></a>
+              <a><Image src="/Download_on_the_App_Store_2017.png" alt="App Store" width={120} height={40} /></a>
               </div>
               
             </div>
+           
           </div>
         </div>
+        <hr /><hr />
         <div className={Styles.row}>
+         
           <div className={Styles.copyright}>
+
             &copy; {new Date().getFullYear()} Elegance Air. All rights reserved.
+
+            
           </div>
+         
         </div>
       </div>
     </footer>
