@@ -74,3 +74,9 @@ class PassengerReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reviews
         fields = "__all__"
+
+
+class ClassSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Class
+        fields = ['id', 'name', 'description']

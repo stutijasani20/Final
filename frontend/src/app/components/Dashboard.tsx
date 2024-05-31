@@ -27,21 +27,21 @@ ChartJS.register(
 );
 
 interface Data {
-  count: any;
+  count: number;
  
 }
 
 
 
 
-export default function Dashboard() {
-  const [bookingsData, setBookingsData] = useState<Data[]>([]);
+const Dashboard: React.FC = () => {
+  const [bookingsData, setBookingsData] = useState<Data>({ count: 0 });
   const [passengersData, setPassengersData] = useState<any[]>([]);
   const [flightsData, setFlightsData] = useState<any[]>([]);
-  const [airportsData, setAirportsData] = useState<any[]>([]);
-  const [usersData, setUsersData] = useState<any[]>([]);
-  const [jobsData, setJobsData] = useState<any[]>([]);
-  const [applicantsData, setApplicantsData] = useState<any[]>([]);
+  const [airportsData, setAirportsData] = useState<Data>({ count: 0 });
+  const [usersData, setUsersData] = useState<Data>({ count: 0 });
+  const [jobsData, setJobsData] = useState<Data>({ count: 0 });
+  const [applicantsData, setApplicantsData] = useState<Data>({ count: 0 });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
@@ -59,25 +59,25 @@ export default function Dashboard() {
           jobsResponse,
           applicantsResponse,
         ] = await Promise.all([
-          axios.get("http://127.0.0.1:8000/bookings", {
+          axios.get<{ count: number }>("http://127.0.0.1:8000/bookings", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://127.0.0.1:8000/passengers", {
+          axios.get<any[]>("http://127.0.0.1:8000/passengers", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://127.0.0.1:8000/flights", {
+          axios.get<any[]>("http://127.0.0.1:8000/flights", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://127.0.0.1:8000/airports", {
+          axios.get<{ count: number }>("http://127.0.0.1:8000/airports", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://127.0.0.1:8000/users", {
+          axios.get<{ count: number }>("http://127.0.0.1:8000/users", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://127.0.0.1:8000/jobs", {
+          axios.get<{ count: number }>("http://127.0.0.1:8000/jobs", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://127.0.0.1:8000/applicant", {
+          axios.get<{ count: number }>("http://127.0.0.1:8000/applicant", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -133,7 +133,7 @@ export default function Dashboard() {
           bookingsData?.count || 0,
           passengersData?.length || 0,
           flightsData?.length || 0,
-          airportsData?.length || 0,
+          airportsData?.count || 0,
           usersData?.count || 0,
           jobsData?.count || 0,
           applicantsData?.count || 0,
@@ -163,7 +163,7 @@ export default function Dashboard() {
 
   return (
     <div className="ml-64 px-6 py-4">
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-4  md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-4 bg-slate-500 text-white rounded shadow flex justify-between items-center">
          
           <h2 className="text-xl  font-semibold">
@@ -187,7 +187,7 @@ export default function Dashboard() {
         </div>
         <div className="p-4 bg-slate-500 text-white rounded shadow flex justify-between items-center">
         <h2 className="text-xl font-semibold">
-             Airports: {airportsData.length}
+             Airports: {airportsData.count}
           </h2>
           <Image src="/airport.png" alt="Dashboard" width={100} height={100} />
           
@@ -227,3 +227,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
+export default Dashboard;

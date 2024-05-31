@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Polyline, Marker, Popup } from "react-leaflet";
+
 import L from "leaflet";
 import Control from "react-leaflet-custom-control";
 import "leaflet/dist/leaflet.css";
@@ -15,6 +15,12 @@ import TurnRightIcon from '@mui/icons-material/TurnRight';
 import RoundaboutLeftIcon from '@mui/icons-material/RoundaboutLeft';
 import TimeToLeaveIcon from '@mui/icons-material/TimeToLeave';
 import Image from "next/image";
+import dynamic from "next/dynamic";
+const MapContainer = dynamic(() => import("react-leaflet").then((module) => module.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import("react-leaflet").then((module) => module.TileLayer), { ssr: false });
+const Polyline = dynamic(() => import("react-leaflet").then((module) => module.Polyline), { ssr: false });
+const Marker = dynamic(() => import("react-leaflet").then((module) => module.Marker), { ssr: false });
+const Popup = dynamic(() => import("react-leaflet").then((module) => module.Popup), { ssr: false });
 interface RouteData {
     routes: {
         summary: {
@@ -41,7 +47,7 @@ const MapWithRoute = () => {
     const[loading, setLoading] = useState(true);
     const searchParams = useSearchParams();
     const airport = searchParams.get("airport") || "Mumbai Airport";
-
+    const rootElement = document.getElementById('__next') as HTMLElement; 
     useEffect(() => {
         const fetchUserLocation = async () => {
             try {
@@ -154,6 +160,7 @@ const MapWithRoute = () => {
                 </Control>
                 
                 <Modal
+              ariaHideApp={false}
     isOpen={modalIsOpen}
     onRequestClose={() => setModalIsOpen(false)}
     style={{
@@ -188,65 +195,64 @@ const MapWithRoute = () => {
         },
     }}
 >
-<div className="flex flex-col items-center animate-fade-in-down">
-<button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full mt-4 ml-auto transition duration-200 ease-in-out transform hover:scale-105" 
-            onClick={() => setModalIsOpen(false)}
-        >
-            <CancelIcon />
-        </button>
-        <div className="p-4 border-b border-gray-200 bg-gray-50 rounded-lg shadow-lg">
-    <h2 className="text-xl font-semibold mb-4 flex items-center">
-        <FiInfo className="mr-2 text-blue-600" />
-        <span className="text-lg">Route Details</span>
-    </h2>
-    <div className="grid grid-cols-2 gap-2">
-        <div className="flex items-center">
-            <FiMapPin className="mr-2 text-blue-600" />
-            <span className="font-semibold">From: </span> {airport}
-        </div>
-        <div className="flex items-center">
-            <FiMapPin className="mr-2 text-blue-600" />
-            <span className="font-semibold">To: </span> Restaurant
-        </div>
-        <div className="flex items-center">
-            <FiClock className="mr-2 text-blue-600" />
-            <span className="font-semibold">Travel Time: </span> {secondsToHoursMinutes(routeData.routes[0].summary.travelTimeInSeconds)}
-        </div>
-        <div className="flex items-center">
-            <GiPathDistance className="mr-2 text-blue-600" />
-            <span className="font-semibold">Distance: </span> {metersToKilometers(routeData.routes[0].summary.lengthInMeters)} km
-        </div>
-        <div className="flex items-center">
-            <FiCalendar className="mr-2 text-blue-600" />
-            <span className="font-semibold">Departure Time: </span> {formatTime(routeData.routes[0].summary.departureTime)}
-        </div>
-        <div className="flex items-center">
-            <FiCalendar className="mr-2 text-blue-600" />
-            <span className="font-semibold">Arrival Time: </span> {formatTime(routeData.routes[0].summary.arrivalTime)}
+<div className="flex flex-col items-center">
+    <button 
+        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full mt-4 ml-auto mb-2 transition duration-200 ease-in-out transform hover:scale-105" 
+        onClick={() => setModalIsOpen(false)}
+    >
+        <CancelIcon />
+    </button>
+    <div className="p-4 border-b border-gray-200 bg-gray-50 rounded-lg shadow-lg w-full md:w-auto lg:w-auto">
+        <h2 className="text-xl font-semibold mb-4 flex items-center">
+            <FiInfo className="mr-2 text-blue-600" />
+            <span className="text-lg">Route Details</span>
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div className="flex items-center">
+                <FiMapPin className="mr-2 text-blue-600" />
+                <span className="font-semibold">From: </span> {airport}
+            </div>
+            <div className="flex items-center">
+                <FiMapPin className="mr-2 text-blue-600" />
+                <span className="font-semibold">To: </span> hotel
+            </div>
+            <div className="flex items-center">
+                <FiClock className="mr-2 text-blue-600" />
+                <span className="font-semibold">Travel Time: </span> {secondsToHoursMinutes(routeData.routes[0].summary.travelTimeInSeconds)}
+            </div>
+            <div className="flex items-center">
+                <GiPathDistance className="mr-2 text-blue-600" />
+                <span className="font-semibold">Distance: </span> {metersToKilometers(routeData.routes[0].summary.lengthInMeters)} km
+            </div>
+            <div className="flex items-center">
+                <FiCalendar className="mr-2 text-blue-600" />
+                <span className="font-semibold">Departure Time: </span> {formatTime(routeData.routes[0].summary.departureTime)}
+            </div>
+            <div className="flex items-center">
+                <FiCalendar className="mr-2 text-blue-600" />
+                <span className="font-semibold">Arrival Time: </span> {formatTime(routeData.routes[0].summary.arrivalTime)}
+            </div>
         </div>
     </div>
-</div>
-<div className="p-4 mt-4 bg-white rounded-lg shadow-lg">
-    <h2 className="text-xl font-semibold mb-4 flex items-center">
-        <FiMapPin className="mr-2 text-blue-600" />
-        <span className="text-lg">Instructions</span>
-    </h2>
-    <div className="border border-gray-200 rounded-lg p-4">
-    <ol className="list-inside text-gray-700">
-    {routeData.routes[0].guidance.instructions.map((instruction: any, index: number) => (
-        <li key={index} className="mb-2">
-             {instruction.message.includes('left') && <TurnLeftIcon sx={{color: "red"}} />}
-            {instruction.message.includes('right') && <TurnRightIcon sx={{color: "blue"}} />}
-            {instruction.message.includes('roundabout') && <RoundaboutLeftIcon sx={{color: "green"}} />}
-            {instruction.message.includes('Leave') && <TimeToLeaveIcon sx={{color: "#b148d2"}}  />}
-            {instruction.message}
-        </li>
-    ))}
-</ol>
+    <div className="p-4 mt-4 bg-white rounded-lg shadow-lg w-full">
+        <h2 className="text-xl font-semibold mb-4 flex items-center">
+            <FiMapPin className="mr-2 text-blue-600" />
+            <span className="text-lg">Instructions</span>
+        </h2>
+        <div className="border border-gray-200 rounded-lg p-4">
+            <ol className="list-inside text-gray-700">
+                {routeData.routes[0].guidance.instructions.map((instruction: any, index: number) => (
+                    <li key={index} className="mb-2">
+                        {instruction.message.includes('left') && <TurnLeftIcon sx={{color: "red"}} />}
+                        {instruction.message.includes('right') && <TurnRightIcon sx={{color: "blue"}} />}
+                        {instruction.message.includes('roundabout') && <RoundaboutLeftIcon sx={{color: "green"}} />}
+                        {instruction.message.includes('Leave') && <TimeToLeaveIcon sx={{color: "#b148d2"}}  />}
+                        {instruction.message} ({instruction.routeOffsetInMeters} meters)
+                    </li>
+                ))}
+            </ol>
+        </div>
     </div>
-</div>
-
-                       
 </div>
 </Modal>
 </MapContainer>

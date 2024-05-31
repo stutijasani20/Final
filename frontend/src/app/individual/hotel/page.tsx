@@ -92,10 +92,10 @@ const MyComponent: React.FC = () => {
     setPage(1);
   };
 
-  const handleViewMap = (hotel: Hotel) => {
+  const handleViewMap =  (hotel: Hotel) => {
     
     const queryString = `?hotelLat=${hotel.position.lat}&hotelLng=${hotel.position.lon}&airport=${flightsParam}`;
-    router.push(`/map${queryString}`);
+     router.push(`/map${queryString}`);
   };
 
   return (
@@ -147,7 +147,7 @@ const MyComponent: React.FC = () => {
                 {hotel.address.country}
               </p>
               <button
-                onClick={() => handleViewMap(hotel)}
+                onClick={async () =>await  handleViewMap(hotel)}
                 className="px-4 py-2 bg-sky-500 text-white rounded-md hover:bg-sky-600 focus:outline-none shadow-md mt-auto"
               >
                 <FaMap className="inline-block" /> View Map

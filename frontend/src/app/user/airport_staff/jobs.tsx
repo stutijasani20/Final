@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -6,73 +7,312 @@ import Image from 'next/image';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {toast, ToastContainer} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-import AddJobModal from './jobAdd';
+import { Button, TextField, Modal, Box } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+
 interface Job {
   id: number;
   title: string;
   location: string;
   start_date: string;
   type: string;
+  department: string;
+  image: File  | null | string;
+
 }
 
-const Jobs = () => {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState(false);
+interface NewJob {
+   department: any;
 
-  const openModal = () => {
-    setShowModal(true);
-  };
+   title: string;
+   location: string;
+   start_date: string;
+   type: string;
+   requirements: string;
+   description: string;
+   salary: string;
+   image: File | null | string;
+  
+
+  }
+
+  interface Department {
+    id: number;
+    name: string;
+}
+
+  
+interface DepartmentResponse {
+  results: Department[];
+  count: number;
+  next: string | null;
+  previous: string | null;
+}
 
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString(undefined, options);
-  };
 
-  const deleteJob = async (id: number) => {
-    try {
-      await axios.delete(`http://127.0.0.1:8000/jobs/${id}`);
-      setJobs(prevJobs => prevJobs.filter(job => job.id !== id));
-      toast.success("Job Deleted Successfully !")
-    } catch (error) {
-      setError('Error deleting job. Please try again later.');
-    }
-  };
 
-  useEffect(() => {
+  const Jobs = () => {
+    const [jobs, setJobs] = useState<Job[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [page, setPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(10);
+    const [totalPages, setTotalPages] = useState<number>(0);
+    const [newJob, setNewJob] = useState<NewJob>({
+      title: '',
+      location: '',
+      start_date: '',
+      type: '',
+      requirements: '',
+      description : "",
+      salary: "",
+      department:'',
+      image : null,
+    });
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const [departmentdata, setDepartmentData] = useState<Department[]>([]);
+    const [departments, setDepartments] = useState<number | ''>('');
+    const [loadingDepartments, setLoadingDepartments] = useState<boolean>(false);
+
+    useEffect(() => {
+        fetchDepartments();
+    }, []);
+
+    const fetchDepartments = async () => {
+        try {
+            setLoadingDepartments(true);
+            const response = await axios.get<DepartmentResponse>("http://127.0.0.1:8000/department/");
+            setDepartmentData(response.data.results);
+        } catch (error) {
+            console.error("Error fetching departments:", error);
+            toast.error("Error fetching departments. Try again later.");
+        } finally {
+            setLoadingDepartments(false);
+        }
+    };
+
+  
     const fetchJobs = async () => {
       setLoading(true);
       setError(null);
-
+      let url = `http://127.0.0.1:8000/jobs/?page=${page}`;
+  
       try {
-        const response = await axios.get('http://127.0.0.1:8000/jobs/');
+        const response = await axios.get(url);
         setJobs(response.data.results);
+        setTotalPages(Math.ceil(response.data.count / pageSize));
       } catch (error) {
         setError('Error fetching jobs. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
+  
+    useEffect(() => {
+      fetchJobs();
+    }, [page, pageSize]);
+  
+    const handlePageChange = (event: React.ChangeEvent<unknown>, newPage: number) => {
+      setPage(newPage);
+  };
+  
+    const deleteJob = async (id: number) => {
+      try {
+        await axios.delete(`http://127.0.0.1:8000/jobs/${id}`);
+        fetchJobs();
+        toast.success('Job deleted successfully!');
+      } catch (error) {
+        setError('Error deleting job. Please try again later.');
+      }
+    };
+  
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = event.target;
+      setNewJob((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    };
+    const handleFileInputChange = (event: any) => {
+      const file = event.target.files[0];
+      setNewJob((prev) => ({
+        ...prev,
+        image: file,
+      }));
+    };
+  
+    const handleDepartmentChange = (event: any) => {
+      const departmentId = event.target.value;
+      setNewJob((prev) => ({
+        ...prev,
+        department: departmentId,
+      }));
+    };
+    const handleAddJob = async () => {
+      try {
+        await axios.post('http://127.0.0.1:8000/jobs/', newJob, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        });
+        fetchJobs();
+        toast.success('Job added successfully!');
+        setOpenModal(false);
+      } catch (error) {
+        setError('Error adding job. Please try again later.');
+      }
+    };
 
-    fetchJobs();
-  }, []);
-
+    const formatDate = (dateString: string): string => {
+      const date = new Date(dateString);
+      const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      return date.toLocaleDateString(undefined, options);
+    };
   return (
     <div className="p-4 ml-64 ">
       <h2 className="text-2xl font-semibold mb-4 text-blue-700">Jobs</h2>
       <ToastContainer />
-      <button
-        onClick={openModal}
-        className="bg-blue-500 mb-3 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-200 ease-in-out transform hover:scale-105"
-      >
+      <div className='mb-5'>
+      <Button variant="contained" color="secondary" onClick={() => setOpenModal(true)} sx={{ marginLeft: 'auto' }}>
         Add Job
-      </button>
-      <AddJobModal showModal={showModal} setShowModal={setShowModal} />
-      <AddJobModal showModal={showModal} setShowModal={setShowModal} />
-  
+      </Button>
+      </div>
+
+      
+
+      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+      <Box sx={{
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: '90%',
+    maxWidth: 600, 
+    maxHeight: '90%', 
+    transform: 'translate(-50%, -50%)',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+    overflowY: 'auto', 
+    overflowX: 'hidden', 
+    }}>
+          <h3>Add Job</h3>
+          <TextField
+            type="text"
+            label="Title"
+            name="title"
+            value={newJob.title}
+            onChange={handleInputChange}
+            fullWidth
+            sx={{ mt: 2 }}
+          />
+          <TextField
+            type="text"
+            label="Location"
+            name="location"
+            value={newJob.location}
+            onChange={handleInputChange}
+            fullWidth
+            sx={{ mt: 2 }}
+          />
+          <TextField
+            type="date"
+            label="Start Date"
+            name="start_date"
+            value={newJob.start_date}
+            onChange={handleInputChange}
+            fullWidth
+            sx={{ mt: 2 }}
+            InputLabelProps={{ shrink: true }}
+          />
+         
+          <TextField
+            type="text"
+            label="Type"
+            name="type"
+            value={newJob.type}
+            onChange={handleInputChange}
+            fullWidth
+            sx={{ mt: 2 }}
+            InputLabelProps={{ shrink: true }}
+            />
+              <TextField
+            type="text"
+            label="Salary"
+            name="salary"
+            value={newJob.salary}
+            onChange={handleInputChange}
+            fullWidth
+            sx={{ mt: 2 }}
+            InputLabelProps={{ shrink: true }}
+            />
+              <TextField
+            type="text"
+            label="Description"
+            name="description"
+            placeholder='After Each Description add a fullstop (.)'
+            value={newJob.description}
+            onChange={handleInputChange}
+            fullWidth
+            sx={{ mt: 2 }}
+            InputLabelProps={{ shrink: true }}
+            />
+              <TextField
+            type="text"
+            label="Requirements"
+            name="requirements"
+            placeholder='After each requirement add a coma (,)'
+            value={newJob.requirements}
+            onChange={handleInputChange}
+            fullWidth
+            sx={{ mt: 2 }}
+            InputLabelProps={{ shrink: true }}
+            />
+     
+     <FormControl fullWidth sx={{ mt: 2 }}>
+                <InputLabel id="department-label">Department</InputLabel>
+                <Select
+                  labelId="department-label"
+                  id="department"
+                  label='Department'
+                  value={newJob.department}
+                  onChange={handleDepartmentChange}
+                  fullWidth
+                 
+                  
+                >
+                  <MenuItem value="">Select Department</MenuItem>
+                  {departmentdata.map((department) => (
+                    <MenuItem key={department.id} value={department.id}>
+                      {department.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+<input
+            type="file"
+            accept="image/*"
+            onChange={handleFileInputChange}
+            className='mt-2'
+          />
+
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+            <Button variant="contained" color="secondary" onClick={handleAddJob}>
+              Add
+            </Button>
+            <Button variant="contained" color="secondary" onClick={() => setOpenModal(false)} sx={{ ml: 2 }}>
+              Cancel
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+
+
+
+      
       
 
       {loading ? (
@@ -119,6 +359,12 @@ const Jobs = () => {
               ))}
             </tbody>
           </table>
+          
+          <div className="flex justify-center mt-4">
+                       <Stack spacing={2}>
+                       <Pagination count={totalPages} color="secondary" onChange={handlePageChange}  />
+                       </Stack>
+                    </div>
         </>
       )}
     </div>

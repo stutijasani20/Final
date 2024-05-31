@@ -13,6 +13,7 @@ function UserProfileModal() {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
   const [loading, setLoading] = useState(false);
+  const rootElement = document.getElementById('__next') as HTMLElement; 
 
   useEffect(() => {
     const userId = localStorage.getItem("userId")
@@ -106,6 +107,7 @@ function UserProfileModal() {
   return (
     <div>
       <Modal
+     ariaHideApp={false}
         isOpen={showModal}
         onRequestClose={() => setShowModal(false)}
         style={{

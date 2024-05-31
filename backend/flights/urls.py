@@ -4,6 +4,8 @@ from .views import *
 urlpatterns = [
     path('flights/', FlightView.as_view()),
     path('flights/<int:pk>/', FlightDetailView.as_view()),
+    path('classes/', ClassListCreateAPIView.as_view(), name='class-list-create'),
+    path('classes/<int:pk>/', ClassRetrieveUpdateDestroyAPIView.as_view(), name='class-detail'),
     path('airports/', AirportView.as_view()),
     path('airports/<int:pk>/', AirportDetailView.as_view()),
     path('passengers/', PassengerView.as_view()),

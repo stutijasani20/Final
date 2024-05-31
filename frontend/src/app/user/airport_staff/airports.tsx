@@ -8,6 +8,8 @@ import { ClipLoader } from 'react-spinners';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 interface Airport {
   id: number;
   name: string;
@@ -52,7 +54,7 @@ const Airports = () => {
   const fetchAirports = async () => {
     setLoading(true);
     setError(null);
-    let url = `http://127.0.0.1:8000/airports/?page=${page}`;
+    let url = `http://127.0.0.1:8000/airports/?page=${page}&page_size=${pageSize}`;
 
     if (filterCriteria.name) {
       url += `&name=${filterCriteria.name}`;
@@ -83,9 +85,11 @@ const Airports = () => {
     fetchAirports();
   }, [page, pageSize, filterCriteria.name, filterCriteria.city, filterCriteria.country]);
 
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
+  const handlePageChange = (event: React.ChangeEvent<unknown>, newPage: number) => {
+    setPage(newPage); 
+    
   };
+  
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterCriteria((prev) => ({
@@ -175,7 +179,7 @@ const Airports = () => {
       </div>
 
       <div className="mb-4">
-        <Button variant="contained" color="primary" onClick={() => setOpenModal(true)}>
+        <Button variant="contained" color="secondary" onClick={() => setOpenModal(true)}>
           Add Airport
         </Button>
       </div>
@@ -274,7 +278,7 @@ const Airports = () => {
                 <th className="border p-2">Code</th>
                 <th className="border p-2">City</th>
                 <th className="border p-2">Country</th>
-                <th className="border p-2">Actions</th> {/* New column for actions */}
+                <th className="border p-2">Actions</th> 
               </tr>
             </thead>
             <tbody>
@@ -300,18 +304,14 @@ const Airports = () => {
           </table>
 
           <div className="flex justify-center mt-4">
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index}
-                onClick={() => handlePageChange(index + 1)}
-                className="mx-1 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 transition-colors duration-200"
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
+                       <Stack spacing={2}>
+                       <Pagination count={totalPages} page={page} color="secondary" onChange={handlePageChange}  />
+                       </Stack>
+                      
+                    </div>
         </>
       )}
+
     </div>
   );
 };

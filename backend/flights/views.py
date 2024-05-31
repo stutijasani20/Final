@@ -17,6 +17,19 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import authentication, permissions
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from datetime import datetime
+class ClassListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Class.objects.all()
+    serializer_class = ClassSerializer
+    pagination_class = PageNumberPagination
+
+class ClassRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Class.objects.all()
+    serializer_class = ClassSerializer
+
+
+
+
+
 class FlightView(APIView):
 
     def get(self, request):
@@ -50,7 +63,7 @@ class FlightView(APIView):
     
 
     def post(self, request):
-       # Require admin user permission
+       
         serializer = FlightSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

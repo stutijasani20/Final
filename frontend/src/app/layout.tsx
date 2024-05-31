@@ -35,7 +35,7 @@ export default function RootLayout({
                 </head>
       <body className={inter.className}>
         <Provider store={store}>
-        <div className="bg-customBackground min-h-screen"> {/* Apply background color here */}
+        <div className="bg-customBackground min-h-screen"> 
         {!admin && <Navbar />} 
           <PersistGate loading={null} persistor={persistor}>
             {children}

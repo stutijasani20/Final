@@ -4,7 +4,8 @@ import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import Image from 'next/image';
 import { Button, Grid, TextField, Select, MenuItem, InputLabel, FormControl, SelectChangeEvent } from "@mui/material";
-import {Pagination} from "@nextui-org/react";
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 interface Booking {
     id: number;
     booking_date: string;
@@ -112,7 +113,7 @@ const Booking = () => {
         fetchBookings();
     }, [filterCriteria.bookingDate, filterCriteria.flightId, filterCriteria.isPaid, page, pageSize]);
 
-    const handleFilterChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleFilterChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void = (e) => {
         const { name, value } = e.target;
         setFilterCriteria((prev) => ({
             ...prev,
@@ -128,7 +129,7 @@ const Booking = () => {
         });
     };
 
-    const handlePageChange = (newPage: number) => {
+    const handlePageChange = (event: React.ChangeEvent<unknown>, newPage: number) => {
         setPage(newPage);
     };
 
@@ -242,9 +243,9 @@ const Booking = () => {
 
 
                     <div className="flex justify-center mt-4">
-                        {Array.from({ length: totalPages }, (_, index) => (
-                            <button key={index} onClick={() => handlePageChange(index + 1)} className="mx-1 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 transition-colors duration-200">{index + 1}</button>
-                        ))}
+                       <Stack spacing={2}>
+                       <Pagination count={totalPages} color="secondary" onChange={handlePageChange}  />
+                       </Stack>
                     </div>
                 </>
             )}
