@@ -45,7 +45,7 @@ const Footer: React.FC = () => {
           <div className={Styles.col}>
             <h3>Support</h3>
             <ul>
-              <li><a href="/contact">Contact Us</a></li>
+              <li><a href="/contct">Contact Us</a></li>
               <li><a href="#">FAQ{"'"}s</a></li>
               <li><a href="#">Grievance Resolution</a></li>
             </ul>

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import Image from 'next/image';
 import { Button, Grid, TextField, Select, MenuItem, InputLabel, FormControl, SelectChangeEvent } from "@mui/material";
-
+import {Pagination} from "@nextui-org/react";
 interface Booking {
     id: number;
     booking_date: string;

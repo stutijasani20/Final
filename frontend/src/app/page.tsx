@@ -20,7 +20,7 @@ const MiddleSection: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000); // Adjust the time according to your needs
+    }, 2000); 
 
     return () => clearTimeout(timer);
   }, []);
@@ -28,8 +28,8 @@ const MiddleSection: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center fixed top-0 left-0 w-full h-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-md z-50">
-                    <RotatingLines />
-                </div>
+        <RotatingLines />
+      </div>
     );
   }
 
@@ -195,6 +195,7 @@ const MiddleSection: React.FC = () => {
             price="999"
             duration="5 Days / 4 Nights"
             includes={["Flight", "Accommodation", "City Tour"]}
+            city="Paris"
           />
           <PackageCard
             name="Tropical Escape"
@@ -202,6 +203,7 @@ const MiddleSection: React.FC = () => {
             price="1299"
             duration="7 Days / 6 Nights"
             includes={["Flight", "Resort Stay", "Activities"]}
+            city='Phuket'
           />
           <PackageCard
             name="European Adventure"
@@ -209,6 +211,7 @@ const MiddleSection: React.FC = () => {
             price="1999"
             duration="10 Days / 9 Nights"
             includes={["Flight", "Accommodation", "Guided Tours"]}
+            city='Venice'
           />
           <PackageCard
             name="Luxury Cruise"
@@ -216,6 +219,7 @@ const MiddleSection: React.FC = () => {
             price="2999"
             duration="14 Days / 13 Nights"
             includes={["Cruise", "Meals", "Excursions"]}
+            city='Cochin'
           />
           <PackageCard
             name="Ski Adventure"
@@ -223,6 +227,7 @@ const MiddleSection: React.FC = () => {
             price="1499"
             duration="7 Days / 6 Nights"
             includes={["Flight", "Accommodation", "Ski Pass"]}
+            city='Shimla'
           />
           <PackageCard
             name="Safari Expedition"
@@ -230,6 +235,7 @@ const MiddleSection: React.FC = () => {
             price="2499"
             duration="10 Days / 9 Nights"
             includes={["Flight", "Lodging", "Safari Tours"]}
+            city='Jaipur'
           />
           <PackageCard
             name="Island Retreat"
@@ -237,6 +243,7 @@ const MiddleSection: React.FC = () => {
             price="1999"
             duration="8 Days / 7 Nights"
             includes={["Flight", "Accommodation", "Island Tours"]}
+            city='andaman and nicobar islands'
           />
           <PackageCard
             name="Historic Journey"
@@ -244,6 +251,7 @@ const MiddleSection: React.FC = () => {
             price="1799"
             duration="9 Days / 8 Nights"
             includes={["Flight", "Accommodation", "Historic Tours"]}
+            city='Agra'
           />
         </div>
       </div><br/><br/>
@@ -252,7 +260,7 @@ const MiddleSection: React.FC = () => {
         <div className={styles.grid}>
           <ReviewCard
             name="John Doe"
-           
+
             rating={5}
             review="Excellent service and great deals! Highly recommended."
           />
@@ -367,27 +375,41 @@ const DestinationCard: React.FC<{
   );
 };
 
-const PackageCard: React.FC<{ name: string; image: string; price: string; duration: string; includes: string[] }> = ({
+const PackageCard: React.FC<{ name: string; image: string; price: string; duration: string; includes: string[], city:string }> = ({
   name,
   image,
   price,
   duration,
   includes,
-}) => (
-  <div className={styles.card}>
-    <img src={image} alt={name} className={styles.cardImage} />
-    <div className={styles.cardContent}>
-      <h3 className={styles.cardTitle}>{name}</h3>
-      <p className={styles.cardPrice}>${price}</p>
-      <p className={styles.cardDuration}>{duration}</p>
-      <ul className={styles.cardDescription}>
-        {includes.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
+  city,
+}) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    
+    
+ 
+    router.push(`flights/search/?city=${city}`);
+  };
+
+  return (
+    <div className={styles.card} onClick={handleClick}>
+      <img src={image} alt={name} className={styles.cardImage} />
+      <div className={styles.cardContent}>
+        <h3 className={styles.cardTitle}>{name}</h3>
+        <p className={styles.cardPrice}>${price}</p>
+        <p className={styles.cardDuration}>{duration}</p>
+        <ul className={styles.cardDescription}>
+          {includes.map((item, index) => (
+            <li key={index}>{item}</li>
+          ))}
+        </ul>
+      </div>
     </div>
-  </div>
-);
+  );
+};
+
+
 
 const ReviewCard: React.FC<{ name: string; rating: number; review: string }> = ({
   name,

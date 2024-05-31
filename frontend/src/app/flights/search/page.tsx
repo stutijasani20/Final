@@ -11,6 +11,7 @@ interface Airport {
   id: number;
   name: string;
   city: string;
+  results: Airport[]
 }
 
 interface Flight {
@@ -60,10 +61,10 @@ const FlightSearchPage: React.FC = () => {
 
   const fetchAirports = async () => {
     try {
-      const response = await axios.get<Airport[]>(
+      const response = await axios.get(
         "http://127.0.0.1:8000/airports"
       );
-      setAirports(response.data);
+      setAirports(response.data.results);
       setLoading(false);
     } catch (error) {
       setError("Error fetching airports. Please try again.");

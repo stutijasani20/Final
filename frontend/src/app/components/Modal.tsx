@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { FiUser, FiPhone, FiCalendar, FiCamera } from "react-icons/fi";
-import axios from "axios"; // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
+import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
 import {ThreeDots} from 'react-loader-spinner';
 function UserProfileModal() {

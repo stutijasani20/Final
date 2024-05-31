@@ -70,7 +70,7 @@ const ReviewList: React.FC = () => {
           href="/reviews/add"
           className="bg-blue-500 text-white px-4 py-2 mt-2 rounded-lg hover:bg-blue-600"
         >
-          <AddCircle />
+          <AddCircle /> Add Review
         </Link>
       </div>
       <ul className="divide-y divide-gray-200">

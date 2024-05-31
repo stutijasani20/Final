@@ -125,7 +125,6 @@ class Booking(models.Model):
 
         insurance_price = Decimal(self.insurance.price) if self.insurance else Decimal(0)
 
-        # Calculate passenger counts
         adult_count = self.passengers.filter(passenger_type='adult').count()
         child_count = self.passengers.filter(passenger_type='child').count()
         infant_count = self.passengers.filter(passenger_type='infant').count()
@@ -140,6 +139,8 @@ class Booking(models.Model):
         )
 
         total_price += insurance_price
+
+        print(total_price)
         
         return total_price
     

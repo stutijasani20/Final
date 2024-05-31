@@ -7,6 +7,8 @@ class DepartmentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class JobSerializer(serializers.ModelSerializer):
+    
+    
     class Meta:
         model = Job
         fields = '__all__'

@@ -99,14 +99,19 @@ class AirportView(APIView):
                 else:
                     airports = Airport.objects.all()
 
-                # Serialize the queryset
-                serializer = AirportSerializer(airports, many=True)
-                serialized_airports = serializer.data
+                paginator = PageNumberPagination()
+                paginator.page_size = 10
 
-                return Response( serialized_airports)
+                paginated_airports = paginator.paginate_queryset(airports, request)
+                
+                serializer = AirportSerializer(paginated_airports, many=True)
+            
+                return paginator.get_paginated_response(serializer.data)
+
+            
             except Exception as e:
                 return Response({'error': str(e)}, status=500)
-            def post(self, request):
+        def post(self, request):
                 serializer = AirportSerializer(data=request.data)
                 if serializer.is_valid():
                     serializer.save()
@@ -388,22 +393,20 @@ class BookingView(APIView):
                     payment = Payment.objects.create(method_name='Razorpay', amount=0, user_id=passenger_id, booking_id=serializer.data['id'])
                     payment.save()
 
-                try:
-                    user_email = request.user 
-                    subject = 'Booking Confirmation'
-                    email_from = settings.EMAIL_HOST_USER
-                    html_content = render_to_string('confirmation.html')
-                    text_content = strip_tags(html_content)  
-                    message = 'Thank you for booking with us. Your booking ID is ' + str(serializer.data['id'])
-                    email = EmailMultiAlternatives(subject, text_content, message , email_from, [user_email])
-                    email.attach_alternative(html_content, "text/html")
-                    email.send()
-                except Exception as e:
-                    # Handle email sending failure gracefully
-                    print("Failed to send confirmation email:", str(e))
-                
-                # Additional operations for insurance and food can be added here
-
+                # try:
+                #     user_email = request.user
+                #     print(user_email) 
+                #     subject = 'Booking Confirmation'
+                #     email_from = settings.EMAIL_HOST_USER
+                #     html_content = render_to_string('confirmation.html')
+                #     text_content = strip_tags(html_content)  
+                #     message = 'Thank you for booking with us. Your booking ID is ' + str(serializer.data['id'])
+                #     email = EmailMultiAlternatives(subject, text_content, message , email_from, [user_email])
+                #     email.attach_alternative(html_content, "text/html")
+                #     email.send()
+                # except Exception as e:
+                   
+                #     print("Failed to send confirmation email:", str(e))
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -459,7 +462,7 @@ class RefundView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
 class BookingDetailView(APIView):
-            authentication_classes = [JWTAuthentication]  # Use JWTAuthentication for authentication
+            authentication_classes = [JWTAuthentication]  
             permission_classes = [IsAuthenticated]
             def get_object(self, pk):
                 try:
@@ -485,7 +488,7 @@ class BookingDetailView(APIView):
                 return Response(status=status.HTTP_204_NO_CONTENT)
                 
 class BookingCancelView(APIView):
-    authentication_classes = [JWTAuthentication]  # Use JWTAuthentication for authentication
+    authentication_classes = [JWTAuthentication]  
     permission_classes = [IsAuthenticated]
     def delete(self, request, booking_id):
         try:

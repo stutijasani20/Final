@@ -3,7 +3,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import Image from 'next/image';
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import {toast, ToastContainer} from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import AddJobModal from './jobAdd';
 interface Job {
   id: number;
   title: string;
@@ -16,13 +19,28 @@ const Jobs = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const openModal = () => {
+    setShowModal(true);
+  };
+
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     return date.toLocaleDateString(undefined, options);
   };
-  
+
+  const deleteJob = async (id: number) => {
+    try {
+      await axios.delete(`http://127.0.0.1:8000/jobs/${id}`);
+      setJobs(prevJobs => prevJobs.filter(job => job.id !== id));
+      toast.success("Job Deleted Successfully !")
+    } catch (error) {
+      setError('Error deleting job. Please try again later.');
+    }
+  };
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -41,11 +59,21 @@ const Jobs = () => {
 
     fetchJobs();
   }, []);
-  
 
   return (
     <div className="p-4 ml-64 ">
       <h2 className="text-2xl font-semibold mb-4 text-blue-700">Jobs</h2>
+      <ToastContainer />
+      <button
+        onClick={openModal}
+        className="bg-blue-500 mb-3 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-200 ease-in-out transform hover:scale-105"
+      >
+        Add Job
+      </button>
+      <AddJobModal showModal={showModal} setShowModal={setShowModal} />
+      <AddJobModal showModal={showModal} setShowModal={setShowModal} />
+  
+      
 
       {loading ? (
         <div className="flex justify-center items-center h-screen">
@@ -72,6 +100,7 @@ const Jobs = () => {
                 <th className="border p-2">Location</th>
                 <th className="border p-2">Start Date</th>
                 <th className="border p-2">Type</th>
+                <th className="border p-2">Actions</th> 
               </tr>
             </thead>
             <tbody>
@@ -81,7 +110,11 @@ const Jobs = () => {
                   <td className="border p-2">{job.location}</td>
                   <td className="border p-2">{formatDate(job.start_date)}</td>
                   <td className="border p-2">{job.type}</td>
-                  
+                  <td className="border p-2">
+                    <button onClick={() => deleteJob(job.id)} className="text-red-500 hover:text-red-700">
+                      <DeleteIcon />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

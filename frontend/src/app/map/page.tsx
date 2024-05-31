@@ -52,12 +52,14 @@ const MapWithRoute = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const searchParams = useSearchParams();
     const airport = searchParams.get("airport") || "Mumbai Airport";
+   
 
     useEffect(() => {
         const fetchUserLocation = async () => {
             try {
                 const response = await axios.get(`http://127.0.0.1:8000/airports/?name=${airport}`);
-                const { lat, lng } = response.data[0];
+               
+                const { lat, lng } = response.data.results[0];
                 setUserLocation({ lat, lng });
                 fetchRouteData(lat, lng);
             } catch (error) {

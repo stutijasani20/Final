@@ -187,7 +187,11 @@ export default function MyBookingsPage() {
 
   const handleCancelBooking = async (bookingId: any) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/bookings/${bookingId}`);
+      await axios.delete(`http://127.0.0.1:8000/bookings/${bookingId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      });
       setBookings(bookings.filter((booking) => booking.id !== bookingId));
       setShowSuccessModal(true);
       console.log("Booking canceled successfully");
@@ -224,7 +228,7 @@ export default function MyBookingsPage() {
         }}
       >
         <Button onClick={handleToggleDropdown}>
-          <Image src="/side.png" alt="side" height={50} width={50} />
+          <Image src="/side.png" alt="side" height={30} width={30} />
         </Button>
         {dropdownVisible && (
           <div
@@ -273,7 +277,7 @@ export default function MyBookingsPage() {
         )}
       </div>
 
-      {/* Bookings Table */}
+     
       <div className="container bg-slate-100  mx-auto p-8">
         <h1 className="text-3xl flex justify-center  font-bold mb-6">My Bookings</h1>
         <div className="mb-8 flex justify-center">
@@ -361,7 +365,6 @@ export default function MyBookingsPage() {
           )}
         </div>
 
-        {/* Success Modal */}
         <BookingSuccessModal
           open={showSuccessModal}
           onClose={() => setShowSuccessModal(false)}
