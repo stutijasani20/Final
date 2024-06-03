@@ -1,9 +1,10 @@
-// authAPI.ts
+
 
 import { useDispatch } from "react-redux";
-import { logout as logoutAction } from "../store/authSlice"; // Import the logout action from your authSlice
+import { logout as logoutAction } from "../store/authSlice"; 
+import { Dispatch } from "@reduxjs/toolkit";
 
-const API_BASE_URL = "http://127.0.0.1:8000/api/auth"; // backend API base URL
+const API_BASE_URL = "http://127.0.0.1:8000/api/auth"; 
 
 export const login = async (credentials: {
   email: string;
@@ -63,8 +64,8 @@ export const refreshToken = async (refreshToken: string) => {
   return response.json();
 };
 
-// Modify logout function to include dispatch parameter
-export const logout = (dispatch) => {
+
+export const logout = (dispatch: Dispatch) => {
   localStorage.removeItem("token");
   dispatch(logoutAction());
 };

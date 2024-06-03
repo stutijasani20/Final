@@ -10,12 +10,15 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import EditIcon from '@mui/icons-material/Edit';
 interface Airport {
   id: number;
   name: string;
   code: string;
   city: string;
   country: string;
+  lat: number;
+  lng: number;
 }
 interface NewAirport {
   name: string;
@@ -49,6 +52,9 @@ const Airports = () => {
   });
 
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editAirportId, setEditAirportId] = useState<number | null>(null);
+
 
 
   const fetchAirports = async () => {
@@ -139,11 +145,53 @@ const Airports = () => {
       });
       fetchAirports();
       toast.success('Airport added successfully!');
+      setNewAirport({
+        name: '',
+        code: '',
+        city: '',
+        country: '',
+        lat: 0,
+        lng: 0,
+       
+    });
+    fetchAirports();
       setOpenModal(false); 
     } catch (error) {
       setError('Error adding airport. Please try again later.');
     }
   };
+
+
+
+  const handleEditAirport = (airport: Airport) => {
+    setIsEditing(true);
+    setEditAirportId(airport.id);
+    setNewAirport({
+       name: airport.name,
+       country: airport.country,
+       city: airport.city,
+       code: airport.code,
+       lat: airport.lat,
+       lng: airport.lng,
+        
+    });
+    setOpenModal(true);
+};
+
+const handleUpdateAirport = async () => {
+  try {
+      await axios.put(`http://127.0.0.1:8000/airports/${editAirportId}/`, newAirport, {
+          headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+      });
+      setOpenModal(false);
+      toast.success('Airport updated successfully!');
+      fetchAirports();
+  } catch (error) {
+      setError('Error updating Airport. Please try again later.');
+  }
+};
 
 
   return (
@@ -185,8 +233,8 @@ const Airports = () => {
       </div>
 
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
-        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
-          <h3>Add Airport</h3>
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4, maxHeight: '80vh', overflowY: 'auto' }}>
+                    <h3>{isEditing ? 'Edit Flight' : 'Add Flight'}</h3>
           <TextField
             type="text"
             label="Name"
@@ -241,14 +289,15 @@ const Airports = () => {
             fullWidth
             sx={{ mt: 2 }}
           />
+          
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
-            <Button variant="contained" color="primary" onClick={handleAddAirport}>
-              Add
-            </Button>
-            <Button variant="contained" color="secondary" onClick={() => setOpenModal(false)} sx={{ ml: 2 }}>
-              Cancel
-            </Button>
-          </div>
+                        <Button variant="contained" color="primary" onClick={isEditing ? handleUpdateAirport : handleAddAirport}>
+                            {isEditing ? 'Update' : 'Add'}
+                        </Button>
+                        <Button variant="contained" color="secondary" onClick={() => setOpenModal(false)} sx={{ ml: 2 }}>
+                            Cancel
+                        </Button>
+                    </div>
         </Box>
       </Modal>
 
@@ -290,14 +339,13 @@ const Airports = () => {
                   <td className="border p-2">{airport.city}</td>
                   <td className="border p-2">{airport.country}</td>
                   <td className="border p-2">
-                  <Button
-                      variant="contained"
-                      style={{ backgroundColor: 'red', color: 'white' }}
-                      onClick={() => deleteAirport(airport.id)}
-                    >
-                      <DeleteIcon />
-                    </Button>
-                  </td>
+                                        <button onClick={() => handleEditAirport(airport)} className="text-blue-500 hover:text-blue-700 mr-2">
+                                            <EditIcon />
+                                        </button>
+                                        <button onClick={() => deleteAirport(airport.id)} className="text-red-500 hover:text-red-700">
+                                            <DeleteIcon />
+                                        </button>
+                                    </td>
                 </tr>
               ))}
             </tbody>

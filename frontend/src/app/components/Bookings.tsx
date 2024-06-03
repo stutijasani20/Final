@@ -13,6 +13,7 @@ interface Booking {
     passenger: number;
     is_paid: boolean;
     flight: number;
+    meals: number[];
 }
 
 interface Flight {
@@ -24,6 +25,7 @@ interface PassengerDetails {
     id: number;
     first_name: string;
     last_name: string;
+
 }
 
 const Booking = () => {
@@ -78,7 +80,12 @@ const Booking = () => {
                     },
                 });
                 setBookings(response.data.results);
+                console.log(response.data)
                 setTotalPages(Math.ceil(response.data.count / pageSize));
+
+                
+                
+
 
                 const passengerIds = response.data.results.map((booking: Booking) => booking.passenger);
                 const passengerEmailResponses = await Promise.all(
@@ -112,7 +119,7 @@ const Booking = () => {
 
         fetchBookings();
     }, [filterCriteria.bookingDate, filterCriteria.flightId, filterCriteria.isPaid, page, pageSize]);
-
+    
     const handleFilterChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void = (e) => {
         const { name, value } = e.target;
         setFilterCriteria((prev) => ({
@@ -228,6 +235,7 @@ const Booking = () => {
                     )}
                 </td>
                 <td className="border p-4">{passengerEmails[index]}</td>
+                
                 <td className="border p-4">
                     <div className={`inline-block px-3 py-1 rounded-full ${booking.is_paid ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
                         {booking.is_paid ? "Success" : "Pending"}

@@ -17,6 +17,9 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import authentication, permissions
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from datetime import datetime
+from django.core.mail import EmailMessage
+import logging
+logger = logging.getLogger(__name__)
 class ClassListCreateAPIView(generics.ListCreateAPIView):
     queryset = Class.objects.all()
     serializer_class = ClassSerializer
@@ -350,8 +353,8 @@ class ConnectionFlightDetailView(APIView):
                 return Response(status=status.HTTP_204_NO_CONTENT)
 
 class BookingView(APIView):
-    authentication_classes = [JWTAuthentication]  # Use JWTAuthentication for authentication
-    permission_classes = [IsAuthenticated]  # Require authentication for all methods
+    authentication_classes = [JWTAuthentication]  
+    permission_classes = [IsAuthenticated]  
     
     def get(self, request):
         passenger_id = request.query_params.get('passenger')
@@ -359,7 +362,14 @@ class BookingView(APIView):
         is_paid = request.query_params.get('is_paid')
         flight_id = request.query_params.get('flight')
 
+       
+       
+
+       
+
         bookings = Booking.objects.all().order_by('-booking_date')
+
+        
 
         if passenger_id:
             bookings = bookings.filter(passenger=passenger_id).order_by('-booking_date')
@@ -379,23 +389,24 @@ class BookingView(APIView):
 
         paginated_bookings = paginator.paginate_queryset(bookings, request)
         
-        serializer = BookingSerializer(paginated_bookings, many=True)
-    
+        serializer = BookingSerializer(paginated_bookings, many=True)    
         return paginator.get_paginated_response(serializer.data)
-        
-
+    
             
         
+   
     def post(self, request):
         serializer = BookingSerializer(data=request.data)
         if serializer.is_valid():
             try:
                 serializer.save()
 
-                # Retrieve data from serializer
+             
                 flight_id = serializer.data['flight']
                 passenger_id = serializer.data['passenger']
                 passengers = serializer.data['passengers']
+
+               
 
                 try:
                     flight = Flight.objects.get(pk=flight_id)
@@ -406,20 +417,9 @@ class BookingView(APIView):
                     payment = Payment.objects.create(method_name='Razorpay', amount=0, user_id=passenger_id, booking_id=serializer.data['id'])
                     payment.save()
 
-                # try:
-                #     user_email = request.user
-                #     print(user_email) 
-                #     subject = 'Booking Confirmation'
-                #     email_from = settings.EMAIL_HOST_USER
-                #     html_content = render_to_string('confirmation.html')
-                #     text_content = strip_tags(html_content)  
-                #     message = 'Thank you for booking with us. Your booking ID is ' + str(serializer.data['id'])
-                #     email = EmailMultiAlternatives(subject, text_content, message , email_from, [user_email])
-                #     email.attach_alternative(html_content, "text/html")
-                #     email.send()
-                # except Exception as e:
-                   
-                #     print("Failed to send confirmation email:", str(e))
+                
+
+                
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -445,8 +445,7 @@ class Initiate_payment(APIView):
             return JsonResponse(payment)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
+        
 class RefundView(APIView):
     def post(self, request, *args, **kwargs):
         booking_id = request.data.get('booking_id')

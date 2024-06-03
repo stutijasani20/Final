@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h2 {
+            color: #007bff;
+        }
+        .booking-details {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .booking-details h3 {
+            margin-top: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Booking Confirmation</h2>
+        <p>Dear Passenger,</p>
+        <p>Thank you for booking with us. Your booking details are as follows:</p>
+        <div class="booking-details">
+            <h3>Booking ID: {{ booking_data.id }}</h3>
+            <p>Passengers: {{ booking_data.passenger_details }}</p>
+            <p>Booking Date: {{ booking_data.booking_date }}</p>
+            <p>Trip Type: {{ booking_data.trip_type }}</p>
+            <p>Flight: {{ booking_data.flight_details }}</p>
+            <p>Passenger: {{ booking_data.passenger }}</p>
+            <p>Insurance: {{ booking_data.insurance_details }}</p>
+            <p>Meals: {{ booking_data.meals_details }}</p>
+        </div>
+        <p>Thank you for choosing our airline.</p>
+        <p>Best regards,<br>Airline Support Team</p>
+    </div>
+</body>
+</html>

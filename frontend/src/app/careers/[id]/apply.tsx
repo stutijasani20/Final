@@ -189,7 +189,8 @@ export default function Apply({ jobId }: { jobId: string }) {
         open={success}
         onClose={handleModalClose}
         aria-labelledby="transition-modal-title"
-        aria
+        
+        component="div" 
         aria-describedby="transition-modal-description"
       >
         <Fade in={success}>

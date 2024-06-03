@@ -36,6 +36,7 @@ class Flight(models.Model):
     price = models.IntegerField(validators=[validate_non_zero])
     available_seats = models.IntegerField(default=0)
     classes = models.ForeignKey(Class, on_delete=models.CASCADE)
+
     
     def total_price(self):
         return self.price * Decimal('0.12') + self.price
@@ -62,10 +63,8 @@ class Passenger(models.Model):
     
 
 
-
-
     def __str__(self):
-        return str(self.name)
+        return self.first_name
 
 
 
@@ -120,6 +119,7 @@ class Booking(models.Model):
 
     def calculate_total_price(self):
         flight_price = Decimal(self.flight.price)
+
         tax_rate = Decimal('0.12')
         total_flight_price = flight_price * (1 + tax_rate)
 
@@ -140,7 +140,7 @@ class Booking(models.Model):
 
         total_price += insurance_price
 
-        print(total_price)
+    
         
         return total_price
     

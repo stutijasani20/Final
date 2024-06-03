@@ -41,6 +41,7 @@ class InsurancePolicySerializer(serializers.ModelSerializer):
 class BookingSerializer(serializers.ModelSerializer):
     passengers = serializers.PrimaryKeyRelatedField(queryset=Passenger.objects.all(), many=True)
 
+
     class Meta:
         model = Booking
         fields = '__all__'

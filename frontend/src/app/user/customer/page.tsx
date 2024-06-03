@@ -44,7 +44,11 @@ interface Passenger {
   age: number;
   gender: string;
 }
-
+interface Airport {
+  name: string;
+  city: string;
+  country: string;
+}
 export default function MyBookingsPage() {
   const router = useRouter();
   const userId = localStorage.getItem("userId");
@@ -61,6 +65,7 @@ export default function MyBookingsPage() {
   const [bookingDateFilter, setBookingDateFilter] = useState("");
   const [filteredBookings, setFilteredBookings] = useState([]);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [airport, setAirportData] = useState<Airport[]>([])
  
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [passengerDetails, setPassengerDetails] = useState<Passenger[]>([]);
@@ -151,10 +156,15 @@ export default function MyBookingsPage() {
         setError("Failed to fetch flights");
       }
     };
+     
+
+    
+    
 
     if (userId) {
       fetchBookings();
       fetchFlights();
+    
     } else {
       router.push("/login");
     }
@@ -166,7 +176,7 @@ export default function MyBookingsPage() {
     async function fetchPassengerDetails() {
       try {
         const ids = bookings.flatMap((booking: Booking) => booking.passengers);
-        console.log(ids);
+       
         const passengerDetailResponses = await Promise.all(
           ids.map((passengerId: number) =>
             axios.get<Passenger>(`http://127.0.0.1:8000/passengers/${passengerId}`)
@@ -176,7 +186,7 @@ export default function MyBookingsPage() {
         const details = passengerDetailResponses.map((response) => response.data);
 
         setPassengerDetails(details);
-        console.log(details);
+        
       } catch (error) {
         console.error("Error fetching passenger details:", error);
       }

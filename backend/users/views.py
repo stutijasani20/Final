@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.shortcuts import redirect
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.core.mail import send_mail
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
@@ -18,7 +18,7 @@ from django.core.exceptions import ImproperlyConfigured
 from .utils import *
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.conf import settings
-from django.core.mail import send_mail
+
 from rest_framework.views import APIView
 from django.conf import settings
 from django.core.mail import send_mail

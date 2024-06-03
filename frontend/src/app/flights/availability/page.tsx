@@ -142,12 +142,12 @@ const AvailableFlightsPage: React.FC = () => {
 
   return (
     <div
-      className="container flex flex-col justify-center items-center  mx-auto py-8 mt-2"
+      className="container flex flex-col justify-start items-center  mx-auto py-8 mt-2"
       style={{ maxWidth: "12000px", height: "100vh", overflowY: "auto" }}
     >
 
       <h1
-        className="text-3xl font-bold mb-4 mt-5"
+        className="text-3xl font-bold mb-4 mt-2"
         style={{
           textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
           color: "#ffffff",
@@ -411,7 +411,7 @@ const AvailableFlightsPage: React.FC = () => {
                   height={30}
                   alt="flight"
                   src="/date2.jpg"
-                  style={{ color: "red", marginRight: "10px" }}
+                  style={{ color: "red", marginRight: "10px", width:"auto", height:"auto" }}
                 />
                 <span>
                   <strong>Arrival Date:</strong>{" "}

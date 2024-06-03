@@ -11,7 +11,7 @@ import { Button, TextField, Modal, Box } from '@mui/material';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-
+import EditIcon from '@mui/icons-material/Edit';
 interface Job {
   id: number;
   title: string;
@@ -20,6 +20,9 @@ interface Job {
   type: string;
   department: string;
   image: File  | null | string;
+  requirements: string;
+  description: string;
+  salary: string;
 
 }
 
@@ -76,6 +79,10 @@ interface DepartmentResponse {
     const [departmentdata, setDepartmentData] = useState<Department[]>([]);
     const [departments, setDepartments] = useState<number | ''>('');
     const [loadingDepartments, setLoadingDepartments] = useState<boolean>(false);
+
+  
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editJobId, setEditJobId] = useState<number | null>(null);
 
     useEffect(() => {
         fetchDepartments();
@@ -160,6 +167,19 @@ interface DepartmentResponse {
         });
         fetchJobs();
         toast.success('Job added successfully!');
+        setNewJob({
+          title: '',
+          location: '',
+          start_date: '',
+          type: '',
+          requirements: '',
+          description : "",
+          salary: "",
+          department:'',
+          image : null,
+         
+      });
+      fetchJobs();
         setOpenModal(false);
       } catch (error) {
         setError('Error adding job. Please try again later.');
@@ -171,6 +191,40 @@ interface DepartmentResponse {
       const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
       return date.toLocaleDateString(undefined, options);
     };
+
+    const handleEditJob = (job: Job) => {
+      setIsEditing(true);
+      setEditJobId(job.id);
+      setNewJob({
+        title: job.title,
+        location: job.location ,
+        start_date: job.start_date,
+        type: job.type,
+        requirements: job.requirements,
+        description : job.description,
+        salary: job.salary,
+        department:job.department,
+        image : job.image,
+        
+          
+      });
+      setOpenModal(true);
+  };
+  
+  const handleUpdateJob = async () => {
+    try {
+        await axios.put(`http://127.0.0.1:8000/jobs/${editJobId}/`, newJob, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        setOpenModal(false);
+        toast.success('Job updated successfully!');
+       fetchJobs();
+    } catch (error) {
+        setError('Error updating Job. Please try again later.');
+    }
+  };
   return (
     <div className="p-4 ml-64 ">
       <h2 className="text-2xl font-semibold mb-4 text-blue-700">Jobs</h2>
@@ -182,33 +236,10 @@ interface DepartmentResponse {
       </div>
 
       
-
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
-      <Box sx={{
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    width: '90%',
-    maxWidth: 600, 
-    maxHeight: '90%', 
-    transform: 'translate(-50%, -50%)',
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
-    overflowY: 'auto', 
-    overflowX: 'hidden', 
-    }}>
-          <h3>Add Job</h3>
-          <TextField
-            type="text"
-            label="Title"
-            name="title"
-            value={newJob.title}
-            onChange={handleInputChange}
-            fullWidth
-            sx={{ mt: 2 }}
-          />
-          <TextField
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4, maxHeight: '80vh', overflowY: 'auto' }}>
+                    <h3>{isEditing ? 'Edit Flight' : 'Add Flight'}</h3>
+         <TextField
             type="text"
             label="Location"
             name="location"
@@ -299,19 +330,17 @@ interface DepartmentResponse {
           />
 
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
-            <Button variant="contained" color="secondary" onClick={handleAddJob}>
-              Add
-            </Button>
-            <Button variant="contained" color="secondary" onClick={() => setOpenModal(false)} sx={{ ml: 2 }}>
-              Cancel
-            </Button>
-          </div>
+             
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+                        <Button variant="contained" color="primary" onClick={isEditing ? handleUpdateJob : handleAddJob}>
+                            {isEditing ? 'Update' : 'Add'}
+                        </Button>
+                        <Button variant="contained" color="secondary" onClick={() => setOpenModal(false)} sx={{ ml: 2 }}>
+                            Cancel
+                        </Button>
+                    </div>
         </Box>
       </Modal>
-
-
-
       
       
 
@@ -351,10 +380,13 @@ interface DepartmentResponse {
                   <td className="border p-2">{formatDate(job.start_date)}</td>
                   <td className="border p-2">{job.type}</td>
                   <td className="border p-2">
-                    <button onClick={() => deleteJob(job.id)} className="text-red-500 hover:text-red-700">
-                      <DeleteIcon />
-                    </button>
-                  </td>
+                                        <button onClick={() => handleEditJob(job)} className="text-blue-500 hover:text-blue-700 mr-2">
+                                            <EditIcon />
+                                        </button>
+                                        <button onClick={() => deleteJob(job.id)} className="text-red-500 hover:text-red-700">
+                                            <DeleteIcon />
+                                        </button>
+                                    </td>
                 </tr>
               ))}
             </tbody>

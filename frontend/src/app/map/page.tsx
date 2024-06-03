@@ -67,11 +67,13 @@ const MapWithRoute = () => {
             }
         };
 
+        
         const fetchRouteData = async (userLat: number, userLng: number) => {
             try {
                 const hotelLat = parseFloat(searchParams.get("hotelLat") || "");
                 const hotelLng = parseFloat(searchParams.get("hotelLng") || "");
-             
+
+               
                 sethotelLocation({ lat: hotelLat, lng: hotelLng });
 
                 const response = await axios.get(
@@ -245,6 +247,7 @@ const MapWithRoute = () => {
         <h2 className="text-xl font-semibold mb-4 flex items-center">
             <FiMapPin className="mr-2 text-blue-600" />
             <span className="text-lg">Instructions</span>
+        
         </h2>
         <div className="border border-gray-200 rounded-lg p-4">
             <ol className="list-inside text-gray-700">
@@ -254,7 +257,7 @@ const MapWithRoute = () => {
                         {instruction.message.includes('right') && <TurnRightIcon sx={{color: "blue"}} />}
                         {instruction.message.includes('roundabout') && <RoundaboutLeftIcon sx={{color: "green"}} />}
                         {instruction.message.includes('Leave') && <TimeToLeaveIcon sx={{color: "#b148d2"}}  />}
-                        {instruction.message} ({instruction.routeOffsetInMeters} meters)
+                        {instruction.message} ({metersToKilometers(instruction.routeOffsetInMeters)} kms)
                     </li>
                 ))}
             </ol>

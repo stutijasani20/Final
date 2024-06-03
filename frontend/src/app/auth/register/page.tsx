@@ -7,7 +7,7 @@ export default function Login() {
   return (
     <>
       
-      <RegistrationPage />
+      <RegistrationPage isLoading={false} />
      
     </>
   );

@@ -39,7 +39,7 @@ export default function Page({ params }: { params: { id: string } }) {
       .catch((error) => console.error("Error:", error));
 
     return () => {
-      // Cleanup code here if needed
+      
     };
   }, [params.id]);
 
@@ -78,18 +78,18 @@ export default function Page({ params }: { params: { id: string } }) {
         <Grid container spacing={3}>
           <Grid item xs={12} sm={8}>
             <Box sx={{ mb: 4 }}>
-              <Typography variant="h5" sx={{ mb: 2, color: "primary.main" }}>
-                Description:
-              </Typography>
-              <ul style={{ marginLeft: "1rem", color: "text.secondary" }}>
-                {descriptionPoints.map((point: string, index: number) => (
-                  <li key={index}>
+            <Typography variant="h5" sx={{ mb: 2, color: "primary.main" }}>
+              Description:
+            </Typography>
+            <ul style={{ marginLeft: "1rem", color: "text.secondary", listStyleType: 'disc' }}>
+              {descriptionPoints.map((point: string, index: number) => (
+                <li key={index}>
                   <Typography component="span" variant="body1" sx={{ mb: 1 }}>
                     {point}
                   </Typography>
                 </li>
-                ))}
-              </ul>
+              ))}
+            </ul>
             </Box>
             <Typography variant="body1" sx={{ mb: 2 }}>
               Department: {departmentName}

@@ -78,7 +78,7 @@ const FlightSearchPage: React.FC = () => {
       setTravellers((prevState: any) => {
         let newValue =
           operation === "increase" ? prevState[type] + 1 : prevState[type] - 1;
-        newValue = newValue < 0 ? 0 : newValue; // Ensure the value is not negative
+        newValue = newValue < 0 ? 0 : newValue; 
 
         if (
           type === "infants" &&
@@ -93,11 +93,16 @@ const FlightSearchPage: React.FC = () => {
     };
 
   const handlePassengerChange = (value: number) => {
-    setPassenger(value < 1 ? 1 : value); // Ensure the value is not below 1
+    setPassenger(value < 1 ? 1 : value);
   };
 
   const handleSearch = async () => {
+    if (!origin || !destination || !departureDate || !flightClass) {
+      setError("Please fill in all required fields.");
+      return;
+    }
     try {
+
       const response = await axios.get<Flight[]>(
         "http://127.0.0.1:8000/flights",
         {
