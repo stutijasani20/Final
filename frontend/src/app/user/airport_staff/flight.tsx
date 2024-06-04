@@ -2,7 +2,7 @@
 "use client";
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import axios from 'axios';
-import { ClipLoader } from 'react-spinners';
+import Loading from '@/app/loading'
 import Image from 'next/image';
 import { Button, Grid, TextField, Select, MenuItem, InputLabel, FormControl, SelectChangeEvent } from "@mui/material";
 import Pagination from '@mui/material/Pagination';
@@ -84,23 +84,23 @@ const Flights = () => {
     const [classes, setClasses] = useState<Classes[]>([]);
     const [editFlightId, setEditFlightId] = useState<number | null>(null);
 
-    const fetchAirports = async () => {
-        let url = 'http://127.0.0.1:8000/airports/';
-        let airports: Airport[] = [];
-
-        while (url) {
+    const fetchAirports = async (): Promise<Airport[]> => {
+        const url = 'http://127.0.0.1:8000/airports/';
+        
+        try {
             const response = await axios.get(url);
             const data = response.data;
-            const fetchedAirports: Airport[] = data.results.map((airport: any) => ({
+            const airports: Airport[] = data.map((airport: any) => ({
                 id: airport.id,
                 name: airport.name,
                 city: airport.city,
             }));
-            airports = airports.concat(fetchedAirports);
-            url = data.next;
+            
+            return airports;
+        } catch (error) {
+            console.error('Error fetching airports:', error);
+            return [];
         }
-
-        setAirports(airports);
     };
 
     useEffect(() => {

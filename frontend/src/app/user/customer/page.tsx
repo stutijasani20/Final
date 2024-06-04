@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import BookingSuccessModal from "../customer/success"; // Import the success modal component
 import Link from "next/link";
-import { Bars } from 'react-loader-spinner';
+import Loading from "@/app/loading";
 import Button from "@mui/material/Button";
 import Image from "next/image";
 import UserProfileModal from "@/app/components/Modal";
@@ -213,7 +213,7 @@ export default function MyBookingsPage() {
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', top:"10px" }}>
-        <Bars color="#00BFFF" height={80} width={80} />
+       <Loading />
       </div>
     );
   }

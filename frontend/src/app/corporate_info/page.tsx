@@ -1,7 +1,7 @@
 "use client";
 import React, {useState, useEffect} from "react";
 import Accordion from "./Accordian";
-import { Grid } from "react-loader-spinner";
+import Loading from "../loading";
 
 
 
@@ -19,7 +19,7 @@ export default function Page() {
   if (loading) {
     return (
       <div className="flex justify-center items-center fixed top-0 left-0 w-full h-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-md z-50">
-      <Grid />
+      <Loading />
       </div>
     );
   }

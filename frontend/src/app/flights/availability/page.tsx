@@ -16,7 +16,7 @@ import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import FlightLandIcon from "@mui/icons-material/FlightLand";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import Image from "next/image";
-import { Hourglass } from "react-loader-spinner";
+import Loading from "@/app/loading";
 interface Flight {
   id: number;
   flight_number: string;
@@ -54,7 +54,7 @@ const AvailableFlightsPage: React.FC = () => {
     if (flightsParam) {
       try {
         const flights: Flight[] = JSON.parse(flightsParam);
-        // setLoading(false);
+      
         setFilteredFlights(flights);
         setError("");
       } catch (error) {
@@ -134,7 +134,7 @@ const AvailableFlightsPage: React.FC = () => {
         backdropFilter: 'blur(5px)', 
         backgroundColor: 'rgba(255, 255, 255, 0.7)' 
       }}>
-      <Hourglass />
+     <Loading />
       </div>
     );
   }

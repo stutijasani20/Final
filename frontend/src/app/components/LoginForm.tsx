@@ -14,7 +14,7 @@ import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
-import { TailSpin } from "react-loader-spinner";
+import Loading from "../loading";
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -80,7 +80,7 @@ const LoginPage = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center fixed top-0 left-0 w-full h-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-md z-50">
-      <TailSpin />
+      <Loading />
       </div>
     );
   }

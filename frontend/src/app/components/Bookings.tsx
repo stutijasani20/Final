@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import axios from 'axios';
-import { ClipLoader } from 'react-spinners';
+import Loading from '../loading';
 import Image from 'next/image';
 import { Button, Grid, TextField, Select, MenuItem, InputLabel, FormControl, SelectChangeEvent } from "@mui/material";
 import Pagination from '@mui/material/Pagination';
@@ -143,7 +143,7 @@ const Booking = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <ClipLoader size={50} color={"#123abc"} loading={loading} />
+                <Loading />
             </div>
         );
     }

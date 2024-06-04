@@ -2,7 +2,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { ClipLoader } from 'react-spinners';
+import Loading from '@/app/loading';
 import Image from 'next/image';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {toast, ToastContainer} from 'react-toastify';
@@ -346,7 +346,7 @@ interface DepartmentResponse {
 
       {loading ? (
         <div className="flex justify-center items-center h-screen">
-          <ClipLoader size={50} color="#123abc" loading={loading} />
+          <Loading />
         </div>
       ) : error ? (
         <div className="mx-64 flex justify-center items-center h-screen text-2xl text-red-500">

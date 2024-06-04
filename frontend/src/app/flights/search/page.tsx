@@ -6,7 +6,7 @@ import styles from "@/app/styles/flightsearch.module.scss"
 import { InputNumber } from "antd";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { Oval } from "react-loader-spinner";
+import Loading from "@/app/loading";
 interface Airport {
   id: number;
   name: string;
@@ -64,7 +64,7 @@ const FlightSearchPage: React.FC = () => {
       const response = await axios.get(
         "http://127.0.0.1:8000/airports"
       );
-      setAirports(response.data.results);
+      setAirports(response.data);
       setLoading(false);
     } catch (error) {
       setError("Error fetching airports. Please try again.");
@@ -192,7 +192,7 @@ const FlightSearchPage: React.FC = () => {
         backdropFilter: 'blur(5px)', 
         backgroundColor: 'rgba(255, 255, 255, 0.7)' 
       }}>
-       <Oval  />
+      <Loading />
       </div>
     );
   }

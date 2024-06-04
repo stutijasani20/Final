@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, TextField, Modal, Box } from '@mui/material';
 import Image from 'next/image';
-import { ClipLoader } from 'react-spinners';
+import Loading from '@/app/loading';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -78,7 +78,7 @@ const Airports = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      setAirports(response.data.results);
+      setAirports(response.data);
       setTotalPages(Math.ceil(response.data.count / pageSize));
     } catch (error) {
       setError('Error fetching airports. Please try again later.');
@@ -303,7 +303,7 @@ const handleUpdateAirport = async () => {
 
       {loading ? (
         <div className="flex justify-center items-center h-screen">
-          <ClipLoader size={50} color="#123abc" loading={loading} />
+          <Loading  />
         </div>
       ) : error ? (
         <div className="mx-64 flex justify-center items-center h-screen text-2xl text-red-500">

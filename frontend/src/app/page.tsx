@@ -11,6 +11,7 @@ import {motion} from 'framer-motion';
 import styles from "@/app/styles/Homepage.module.scss"
 import Image from "next/image";
 import { RotatingLines } from "react-loader-spinner";
+import Loading from "./loading";
 
 
 const MiddleSection: React.FC = () => {
@@ -28,7 +29,7 @@ const MiddleSection: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center fixed top-0 left-0 w-full h-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-md z-50">
-        <RotatingLines />
+        <Loading />
       </div>
     );
   }

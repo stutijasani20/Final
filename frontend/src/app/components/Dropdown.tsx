@@ -37,7 +37,7 @@ const Dropdown = () => {
 
           const user =
             typeof window !== "undefined" ? localStorage.getItem("userId") : null;
-          // Fetch profile image
+          
           const profileImageResponse = await axios.get(
             `http://127.0.0.1:8000/profile/?user=${user}`,
             {

@@ -59,7 +59,7 @@ const MapWithRoute = () => {
             try {
                 const response = await axios.get(`http://127.0.0.1:8000/airports/?name=${airport}`);
                
-                const { lat, lng } = response.data.results[0];
+                const { lat, lng } = response.data[0];
                 setUserLocation({ lat, lng });
                 fetchRouteData(lat, lng);
             } catch (error) {
@@ -257,6 +257,7 @@ const MapWithRoute = () => {
                         {instruction.message.includes('right') && <TurnRightIcon sx={{color: "blue"}} />}
                         {instruction.message.includes('roundabout') && <RoundaboutLeftIcon sx={{color: "green"}} />}
                         {instruction.message.includes('Leave') && <TimeToLeaveIcon sx={{color: "#b148d2"}}  />}
+                        {instruction.message.includes('arrived') && <Image src="/arrive.jpg" alt='image' height={50} width={50}  />}
                         {instruction.message} ({metersToKilometers(instruction.routeOffsetInMeters)} kms)
                     </li>
                 ))}

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Button, Grid, TextField } from "@mui/material";
-
+import Loading from "@/app/loading";
 interface Booking {
     id: number;
     booking_date: string;
@@ -149,7 +149,9 @@ const Page: React.FC = () => {
 </Button>
             <div className="mb-8 mt-3">
                 {loading ? (
-                    <p>Loading...</p>
+                    <p>
+                        <Loading />
+                    </p>
                 ) : (
                     <>
                         {filterCriteria.bookingDate || filterCriteria.flightId ? (

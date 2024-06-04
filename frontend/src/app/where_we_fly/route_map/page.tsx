@@ -55,29 +55,23 @@ export default function Map(): JSX.Element {
 
   const fetchAirportsAndSetMarkers = async (setMarkers: React.Dispatch<React.SetStateAction<Airport[]>>) => {
     try {
-      let url = 'http://127.0.0.1:8000/airports/';
-      let airports: Airport[] = [];
-      
-      while (url) {
+        const url = 'http://127.0.0.1:8000/airports/';
         const response = await axios.get(url);
         const data = response.data;
-        const fetchedAirports: Airport[] = data.results.map((airport: any) => ({
-          id: airport.id,
-          name: airport.name,
-          city: airport.city,
-          country: airport.country,
-          lat: airport.lat,
-          lng: airport.lng,
+        const airports: Airport[] = data.map((airport: any) => ({
+            id: airport.id,
+            name: airport.name,
+            city: airport.city,
+            country: airport.country,
+            lat: airport.lat,
+            lng: airport.lng,
         }));
-        airports = airports.concat(fetchedAirports);
-        url = data.next;
-      }
-      
-      setMarkers(airports);
+
+        setMarkers(airports);
     } catch (error) {
-      console.error("Error fetching marker data:", error);
+        console.error("Error fetching marker data:", error);
     }
-  };
+};
 
   useEffect(() => {
     fetchAirportsAndSetMarkers(setMarkers);

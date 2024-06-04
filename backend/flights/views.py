@@ -100,33 +100,28 @@ class FlightDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class AirportView(APIView):
-        def get(self, request):
-            try:
-                name = request.query_params.get('name')
-                city = request.query_params.get('city')
-                country = request.query_params.get('country')
+    def get(self, request):
+        try:
+            name = request.query_params.get('name')
+            city = request.query_params.get('city')
+            country = request.query_params.get('country')
 
-                if name:
-                    airports = Airport.objects.filter(name__icontains=name)
-                elif city:
-                    airports = Airport.objects.filter(city__icontains=city)
-                elif country:
-                    airports = Airport.objects.filter(country__icontains=country)
-                else:
-                    airports = Airport.objects.all()
+            if name:
+                airports = Airport.objects.filter(name__icontains=name)
+            elif city:
+                airports = Airport.objects.filter(city__icontains=city)
+            elif country:
+                airports = Airport.objects.filter(country__icontains=country)
+            else:
+                airports = Airport.objects.all()
 
-                paginator = PageNumberPagination()
-                paginator.page_size = 10
+            serializer = AirportSerializer(airports, many=True)
+        
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
-                paginated_airports = paginator.paginate_queryset(airports, request)
-                
-                serializer = AirportSerializer(paginated_airports, many=True)
-            
-                return paginator.get_paginated_response(serializer.data)
-
-            
-            except Exception as e:
-                return Response({'error': str(e)}, status=500)
+        
         def post(self, request):
                 serializer = AirportSerializer(data=request.data)
                 if serializer.is_valid():
@@ -160,7 +155,7 @@ class AirportDetailView(APIView):
                 return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PassengerView(APIView):
-        authentication_classes = [JWTAuthentication]  # Use JWTAuthentication for authentication
+        authentication_classes = [JWTAuthentication]  
         permission_classes = [IsAuthenticated]
         def get(self, request):
                 user_id = request.query_params.get('user')
@@ -458,16 +453,16 @@ class RefundView(APIView):
         except Booking.DoesNotExist:
             return Response({'error': 'Booking not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        payment_id = booking.payment_id  # Ensure you store payment_id in your Booking model
+        payment_id = booking.payment_id 
         refund_amount = booking.calculate_refundable_amount()
 
         client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
         try:
             refund = client.payment.refund(payment_id, {
-                'amount': int(refund_amount * 100)  # amount in paise
+                'amount': int(refund_amount * 100)  
             })
-            booking.is_paid = False  # Optionally mark the booking as unpaid
+            booking.is_paid = False  
             booking.save()
             return Response(refund, status=status.HTTP_200_OK)
         except Exception as e:
@@ -476,6 +471,7 @@ class RefundView(APIView):
 class BookingDetailView(APIView):
             authentication_classes = [JWTAuthentication]  
             permission_classes = [IsAuthenticated]
+            
             def get_object(self, pk):
                 try:
                     return Booking.objects.get(pk=pk)
@@ -488,17 +484,44 @@ class BookingDetailView(APIView):
 
             def put(self, request, pk):
                 booking = self.get_object(pk)
+                if booking is None:
+                    return Response({"error": "Booking not found"}, status=status.HTTP_404_NOT_FOUND)
+                
                 serializer = BookingSerializer(booking, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
+                    passengers = Passenger.objects.filter(booking=booking)  
+                    insurance = Insurance.objects.filter(booking=booking)
+                    meals = Meal.objects.filter(booking=booking)
+                    flights = Flight.objects.filter(booking=booking)
+                    self.send_confirmation_email(serializer.data, request.user.email, passengers, insurance, meals,flights)
                     return Response(serializer.data)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            def send_confirmation_email(self, booking_data, user_email, passengers, insurance, meals, flights):
+                try:
+                    subject = f'Booking Confirmation on Elegance Air'
+
+                    email_from = settings.EMAIL_HOST_USER
+                    html_content = render_to_string('confirmation_mail.html', {
+                        'booking_data': booking_data,
+                        'passengers': passengers,
+                        'insurances': insurance,  
+                        'meals': meals,
+                        'flights': flights,  
+                    })
+                    
+                    email = EmailMessage(subject, html_content, email_from, [user_email])
+                    email.content_subtype = "html"
+                    email.send()
+                except Exception as e:
+                    print("Failed to send confirmation email:", str(e))
+
 
             def delete(self, request, pk):
                 booking = self.get_object(pk)
                 booking.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
-                
 class BookingCancelView(APIView):
     authentication_classes = [JWTAuthentication]  
     permission_classes = [IsAuthenticated]

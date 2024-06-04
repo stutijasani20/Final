@@ -2,6 +2,7 @@
 import React from "react";
 import withLoading from "../components/withLoading";
 import Image from "next/image";
+import Loading from "../loading";
 
 const AboutPage: React.FC = () => {
   return (
@@ -147,7 +148,6 @@ const PerformanceHighlight: React.FC<{
   );
 };
 
-// Component for each footprint card
 const FootprintCard: React.FC<{
   icon: string;
   alt: string;

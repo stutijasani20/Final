@@ -5,7 +5,7 @@ import { Select, MenuItem, InputLabel, FormControl, Button, SelectChangeEvent } 
 import Image from 'next/image';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-
+import Loading from '../loading';
 const User = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -84,7 +84,8 @@ const User = () => {
 
       <h2 className="text-2xl font-semibold mb-4 text-blue-700">Users</h2>
       {loading ? (
-        <p>Loading...</p>
+        <p><Loading />
+        </p>
       ) : error ? (
         <p>{error}</p>
       ) : users.length === 0 ? (

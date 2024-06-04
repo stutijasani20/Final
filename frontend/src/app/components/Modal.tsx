@@ -5,7 +5,7 @@ import Modal from "react-modal";
 import { FiUser, FiPhone, FiCalendar, FiCamera } from "react-icons/fi";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import {ThreeDots} from 'react-loader-spinner';
+import Loading from "../loading";
 function UserProfileModal() {
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState("");
@@ -91,14 +91,7 @@ function UserProfileModal() {
   if(loading) {
     return (
       <div>
-        <ThreeDots   visible={true}
-      height="80"
-      width="80"
-      color="#4fa94d"
-      radius="9"
-      ariaLabel="three-dots-loading"
-      wrapperStyle={{}}
-      wrapperClass="" />
+       <Loading />
       </div>
       
     )

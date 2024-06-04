@@ -2,51 +2,155 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Confirmation</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
         }
         .container {
             max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            
+            color: green;
+            text-align: center;
+            padding: 20px;
+            border-radius: 5px 5px 0 0;
+        }
+        .header img {
+            width: 100px;
+            height: auto;
+            display: block;
             margin: 0 auto;
+            margin-bottom: 10px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
             padding: 20px;
         }
         h2 {
+            margin-top: 20px;
+            font-size: 20px;
             color: #007bff;
         }
-        .booking-details {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 20px;
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
         }
-        .booking-details h3 {
-            margin-top: 0;
-            color: #333;
+        li {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Booking Confirmation</h2>
-        <p>Dear Passenger,</p>
-        <p>Thank you for booking with us. Your booking details are as follows:</p>
-        <div class="booking-details">
-            <h3>Booking ID: {{ booking_data.id }}</h3>
-            <p>Passengers: {{ booking_data.passenger_details }}</p>
-            <p>Booking Date: {{ booking_data.booking_date }}</p>
-            <p>Trip Type: {{ booking_data.trip_type }}</p>
-            <p>Flight: {{ booking_data.flight_details }}</p>
-            <p>Passenger: {{ booking_data.passenger }}</p>
-            <p>Insurance: {{ booking_data.insurance_details }}</p>
-            <p>Meals: {{ booking_data.meals_details }}</p>
+        <div class="header">
+            <img src="https://i.ibb.co/RBkHQtM/6236d254385149d5a4f67ad2b637bbbc-removebg-preview.png" alt="Elegance Air Logo">
+            <h1>Booking Confirmation</h1>
         </div>
-        <p>Thank you for choosing our airline.</p>
-        <p>Best regards,<br>Airline Support Team</p>
+        <div class="content">
+            <p>Your Booking is completed successfully.</p>
+            <h2>Booking Details</h2>
+            <p><strong>Flight Details:</strong></p>
+            <ul>
+                {% for flight in flights %}
+                    <li><strong>Flight Number:  </strong>{{ flight.flight_number }}</li>
+                    <li><strong>From: </strong>{{ flight.departure_airport }}</li>
+                    <li><strong>To: </strong>{{ flight.arrival_airport }}</li>
+                    
+                {% endfor %}
+            </ul>
+            <!-- <li>Booking Date: {{ booking_data.booking_date }}</li> -->
+            <p><strong>Payment Status:</strong> {% if booking_data.is_paid %}Successful{% else %}Not{% endif %}</p>
+            <p><strong>Trip Type:</strong> {{ booking_data.trip_type }}</p>
+            <h2>Passenger Details</h2>
+            <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Age</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for passenger in passengers %}
+                    <tr>
+                      <td>{{ passenger.first_name }} {{ passenger.last_name }}</td>
+                      
+                      <td>{{ passenger.gender }}</td>
+                      <td>{{ passenger.age }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            <h2>Insurance</h2>
+            {% if insurances %}
+                <ul>
+                    {% for insurance in insurances %}
+                        <li><strong>Name:</strong> {{ insurance.name }}  <strong>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No Insurance Opted</p>
+            {% endif %}
+            <h2>Meals</h2>
+            {% if meals %}
+                <ul>
+                    {% for meal in meals %}
+                        <li>{{ meal.name }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No Meals Selected</p>
+            {% endif %}
+
+            
+
+        <p style="color: red; font-weight: bold; margin-top: 20px;">Show this mail at the Airport during the time of Check In. You will get your boarding pass based on this email.</p>
+        
+        </div>
+        <div class="footer">
+            <p>Best Regards,</p>
+            <p>The Elegance Air Team</p>
+            <p>Elegance Air, 1234 Street, City, State, 56789</p>
+            <p>Email: info@eleganceair.com | Phone: 123-456-7890</p>
+        </div>
     </div>
 </body>
 </html>
