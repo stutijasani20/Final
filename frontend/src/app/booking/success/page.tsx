@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import axios from "axios";
-// import { sendEmail } from "./emailService"; // Example: use nodemailer or a similar library
+import Loading from "@/app/loading";
 import Image from "next/image";
 interface Booking {
   id: number;
@@ -57,35 +57,7 @@ const Success: React.FC = () => {
 
 
   useEffect(() => {
-    // const sendBookingConfirmationEmail = async () => {
-    //   // Check if booking data is available
-    //   if (booking) {
-    //     try {
-    //       // Fetch additional data needed for the email
-    //       const flightDetailsResponse = await axios.get(
-    //         `http://127.0.0.1:8000/flights/${booking.flight}/`
-    //       );
-    //       const flightDetails = flightDetailsResponse.data;
-
-    //       // Compose email content using fetched data
-    //       const emailContent = `
-    //         Hello ${passengers[0].first_name} ${passengers[0].last_name},
-
-    //         Your booking has been successfully confirmed!
-    //         Here are your flight details:
-    //         Flight Number: ${flightDetails.flight_number}
-    //         Departure: ${flightDetails.departure}
-    //         Arrival: ${flightDetails.arrival}
-    //         Date: ${new Date(flightDetails.date).toLocaleDateString()}
-    //         Time: ${new Date(flightDetails.time).toLocaleTimeString()}
-
-    //         Thank you for choosing our service!
-    //       `;
-
-    //       // Send the email
-    //       await sendEmail(passengers[0].email, "Booking Confirmation", emailContent);
-    //     } catch (error) {
-    //       console.error("Error sending booking confirmation email:", error);
+    
             const fetchBookingData = async () => {
       try {
         const response = await axios.get(
@@ -235,7 +207,7 @@ const Success: React.FC = () => {
         backdropFilter: 'blur(5px)', 
         backgroundColor: 'rgba(255, 255, 255, 0.7)' 
       }}>
-        <Image src="/ticket.gif" alt="Loading..." width={400} height={300} />
+        <Loading />
       </div>
     );
   }

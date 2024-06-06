@@ -1,6 +1,7 @@
 "use client";
 import React, { ComponentType, useState, useEffect } from 'react';
 import Image from 'next/image';
+import Loading from '../loading';
 
 
 
@@ -27,7 +28,7 @@ function withLoading<T extends WithLoadingProps>(WrappedComponent: ComponentType
         if (isLoading || showLoader) {
             return (
                 <div className="flex justify-center items-center fixed top-0 left-0 w-full h-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-md z-50">
-                  <Image src="/f1.gif" alt="Loading..." width={100} height={100} />
+                  <Loading />
                 </div>
             );
         }

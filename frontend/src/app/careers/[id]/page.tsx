@@ -6,7 +6,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Apply from "./apply";
 import Image from "next/image";
-
+import Loading from "@/app/loading";
 export default function Page({ params }: { params: { id: string } }) {
   const [jobData, setJobData] = useState<any>(null);
   const [departmentData, setDepartmentData] = useState<any>(null);
@@ -44,7 +44,7 @@ export default function Page({ params }: { params: { id: string } }) {
   }, [params.id]);
 
   if (loading) {
-    return <div className="text-center">Loading...</div>;
+    return <div className="text-center"><Loading /></div>;
   }
 
   if (!jobData) {

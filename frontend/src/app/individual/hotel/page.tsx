@@ -5,6 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {  FaPhone, FaMapMarkerAlt, FaMap } from "react-icons/fa";
+import Loading from "@/app/loading";
 interface Hotel {
   position: {
     lat: number;
@@ -118,7 +119,7 @@ const MyComponent: React.FC = () => {
       </form>
       {loading ? (
         <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-50">
-          <Image src="/hotel.gif" alt="loading" width={200} height={200} />
+         <Loading />
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

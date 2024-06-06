@@ -95,8 +95,11 @@ const Flights = () => {
                 name: airport.name,
                 city: airport.city,
             }));
+
+           setAirports(airports)
             
             return airports;
+            
         } catch (error) {
             console.error('Error fetching airports:', error);
             return [];
@@ -106,6 +109,9 @@ const Flights = () => {
     useEffect(() => {
         fetchAirports();
     }, []);
+
+    
+   
 
     const fetchClass = async () => {
         let url = 'http://127.0.0.1:8000/classes/';
@@ -497,7 +503,7 @@ const Flights = () => {
 
                     <div className="flex justify-center mt-4">
                         <Stack spacing={2}>
-                            <Pagination count={totalPages} page={page} color="secondary" onChange={handlePageChange} />
+                        <Pagination count={10} variant="outlined" color="secondary" />
                         </Stack>
                     </div>
                 </>

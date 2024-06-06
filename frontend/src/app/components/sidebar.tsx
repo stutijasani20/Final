@@ -60,7 +60,7 @@ const Sidebar = ({ setActiveSection }: {setActiveSection: any}) => {
                 </ul>
 
                 <div className="m-4 flex justify-center items-center">
-                    <Image src="/dashboard.gif" alt="logo" width={200} height={200} className="rounded-full w-auto h-auto" /> 
+                    <Image src="/dashboard.gif" alt="logo" width={600} height={600} className="rounded-full w-auto h-auto" /> 
                     </div>
                
                 <div className="absolute bottom-0 left-0 w-full text-center pb-4">

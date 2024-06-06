@@ -16,6 +16,7 @@ import RoundaboutLeftIcon from '@mui/icons-material/RoundaboutLeft';
 import Image from "next/image";
 import TimeToLeaveIcon from '@mui/icons-material/TimeToLeave';
 import dynamic from "next/dynamic";
+import Loading from "../loading";
 const MapContainer = dynamic(() => import("react-leaflet").then((module) => module.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import("react-leaflet").then((module) => module.TileLayer), { ssr: false });
 const Polyline = dynamic(() => import("react-leaflet").then((module) => module.Polyline), { ssr: false });
@@ -161,7 +162,7 @@ const MapWithRoute = () => {
           </Popup>
                 </Marker>
                 <Marker position={[hotelLocation.lat, hotelLocation.lng]} icon={markerIcon2}>
-                    <Popup>hotel</Popup>
+                    <Popup>Your Destination</Popup>
                 </Marker>
                 <Control position="topright">
                     <button
@@ -282,7 +283,7 @@ if (error) {
  if (loading) {
     return (
     <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-50">
-        <Image src="/map.gif" alt="loading" width={150} height={150} />
+        <Loading />
     </div>
      );
 }
