@@ -156,7 +156,9 @@ const MapWithRoute = () => {
                     color="blue"
                 />
                 <Marker position={[userLocation.lat, userLocation.lng]} icon={markerIcon}>
-                    <Popup>Starting Point</Popup>
+                <Popup>
+            You are Here
+          </Popup>
                 </Marker>
                 <Marker position={[hotelLocation.lat, hotelLocation.lng]} icon={markerIcon2}>
                     <Popup>hotel</Popup>
@@ -257,7 +259,7 @@ const MapWithRoute = () => {
                         {instruction.message.includes('right') && <TurnRightIcon sx={{color: "blue"}} />}
                         {instruction.message.includes('roundabout') && <RoundaboutLeftIcon sx={{color: "green"}} />}
                         {instruction.message.includes('Leave') && <TimeToLeaveIcon sx={{color: "#b148d2"}}  />}
-                        {instruction.message.includes('arrived') && <Image src="/arrive.jpg" alt='image' height={50} width={50}  />}
+
                         {instruction.message} ({metersToKilometers(instruction.routeOffsetInMeters)} kms)
                     </li>
                 ))}

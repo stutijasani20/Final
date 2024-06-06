@@ -150,7 +150,9 @@ const MapWithRoute = () => {
                     color="blue"
                 />
                 <Marker position={[userLocation.lat, userLocation.lng]} icon={markerIcon}>
-                    <Popup>Starting Point</Popup>
+                <Popup>
+            You are Here
+          </Popup>
                 </Marker>
                 <Marker position={[touristLocation.lat, touristLocation.lng]} icon={markerIcon2}>
                     <Popup>tourist</Popup>
