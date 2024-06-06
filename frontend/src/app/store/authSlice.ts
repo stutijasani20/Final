@@ -33,7 +33,6 @@ const authSlice = createSlice({
       localStorage.setItem("user", JSON.stringify(action.payload));
       localStorage.setItem("userId", action?.payload?.id ?? "");
       localStorage.setItem("isAuthenticated", "true");
-      console.log(action.payload.jwt_token.access);
       const token  = action.payload.jwt_token.access;
       setToken(token);
   
