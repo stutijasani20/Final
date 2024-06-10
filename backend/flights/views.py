@@ -122,7 +122,7 @@ class AirportView(APIView):
             return Response({"error": str(e)}, status=500)
 
         
-        def post(self, request):
+    def post(self, request):
                 serializer = AirportSerializer(data=request.data)
                 if serializer.is_valid():
                     serializer.save()
@@ -500,9 +500,11 @@ class BookingDetailView(APIView):
 
             def send_confirmation_email(self, booking_data, user_email, passengers, insurance, meals, flights):
                 try:
-                    subject = f'Booking Confirmation on Elegance Air'
-
+                    subject = 'Booking Confirmation on Elegance Air'
                     email_from = settings.EMAIL_HOST_USER
+
+            
+
                     html_content = render_to_string('confirmation_mail.html', {
                         'booking_data': booking_data,
                         'passengers': passengers,
@@ -510,7 +512,7 @@ class BookingDetailView(APIView):
                         'meals': meals,
                         'flights': flights,  
                     })
-                    
+
                     email = EmailMessage(subject, html_content, email_from, [user_email])
                     email.content_subtype = "html"
                     email.send()

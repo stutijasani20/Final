@@ -503,7 +503,7 @@ const Flights = () => {
 
                     <div className="flex justify-center mt-4">
                         <Stack spacing={2}>
-                        <Pagination count={10} variant="outlined" color="secondary" />
+                            <Pagination count={totalPages} page={page} color="secondary" onChange={handlePageChange} />
                         </Stack>
                     </div>
                 </>

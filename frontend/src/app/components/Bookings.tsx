@@ -82,11 +82,6 @@ const Booking = () => {
                 setBookings(response.data.results);
                 console.log(response.data)
                 setTotalPages(Math.ceil(response.data.count / pageSize));
-
-                
-                
-
-
                 const passengerIds = response.data.results.map((booking: Booking) => booking.passenger);
                 const passengerEmailResponses = await Promise.all(
                     passengerIds.map((passengerId: number) =>

@@ -13,6 +13,7 @@ import {
 
 import rootReducer from "./authSlice";
 import storage from "redux-persist/es/storage";
+import thunk from "redux-thunk";
 
 const persistConfig = {
   key: "root",

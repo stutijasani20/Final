@@ -117,7 +117,7 @@ const Dropdown = () => {
               </MenuItem>
             ),
             <MenuItem key="support" onClick={handleClose}>
-              <Link href="/contact" className="font-bold text-green-800">
+              <Link href="/contct" className="font-bold text-green-800">
                 <Image
                   src="/support.png"
                   alt="Dashboard"
